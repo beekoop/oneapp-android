@@ -139,6 +139,9 @@ function initializeShoppingCart(){
 
 function validateTerminal()
 {
+	//bug fix for moment
+	moment = global.moment;
+	
 	var terminal_key = APP.TERMINAL_KEY;
 	
 	// validate terminal key
