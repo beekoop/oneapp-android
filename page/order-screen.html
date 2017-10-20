@@ -456,6 +456,22 @@
   		</ons-col>  		
   	</ons-row>
   	
+  	<!-- iframe -->
+  	<ons-row style="height:100%;" ng-show="screen.shouldShowIframe">
+  		<ons-col> 
+  		<form target="iframe" method="post" id="iframe-form" action="http://192.168.0.30:8080/DesertView/LoginServlet">
+  			<input type="hidden" name="CLIENTTYPE" value="POSTERITA">
+  			<input type="hidden" name="USERNAME" value="Selwin">
+  			<input type="hidden" name="PASSWORD" value="123456">
+  			<input type="hidden" name="OPERATORNAME" value="Selwin">
+  			<input type="hidden" name="ISOPERATORADMIN" value="1">
+  			<input type="hidden" name="TILLNAME" value="Till1">
+  			<input type="hidden" name="PRINTERWIDTH" value="80">  			
+  		</form>
+  		<iframe id="iframe"  name="iframe" width="100%" height="600px">please wait ...</iframe> 			
+  		</ons-col>  		
+  	</ons-row>
+  	
   </ons-col>
   
   <ons-col width="317px">  	

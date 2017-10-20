@@ -139,8 +139,16 @@ function initializeShoppingCart(){
 
 function validateTerminal()
 {
+	
 	//bug fix for moment
-	moment = global.moment;
+	
+	if(typeof global == "undefined"){
+		
+	} else
+		
+	{
+		moment = global.moment;
+	}
 	
 	var terminal_key = APP.TERMINAL_KEY;
 	
@@ -831,6 +839,7 @@ module.service('OrderScreen', function() {
 		screen.shouldShowCreateCustomer = false;
 		screen.shouldShowOrderActions = false;	
 		screen.shouldShowCustomerForm = false;
+		screen.shouldShowIframe = false;
 	};
 		
 	screen.viewLineDetails = function( lineId ){
@@ -844,6 +853,7 @@ module.service('OrderScreen', function() {
 		screen.shouldShowCreateCustomer = false;
 		screen.shouldShowOrderActions = false;
 		screen.shouldShowCustomerForm = false;
+		screen.shouldShowIframe = false;
 		
 		screen.lineId = lineId;
 		
@@ -861,6 +871,7 @@ module.service('OrderScreen', function() {
 		screen.shouldShowCreateCustomer = false;
 		screen.shouldShowOrderActions = false;
 		screen.shouldShowCustomerForm = false;
+		screen.shouldShowIframe = false;
 		
 	};
 	
@@ -873,8 +884,9 @@ module.service('OrderScreen', function() {
 		screen.shouldShowSearchCustomer = false;
 		screen.shouldShowCustomerDetails = false;
 		screen.shouldShowCreateCustomer = false;
-		screen.shouldShowOrderActions = false;
+		screen.shouldShowOrderActions = false;		
 		screen.shouldShowCustomerForm = true;
+		screen.shouldShowIframe = false;
 		
 	};
 	
@@ -892,6 +904,23 @@ module.service('OrderScreen', function() {
 		 */
 		
 	};
+	
+	screen.loadIframe = function(url){
+		
+		var screen = this;
+		
+		screen.shouldShowProductSelector = false;
+		screen.shouldShowLineDetails = false;
+		screen.shouldShowSearchCustomer = false;
+		screen.shouldShowCustomerDetails = false;
+		screen.shouldShowCreateCustomer = false;
+		screen.shouldShowOrderActions = false;
+		screen.shouldShowCustomerForm = false;
+		
+		screen.shouldShowIframe = true;	
+		
+		document.getElementById("iframe-form").submit();
+	}
 	
 	screen.reset();
 	
@@ -963,7 +992,14 @@ module.controller('OrderScreenController', function($scope, $timeout, ShoppingCa
 		
 		/* END CAYAN GIFT CARD */
 		
+		/* OneApp */
+		var product_name = product['name'];
 		
+		if( 'RA Cellular' == product_name )
+		{
+			$scope.displayRACellular();
+			return;
+		}
 		
 		// clear last sales info from cart footer
 		OrderScreen.lastSale = null;
@@ -971,6 +1007,19 @@ module.controller('OrderScreenController', function($scope, $timeout, ShoppingCa
 		var line = ShoppingCart.addLine(product_id, qty);
 		$scope.currentLineIndex = line.index;
 	};
+	
+	$scope.displayRACellular = function(){
+		
+		/*
+		
+		$scope.showIframe = true;
+		
+		var iframe = document.getElementById("iframe");
+		iframe.src = "https://my.posterita.com";*/
+		
+		OrderScreen.loadIframe();
+		
+	}
 	
 	$scope.addModifier = function( modifier_id ){	
 		
@@ -3583,6 +3632,8 @@ function transportwebcallback( response ){
 	console.log( response );
 	
 }
+
+
 
 
 /*
