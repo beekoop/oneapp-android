@@ -349,7 +349,7 @@ APP.initCache = function(){
 					return null;
 				}
 				
-				return record;
+				return jQuery.extend({}, record);
 				
 			},
 			

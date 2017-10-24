@@ -139,17 +139,6 @@ function initializeShoppingCart(){
 
 function validateTerminal()
 {
-	
-	//bug fix for moment
-	
-	if(typeof global == "undefined"){
-		
-	} else
-		
-	{
-		moment = global.moment;
-	}
-	
 	var terminal_key = APP.TERMINAL_KEY;
 	
 	// validate terminal key
@@ -344,7 +333,12 @@ module.controller('AppController', function($scope) {
 		
 		window.alert = navigator.notification.alert;
 		
-	}	
+	}
+	
+	if(typeof global != "undefined"){
+		
+		moment = global.moment;
+	}
 	
 });
 
@@ -905,7 +899,7 @@ module.service('OrderScreen', function() {
 		
 	};
 	
-	screen.loadIframe = function(url){
+	screen.showIframe = function(){
 		
 		var screen = this;
 		
@@ -927,7 +921,7 @@ module.service('OrderScreen', function() {
 });
 
 // sales
-module.controller('OrderScreenController', function($scope, $timeout, ShoppingCart, OrderScreen, Payments) {
+module.controller('OrderScreenController', function($scope, $timeout, $window, ShoppingCart, OrderScreen, Payments) {
 	
 	var terminal = APP.TERMINAL.getById(APP.TERMINAL_KEY);
 	var store = APP.STORE.getById(terminal.store_id);
@@ -992,14 +986,60 @@ module.controller('OrderScreenController', function($scope, $timeout, ShoppingCa
 		
 		/* END CAYAN GIFT CARD */
 		
-		/* OneApp */
+		/* Start RACellular integration */
 		var product_name = product['name'];
 		
-		if( 'RA Cellular' == product_name )
-		{
-			$scope.displayRACellular();
+		if( "RA Cellular" == product_name ){			
+			
+			/*
+			OrderScreen.showIframe();
+			
+			// add message listner
+			$window.onmessage = function(response){
+				
+				var data = response.data;
+				
+				console.log(data);
+				
+				PrinterManager.print([['N',data['PrintString']]]);
+				
+				//add product to cart
+				
+				
+			};
+			*/
+			
+			
+			
+			var data = {
+			    "MessageType": "Voucher",
+			    "PrintString": "\u001b|N\u001b|3C\u001b|bC\u001b|cASHOP NAME\n\u001b|lA\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\u001b|N\u001b|1CDate : 2017-10-20 13:46:03\nCashier : Selwin\nHOST : TILL1\n\u001b|3CVodacom R2\n\u001b|4C\u001b|4C 1023 5080 5345\n\u001b|N\u001b|1C\nPrice : 2.00\nSerial : 15340959387\nTo Recharge Dial :\n*100*01*PIN# Customer Care : 111\nor\nSMS PIN to 100\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n600698600144\n DSTV \u0026 PREPAID ELECTRICITY\n  NOW AVAILABLE IN STORE!\n  www.buyprepaid.co.za\n",
+			    "Cost": 1.96,
+			    "HasVat": true,
+			    "Value": 2.0,
+			    "VariableRate": false,
+			    "VoucherCode": "VOD000002",
+			    "VoucherName": "Vodacom R2",
+			    "Voidable": true
+			};
+			
+			
+			//add product to cart
+			
+			OrderScreen.lastSale = null;
+			
+			var line = ShoppingCart.addLine(103, 1);
+			ShoppingCart.updatePrice(line.index, data.Value);
+			ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
+			ShoppingCart.vouchers.push(data.PrintString);
+			
+			$scope.currentLineIndex = line.index;
+			
 			return;
 		}
+		
+		
+		/* END RACellular integration */		
 		
 		// clear last sales info from cart footer
 		OrderScreen.lastSale = null;
@@ -1007,19 +1047,6 @@ module.controller('OrderScreenController', function($scope, $timeout, ShoppingCa
 		var line = ShoppingCart.addLine(product_id, qty);
 		$scope.currentLineIndex = line.index;
 	};
-	
-	$scope.displayRACellular = function(){
-		
-		/*
-		
-		$scope.showIframe = true;
-		
-		var iframe = document.getElementById("iframe");
-		iframe.src = "https://my.posterita.com";*/
-		
-		OrderScreen.loadIframe();
-		
-	}
 	
 	$scope.addModifier = function( modifier_id ){	
 		
@@ -3632,8 +3659,6 @@ function transportwebcallback( response ){
 	console.log( response );
 	
 }
-
-
 
 
 /*

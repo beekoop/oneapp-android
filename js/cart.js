@@ -64,6 +64,7 @@ function Cart()
 		this.grandtotal = 0;		
 		this.costtotal = 0;
 		this.note = "";
+		this.vouchers = [];
 		
 		this.lines = new HashMap();
 		
@@ -109,6 +110,7 @@ function Cart()
 			this.costtotal = 0;
 			
 			this.note = "";
+			this.vouchers = [];
 			
 			this.lines = new HashMap();
 			
@@ -183,6 +185,21 @@ function Cart()
 			
 			jQuery(this).trigger('cart.updateLine', line);
 			this.callbacks.fire(this, 'update line');
+			
+			return line;
+			
+		};
+		
+		this.updateProductInfo = function( index, name, description ){
+			
+			var line = this.lines.get(index);
+			line.product.name = name;
+			line.product.description = description;
+			
+			//this.updateTotal();	
+			
+			jQuery(this).trigger('cart.updateProductInfo', line);
+			this.callbacks.fire(this, 'update product info');
 			
 			return line;
 			
