@@ -987,6 +987,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		/* END CAYAN GIFT CARD */
 		
 		/* Start RACellular integration */
+		
 		var product_name = product['name'];
 		
 		if( "RA Cellular" == product_name ){			
@@ -999,14 +1000,22 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 				
 				var data = response.data;
 				
-				console.log(data);
-				
-				PrinterManager.print([['N',data['PrintString']]]);
-				
 				//add product to cart
 				
+				OrderScreen.lastSale = null;
+				
+				var line = ShoppingCart.addLine(103, 1);
+				ShoppingCart.updatePrice(line.index, data.Value);
+				ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
+				ShoppingCart.vouchers.push(data.PrintString);
+				
+				$scope.currentLineIndex = line.index;
+				
+				console.log(data);				
 				
 			};
+			
+			return;
 			*/
 			
 			
@@ -1036,6 +1045,8 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			$scope.currentLineIndex = line.index;
 			
 			return;
+			
+			
 		}
 		
 		

@@ -862,7 +862,10 @@ APP.checkout = function( customer, cart, payments, order_id, uuid ){
 	    cashback: 0,
 	    donation: 0,
 	    surcharge: 0,
-	    discounts : []
+	    discounts : [],
+	    
+	    //RA Cellular
+	    vouchers : cart.vouchers
 	};
 	
 	// assign uuid	

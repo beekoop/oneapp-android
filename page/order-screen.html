@@ -458,18 +458,43 @@
   	
   	<!-- iframe -->
   	<ons-row style="height:100%;" ng-show="screen.shouldShowIframe">
-  		<ons-col> 
-  		<form target="iframe" method="post" id="iframe-form" action="http://192.168.0.30:8080/DesertView/LoginServlet">
-  			<input type="hidden" name="CLIENTTYPE" value="POSTERITA">
-  			<input type="hidden" name="USERNAME" value="Selwin">
-  			<input type="hidden" name="PASSWORD" value="123456">
-  			<input type="hidden" name="OPERATORNAME" value="Selwin">
-  			<input type="hidden" name="ISOPERATORADMIN" value="1">
-  			<input type="hidden" name="TILLNAME" value="Till1">
-  			<input type="hidden" name="PRINTERWIDTH" value="80">  			
-  		</form>
-  		<iframe id="iframe"  name="iframe" width="100%" height="600px">please wait ...</iframe> 			
-  		</ons-col>  		
+  	
+  		<ons-col class="">  
+  		<div class="header-footer-layout" style="left:0px; right: 318px; width: auto;">
+  				<div class="header">
+  				
+  					<div class="navigation-bar">
+					  <div class="navigation-bar__left">
+					  	<span class="toolbar-button--quiet navigation-bar__line-height" ng-click="screen.reset()">
+					      <i class="ion-ios-arrow-back"
+					        style="font-size:32px; vertical-align:-6px;"></i>
+					    </span>				    
+					  </div>
+					
+					  <div class="navigation-bar__center">
+					    RA Celluar
+					  </div>
+					
+					  <div class="navigation-bar__right">					    
+					  </div>
+					</div>  					
+  				</div>
+  				<div class="content" style="display: flex; width: 100%; height: 100%; flex-direction: column; overflow: hidden;"> 				
+  					
+					<form target="iframe" method="post" id="iframe-form" action="http://99157374.ngrok.io/DesertView/LoginServlet">
+		  			<input type="hidden" name="CLIENTTYPE" value="POSTERITA">
+		  			<input type="hidden" name="USERNAME" value="Selwin">
+		  			<input type="hidden" name="PASSWORD" value="123456">
+		  			<input type="hidden" name="OPERATORNAME" value="Selwin">
+		  			<input type="hidden" name="ISOPERATORADMIN" value="1">
+		  			<input type="hidden" name="TILLNAME" value="Till1">
+		  			<input type="hidden" name="PRINTERWIDTH" value="80">  			
+		  		</form>
+		  		<iframe id="iframe"  name="iframe" width="100%" style="flex-grow: 1; border: none; margin: 0; padding: 0;">please wait ...</iframe> 	
+  		
+  				</div>
+  			</div>			
+  		</ons-col>  				
   	</ons-row>
   	
   </ons-col>
@@ -587,12 +612,12 @@
 			<ons-row class="action-button">
 				 
 				<ons-col  width="70px">
-					<button class="button button--large orange" ng-disabled="(!(cart.lines.size() > 0 && screen.shouldShowProductSelector))" ng-click="fastCheckout()">
+					<button class="button button--large orange" ng-disabled="(!(cart.lines.size() > 0 && ( screen.shouldShowProductSelector || screen.shouldShowIframe )))" ng-click="fastCheckout()">
 						Fast
 					</button>
 				</ons-col>
 				<ons-col>
-					<button class="button button--large green" ng-disabled="(!(cart.lines.size() > 0 && screen.shouldShowProductSelector))" ng-click="showCheckoutDialog()">Checkout</button>
+					<button class="button button--large green" ng-disabled="(!(cart.lines.size() > 0 && ( screen.shouldShowProductSelector || screen.shouldShowIframe )))" ng-click="showCheckoutDialog()">Checkout</button>
 				</ons-col>
 			</ons-row>		   
   		</div>

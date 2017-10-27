@@ -101,7 +101,8 @@ var PrinterManager = {};
 
 PrinterManager.implementations = {
     STAR_WEB_PRINT: 'star',
-    EPSON_EPOS_PRINT: 'epson'
+    EPSON_EPOS_PRINT: 'epson',
+    POSTERITA_PRINT: 'posterita'
 };
 
 PrinterManager.print = function (printFormat) {
@@ -152,6 +153,10 @@ PrinterManager.getPrinter = function () {
 
     case this.implementations.EPSON_EPOS_PRINT:
         printer = EPSON_EPOS_PRINT_Printer;
+        break;
+        
+    case this.implementations.POSTERITA_PRINT:
+        printer = POSTERITA_Printer;
         break;
 
     default:
@@ -663,6 +668,268 @@ var EPSON_EPOS_PRINT_Printer = {
     }
 };
 
+var POSTERITA_Printer = {
+		
+		getPrinterConfiguration : function() {
+			//return PrinterManager.getPrinterConfiguration();
+			
+			return {
+				LINE_WIDTH : 40,
+				IP_ADDRESS : '192.168.0.92:8888',
+				PRINTER_NAME: 'EPSON_TM-T20'
+				
+			};
+		},
+
+	    format: function (printFormat) {
+
+	        var configuration = this.getPrinterConfiguration();
+	        
+	        console.info(configuration);
+
+	        var LINE_WIDTH = configuration.LINE_WIDTH;
+	        var LINE_SEPARATOR = JSReceiptUtils.replicate('-', LINE_WIDTH);
+
+	        var request = "";
+	        /* Restore line spacing */
+	        request += ESC_COMMANDS.DEFAULT_LINE_SPACING;
+
+	        for (var i = 0; i < printFormat.length; i++) {
+	            var line = printFormat[i];
+
+	            if (line.length == 1) {
+	                var command = line[0];
+
+	                switch (command) {
+	                case 'FEED':
+	                    request += ESC_COMMANDS.LINE_FEED;
+	                    break;
+
+	                case 'SEPARATOR':
+	                    request += LINE_SEPARATOR;
+	                    request += ESC_COMMANDS.LINE_FEED;
+	                    break;
+
+	                case 'CENTER':
+	                    request += ESC_COMMANDS.CENTER_ALIGN;
+	                    break;
+
+	                case 'LEFT':
+	                    request += ESC_COMMANDS.LEFT_ALIGN;
+	                    break;
+
+	                case 'RIGHT':
+	                    request += ESC_COMMANDS.RIGHT_ALIGN;
+	                    break;
+
+	                case 'SIGNATURE':
+
+	                    var canvas = document.getElementById("signature-canvas");
+	                    if (canvas) {
+	                        var imageBase64 = canvas.toDataURL();
+	                        request = request + "<image>" + imageBase64 + "<image>";
+	                    } else {
+	                        request += (ESC_COMMANDS.FONT_NORMAL_BOLD + JSReceiptUtils.format(I18n.t("Signature") + ":________________________________________________", LINE_WIDTH));
+	                    }
+
+	                    request += ESC_COMMANDS.LINE_FEED;
+	                    break;
+
+	                case 'PAPER_CUT':
+	                    request += ESC_COMMANDS.PAPER_CUT;
+	                    request += ESC_COMMANDS.LINE_FEED;
+	                    break;
+
+	                case 'OPEN_DRAWER':
+	                    request += ESC_COMMANDS.OPEN_DRAWER;
+	                    break;
+
+	                case 'NVRAM':
+	                    request += ESC_COMMANDS.NVRAM;
+	                    break;
+
+	                }
+
+
+
+	            } else {
+	                var font = line[0];
+	                var text = line[1];
+
+	                if (text == null) continue;
+
+	                if (line.length > 2) {
+	                    var label = line[2];
+	                    text = label + text;
+	                }
+
+	                switch (font) {
+	                    /*normal*/
+	                case 'N':
+	                    request += ESC_COMMANDS.FONT_NORMAL;
+	                    break;
+
+	                    /*bold*/
+	                case 'B':
+	                    request += ESC_COMMANDS.FONT_NORMAL_BOLD;
+	                    break;
+
+	                    /*invert*/
+	                case 'I':
+	                    request += ESC_COMMANDS.FONT_NORMAL;
+	                    break;
+
+	                    /*underline*/
+	                case 'U':
+	                    request += ESC_COMMANDS.FONT_NORMAL;
+	                    break;
+
+	                    /*small*/
+	                case 'S':
+	                    request += ESC_COMMANDS.FONT_SMALL;
+	                    break;
+
+	                    /*header 1*/
+	                case 'H1':
+	                    request += ESC_COMMANDS.FONT_H1;
+	                    break;
+
+	                    /*header 2*/
+	                case 'H2':
+	                    request += ESC_COMMANDS.FONT_H2;
+	                    break;
+
+	                    /*header 3*/
+	                case 'H3':
+	                    request += ESC_COMMANDS.FONT_H3;
+	                    break;
+
+	                    /*header 4*/
+	                case 'H4':
+	                    request += ESC_COMMANDS.FONT_H4;
+	                    break;
+
+
+	                case 'BARCODE':
+
+	                    var barcodeLengthMap = ['\x04', '\x05', '\x06', '\x07', '\x08', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E', '\x0F'];
+	                    var barcodeLength = barcodeLengthMap[text.length - 4];
+	                    var barcode = '\x1D' + 'h' + '\x64' + '\x1D' + 'w' + '\x02' + '\x1D' + 'H' + '\x02' + '\x1D' + 'k' + '\x45' + barcodeLength + text;
+
+	                    request += ESC_COMMANDS.LINE_FEED;
+	                    request += barcode;
+	                    /* override barcode text */
+	                    text = "";
+	                    break;
+
+	                case 'CANVAS':
+	                    var canvas = text;
+	                    var imageBase64 = canvas.toDataURL();
+	                    request = request + "<image>" + imageBase64 + "<image>";
+	                    text = "";
+	                    break;
+	                
+		            case 'IMG':
+		                var imageBase64 = text;
+		                request = request + "<image>" + imageBase64 + "<image>";
+		                text = "";
+		                break;
+		
+		            }
+
+
+	                request += text;
+	                request += ESC_COMMANDS.LINE_FEED;
+	                
+	            }
+	        }
+
+	        return request;
+	    },
+
+	    print: function(printData) {
+
+	    	var configuration = this.getPrinterConfiguration();
+	    	
+	    	var dfd = new jQuery.Deferred();
+	    	    	
+	        var base64encodedstr = Base64.encode(printData);
+	        
+	        /*
+	        //use xmlhttprequest driectly
+	        var xhttp;
+	        if (window.XMLHttpRequest) {
+	            xhttp = new XMLHttpRequest();
+	            } else {
+	            // code for IE6, IE5
+	            xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	        }
+	        	        
+	        xhttp.onreadystatechange = function() {
+	        	  if (xhttp.readyState == 4 && xhttp.status == 200) {
+	        	    
+	        	    dfd.resolve(xhttp.responseText);
+	        	  }
+	        	  else
+	        	  {
+	        		  dfd.reject(xhttp.responseText);
+	        	  }
+	        };
+	        
+	        var ip = configuration.IP_ADDRESS;
+	        
+	        xhttp.open("POST", "http://" + ip + "/printing/", true);
+	        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");        
+	        
+	        var postData = "action=print&printer=" + encodeURIComponent(configuration.PRINTER_NAME) + "&job=" + encodeURIComponent(base64encodedstr);
+	                
+	        xhttp.send(postData);
+	        */
+	        
+	        var ip = configuration.IP_ADDRESS;
+	        
+	        jQuery.post( "http://" + ip + "/printing/", { action: "print", printer: configuration.PRINTER_NAME, job: base64encodedstr } )
+	        .done(function(){
+	        	dfd.resolve();
+	        })
+	        .fail(function(){
+	        	dfd.reject();
+	        });
+	        
+	        return dfd.promise();
+
+	    },
+
+	    getPrinters: function() {
+
+	        var dfd = new jQuery.Deferred();
+	        
+	        var configuration = this.getPrinterConfiguration();
+	        var ip = configuration.IP_ADDRESS;
+	        
+	        jQuery.get("http://" + ip + "/printing/", {
+	                action: "getPrinters"
+	            },
+	            function(json, textStatus, jqXHR) {
+
+	                if (json == null || jqXHR.status != 200) {
+	                    dfd.reject('Failed to get printers');
+	                    return;
+	                }
+
+	                dfd.resolve(json);
+
+	            },
+
+	            "json").fail(function() {
+	            console.error('Failed to get printers');
+	        });
+
+	        return dfd.promise();
+	    }
+
+	};
+
 /*=== EMV error receipt formatting ===*/
 PrinterManager.getEMVErrorReceiptPrintFormat = function ( response ) {
 
@@ -1130,6 +1397,21 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
         openDrawerFormat = openDrawerFormat.concat(printFormat);
         printFormat = openDrawerFormat;
     }
+    
+    /* RA Cellular */
+    if( order.vouchers && order.vouchers.length > 0 ){
+    	
+    	var voucher = null;
+    	
+    	for(var i=0; i<order.vouchers.length; i++){
+    		
+    		voucher = order.vouchers[i];
+    		printFormat.push(['N', voucher + '\n']);
+    		
+    	}
+    	
+    	
+    }
 
     return printFormat;
 };
@@ -1391,4 +1673,146 @@ var HTMLPrinter = {
             
             return html;
 		}
+};
+
+/**
+*
+*  Base64 encode / decode
+*  http://www.webtoolkit.info/
+*
+**/
+var Base64 = {
+
+	// private property
+	_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+	
+	// public method for encoding
+	encode : function (input) {
+	    var output = "";
+	    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+	    var i = 0;
+	
+	    input = Base64._utf8_encode(input);
+	
+	    while (i < input.length) {
+	
+	        chr1 = input.charCodeAt(i++);
+	        chr2 = input.charCodeAt(i++);
+	        chr3 = input.charCodeAt(i++);
+	
+	        enc1 = chr1 >> 2;
+	        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+	        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+	        enc4 = chr3 & 63;
+	
+	        if (isNaN(chr2)) {
+	            enc3 = enc4 = 64;
+	        } else if (isNaN(chr3)) {
+	            enc4 = 64;
+	        }
+	
+	        output = output +
+	        this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+	        this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+	
+	    }
+	
+	    return output;
+	},
+	
+	// public method for decoding
+	decode : function (input) {
+	    var output = "";
+	    var chr1, chr2, chr3;
+	    var enc1, enc2, enc3, enc4;
+	    var i = 0;
+	
+	    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+	
+	    while (i < input.length) {
+	
+	        enc1 = this._keyStr.indexOf(input.charAt(i++));
+	        enc2 = this._keyStr.indexOf(input.charAt(i++));
+	        enc3 = this._keyStr.indexOf(input.charAt(i++));
+	        enc4 = this._keyStr.indexOf(input.charAt(i++));
+	
+	        chr1 = (enc1 << 2) | (enc2 >> 4);
+	        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+	        chr3 = ((enc3 & 3) << 6) | enc4;
+	
+	        output = output + String.fromCharCode(chr1);
+	
+	        if (enc3 != 64) {
+	            output = output + String.fromCharCode(chr2);
+	        }
+	        if (enc4 != 64) {
+	            output = output + String.fromCharCode(chr3);
+	        }
+	
+	    }
+	
+	    output = Base64._utf8_decode(output);
+	
+	    return output;
+	
+	},
+	
+	// private method for UTF-8 encoding
+	_utf8_encode : function (string) {
+	    string = string.replace(/\r\n/g,"\n");
+	    var utftext = "";
+	
+	    for (var n = 0; n < string.length; n++) {
+	
+	        var c = string.charCodeAt(n);
+	
+	        if (c < 128) {
+	            utftext += String.fromCharCode(c);
+	        }
+	        else if((c > 127) && (c < 2048)) {
+	            utftext += String.fromCharCode((c >> 6) | 192);
+	            utftext += String.fromCharCode((c & 63) | 128);
+	        }
+	        else {
+	            utftext += String.fromCharCode((c >> 12) | 224);
+	            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+	            utftext += String.fromCharCode((c & 63) | 128);
+	        }
+	
+	    }
+	
+	    return utftext;
+	},
+	
+	// private method for UTF-8 decoding
+	_utf8_decode : function (utftext) {
+	    var string = "";
+	    var i = 0;
+	    var c = c1 = c2 = 0;
+	
+	    while ( i < utftext.length ) {
+	
+	        c = utftext.charCodeAt(i);
+	
+	        if (c < 128) {
+	            string += String.fromCharCode(c);
+	            i++;
+	        }
+	        else if((c > 191) && (c < 224)) {
+	            c2 = utftext.charCodeAt(i+1);
+	            string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+	            i += 2;
+	        }
+	        else {
+	            c2 = utftext.charCodeAt(i+1);
+	            c3 = utftext.charCodeAt(i+2);
+	            string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+	            i += 3;
+	        }
+	
+	    }
+	
+	    return string;
+	}
+
 };
