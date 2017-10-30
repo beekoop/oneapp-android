@@ -1490,7 +1490,7 @@ APP.PRINTER_SETTINGS.saveSettings = function( settings ){
 	this.settings = settings;
 };
 
-APP.PRINTER_SETTINGS.testSettings = function( settings ){
+APP.PRINTER_SETTINGS.testPrinterSettings = function( settings ){
 	
 	this.settings = settings;
 	
@@ -1532,6 +1532,33 @@ APP.PRINTER_SETTINGS.testSettings = function( settings ){
 	return dfd.promise();	
 };
 
+APP.PRINTER_SETTINGS.testPoleDisplaySettings = function( settings ){
+	
+	this.settings = settings;
+	
+	var dfd = new jQuery.Deferred();
+	
+	var format = [];
+	
+	PrinterManager.print( format ).done(function(){
+		
+		dfd.resolve();
+		
+	}).fail(function(){
+		
+		dfd.reject();
+		
+	}).always(function(){
+		
+		APP.PRINTER_SETTINGS.settings = null;
+		APP.PRINTER_SETTINGS.getSettings();
+		
+	});	
+	
+	
+	return dfd.promise();	
+};
+
 APP.PRINTER_SETTINGS.isPrinterEnabled = function(){
 	return ( true == this.getSettings().enablePrinter );
 };
@@ -1542,6 +1569,10 @@ APP.PRINTER_SETTINGS.isDrawerEnabled = function(){
 
 APP.PRINTER_SETTINGS.isKitchenPrinterEnabled = function(){
 	return ( true == this.getSettings().enableKitchenPrinter );
+};
+
+APP.PRINTER_SETTINGS.isPoleDisplayEnabled = function(){
+	return ( true == this.getSettings().enablePoleDisplay );
 };
 
 APP.PRINTER = {};

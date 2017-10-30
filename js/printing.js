@@ -34,6 +34,13 @@ var ESC_COMMANDS = {
 
     DEFAULT_LINE_SPACING: "\x1B\x32"
 };
+
+var PoleDisplay_ESC_COMMANDS = {
+        CLEAR:'\x0C',
+        LINE_FEED:'\x0A',
+        MOVE_LEFT: '\x0D'
+};
+
 var JSReceiptUtils = {
     replicate: function (str, n) {
         var s = '';
@@ -121,7 +128,7 @@ PrinterManager.setPrinterConfiguration = function ( config ) {
 PrinterManager.getPrinterConfiguration = function () {
 
 	var configuration = {};
-	
+
 	var settings = APP.PRINTER_SETTINGS.getSettings();
 
     configuration.PRINTER_IMPLEMENTATION = settings.printerType;
@@ -139,14 +146,16 @@ PrinterManager.getLineWidth = function () {
 };
 
 PrinterManager.getPrinter = function () {
-
+	
+	return NODEJS_Printer;
+	/*
     var printer = null;
 
     var configuration = this.getPrinterConfiguration();
     var implementation = configuration.PRINTER_IMPLEMENTATION
 
     switch (implementation) {
-    
+
     case this.implementations.STAR_WEB_PRINT:
         printer = STAR_WEB_PRINT_Printer;
         break;
@@ -154,7 +163,7 @@ PrinterManager.getPrinter = function () {
     case this.implementations.EPSON_EPOS_PRINT:
         printer = EPSON_EPOS_PRINT_Printer;
         break;
-        
+
     case this.implementations.POSTERITA_PRINT:
         printer = POSTERITA_Printer;
         break;
@@ -164,6 +173,7 @@ PrinterManager.getPrinter = function () {
     }
 
     return printer;
+    */
 };
 
 PrinterManager.printReceipt = function (receiptJSON, openDrawer) {
@@ -174,21 +184,21 @@ PrinterManager.printReceipt = function (receiptJSON, openDrawer) {
 };
 
 var STAR_WEB_PRINT_Printer = {
-		
+
 		format: function (printFormat) {
-			
+
 			var configuration = PrinterManager.getPrinterConfiguration();
             var LINE_WIDTH = PrinterManager.getLineWidth();
             var LINE_SEPARATOR = JSReceiptUtils.replicate('-', LINE_WIDTH);
 
             var builder = new StarWebPrintBuilder();
             var request = "";
-            
+
             /* parse print format */
-            for (var i = 0; i < printFormat.length; i++) 
+            for (var i = 0; i < printFormat.length; i++)
             {
                 var line = printFormat[i];
-                
+
                 if (line.length == 1) {
                     var command = line[0];
 
@@ -304,7 +314,7 @@ var STAR_WEB_PRINT_Printer = {
                         invert: false,
                         data: text
                     };
-                    
+
                     switch (font) {
                     /*normal*/
                     case 'N':
@@ -361,8 +371,8 @@ var STAR_WEB_PRINT_Printer = {
                         textElementJSON.width = 2;
                         textElementJSON.height = 2;
                         break;
-                    
-                        
+
+
                     case 'BARCODE':
                         request += builder.createBarcodeElement({
                             symbology: 'Code39',
@@ -388,26 +398,26 @@ var STAR_WEB_PRINT_Printer = {
 
                         textElementJSON.data = "";
 
-                        break; 
-                        
+                        break;
+
                     }/*switch*/
-                    
+
                     request += builder.createTextElement(textElementJSON);
                     request += builder.createFeedElement({
                         line: 1
                     });
-                    
-                }/*else*/                
-                
+
+                }/*else*/
+
             }/*for*/
-            
-            
+
+
             return request;
-			
+
 		},
-		
+
 		print: function (printData) {
-			
+
 			var dfd = new jQuery.Deferred();
 
 	        var configuration = PrinterManager.getPrinterConfiguration();
@@ -425,31 +435,31 @@ var STAR_WEB_PRINT_Printer = {
 	            });
 
 	            trader.onReceive = function (response) {
-	            	
+
 	            	if (trader.isOffLine({traderStatus:response.traderStatus})) {
         	　　　　　　	dfd.reject("Printer is offline!");
         	　　　　　　	return;
         	　　　　	}
-	            	
+
 	            	if (trader.isCoverOpen({traderStatus:response.traderStatus})) {
 	            		dfd.reject("Printer cover is open!");
 	        	　　　　　return;
 	        　　　　	}
-	            	
+
 	            	if (trader.isPaperEnd({traderStatus:response.traderStatus})) {
         	　　　　　　	dfd.reject("Printer out of paper!");
    	　　　　　			return;
         	　　　　 }
-	            	
-	                var responseXML = response.responseText;	                
+
+	                var responseXML = response.responseText;
 	                dfd.resolve(responseXML);
 	            };
-	            
+
 	            trader.onTimeout = function () {
 	            	dfd.reject("Printer is offline!");
         	　　　　　return;
 	            }
-	            
+
 	            trader.onError = function (response) {
 	                var responseXML = response.responseText;
 	                dfd.reject(responseXML);
@@ -459,14 +469,14 @@ var STAR_WEB_PRINT_Printer = {
 	                request: printData
 	            });
 	        }
-	        
+
 	        return dfd.promise();
 	    },
 
 	    sendJob: function (ip, job) {
 
 	    }
-		
+
 };
 
 
@@ -630,7 +640,7 @@ var EPSON_EPOS_PRINT_Printer = {
     print: function (printData) {
 
     	var dfd = new jQuery.Deferred();
-    	
+
         var configuration = PrinterManager.getPrinterConfiguration();
         var ips = configuration.IP_ADDRESS;
 
@@ -656,35 +666,35 @@ var EPSON_EPOS_PRINT_Printer = {
             epos.oncoveropen = function () {
             	dfd.reject("Printer cover is open.");
             };
-            
+
             epos.ontimeout = function () {
             	dfd.reject("Printer is offline.");
             };
 
             epos.send(printData);
         }
-        
+
         return dfd.promise();
     }
 };
 
 var POSTERITA_Printer = {
-		
+
 		getPrinterConfiguration : function() {
 			//return PrinterManager.getPrinterConfiguration();
-			
+
 			return {
 				LINE_WIDTH : 40,
 				IP_ADDRESS : '192.168.0.92:8888',
 				PRINTER_NAME: 'EPSON_TM-T20'
-				
+
 			};
 		},
 
 	    format: function (printFormat) {
 
 	        var configuration = this.getPrinterConfiguration();
-	        
+
 	        console.info(configuration);
 
 	        var LINE_WIDTH = configuration.LINE_WIDTH;
@@ -828,19 +838,19 @@ var POSTERITA_Printer = {
 	                    request = request + "<image>" + imageBase64 + "<image>";
 	                    text = "";
 	                    break;
-	                
+
 		            case 'IMG':
 		                var imageBase64 = text;
 		                request = request + "<image>" + imageBase64 + "<image>";
 		                text = "";
 		                break;
-		
+
 		            }
 
 
 	                request += text;
 	                request += ESC_COMMANDS.LINE_FEED;
-	                
+
 	            }
 	        }
 
@@ -850,11 +860,11 @@ var POSTERITA_Printer = {
 	    print: function(printData) {
 
 	    	var configuration = this.getPrinterConfiguration();
-	    	
+
 	    	var dfd = new jQuery.Deferred();
-	    	    	
+
 	        var base64encodedstr = Base64.encode(printData);
-	        
+
 	        /*
 	        //use xmlhttprequest driectly
 	        var xhttp;
@@ -864,10 +874,10 @@ var POSTERITA_Printer = {
 	            // code for IE6, IE5
 	            xhttp = new ActiveXObject("Microsoft.XMLHTTP");
 	        }
-	        	        
+
 	        xhttp.onreadystatechange = function() {
 	        	  if (xhttp.readyState == 4 && xhttp.status == 200) {
-	        	    
+
 	        	    dfd.resolve(xhttp.responseText);
 	        	  }
 	        	  else
@@ -875,19 +885,19 @@ var POSTERITA_Printer = {
 	        		  dfd.reject(xhttp.responseText);
 	        	  }
 	        };
-	        
+
 	        var ip = configuration.IP_ADDRESS;
-	        
+
 	        xhttp.open("POST", "http://" + ip + "/printing/", true);
-	        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");        
-	        
+	        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
 	        var postData = "action=print&printer=" + encodeURIComponent(configuration.PRINTER_NAME) + "&job=" + encodeURIComponent(base64encodedstr);
-	                
+
 	        xhttp.send(postData);
 	        */
-	        
+
 	        var ip = configuration.IP_ADDRESS;
-	        
+
 	        jQuery.post( "http://" + ip + "/printing/", { action: "print", printer: configuration.PRINTER_NAME, job: base64encodedstr } )
 	        .done(function(){
 	        	dfd.resolve();
@@ -895,7 +905,7 @@ var POSTERITA_Printer = {
 	        .fail(function(){
 	        	dfd.reject();
 	        });
-	        
+
 	        return dfd.promise();
 
 	    },
@@ -903,10 +913,10 @@ var POSTERITA_Printer = {
 	    getPrinters: function() {
 
 	        var dfd = new jQuery.Deferred();
-	        
+
 	        var configuration = this.getPrinterConfiguration();
 	        var ip = configuration.IP_ADDRESS;
-	        
+
 	        jQuery.get("http://" + ip + "/printing/", {
 	                action: "getPrinters"
 	            },
@@ -937,40 +947,40 @@ PrinterManager.getEMVErrorReceiptPrintFormat = function ( response ) {
 
     var LINE_WIDTH = this.getLineWidth();
     var LINE_SEPARATOR = JSReceiptUtils.replicate('-', LINE_WIDTH);
-    
+
     var cursymbol = '$';
-    
-    var printFormat = [     
-                       
+
+    var printFormat = [
+
        ['FEED'],
        ['CENTER'],
-       
+
        ['H4', '** DECLINED **' ]
     ];
-    
+
     var payment = response;
-    
+
     var emvInfo = payment.AdditionalParameters.EMV;
-	
+
 	payment.isEMV = true;
 	payment.ExpDate = emvInfo.CardInformation.CardExpiryDate;
-	
+
 	payment.AID = emvInfo.ApplicationInformation.Aid;
 	payment.ApplicationLabel = emvInfo.ApplicationInformation.ApplicationLabel;
-	
+
 	payment.CryptogramType = emvInfo.ApplicationCryptogram.CryptogramType;
 	payment.Cryptogram = emvInfo.ApplicationCryptogram.Cryptogram;
-	
-	payment.PINStatement = emvInfo.PINStatement; 
-	
+
+	payment.PINStatement = emvInfo.PINStatement;
+
 	var s = payment.PaymentType + ' ' + payment.TransactionType + ' ' + cursymbol +   Number(payment.amount).toFixed(2);
 	printFormat.push(['B', JSReceiptUtils.format(s, LINE_WIDTH) ]);
-	
+
 	printFormat.push(['N', '']);
-	
+
 	//Merchant ID
 	printFormat.push(['N', JSReceiptUtils.format('Merchant ID', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.MerchantId , 20, true)]);
-	
+
 	//Auth Code
 	if( payment.AuthCode )
 	{
@@ -980,70 +990,70 @@ PrinterManager.getEMVErrorReceiptPrintFormat = function ( response ) {
 	{
 		printFormat.push(['N', JSReceiptUtils.format('Approval Code', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.AuthorizationCode , 20, true)]);
 	}
-	
-	
+
+
 	//Ref No
 	if( payment.RefID )
     	printFormat.push(['N', JSReceiptUtils.format('Ref ID', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.RefID , 20, true)]);
-    	
-	
+
+
 	//Transaction Id
 	if( payment.TransactionID )
 		printFormat.push(['N', JSReceiptUtils.format('Transaction ID', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.TransactionID , 20, true)]);
-	
+
 	//Card Brand
 	printFormat.push(['N', JSReceiptUtils.format('Card brand', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.PaymentType , 20, true)]);
-	
+
 	//PAN
 	printFormat.push(['N', JSReceiptUtils.format('PAN', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.AccountNumber , 20, true)]);
-	
+
 	if( payment.PaymentType == 'AMEX' && payment.isEMV == true ){
-		
+
 		//Expiration Date
 		printFormat.push(['N', JSReceiptUtils.format('Exp. Date', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.ExpDate , 20, true)]);
-		
+
 	}
-	
+
 	//Entry Mode
 	printFormat.push(['N', JSReceiptUtils.format('Entry Mode', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.EntryMode , 20, true)]);
-	
+
 	//EMV Compliance
 	//AID
 	printFormat.push(['N', JSReceiptUtils.format('AID', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.AID , 20, true)]);
-	
+
 	//Application Label
 	printFormat.push(['N', JSReceiptUtils.format('Application Label', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.ApplicationLabel , 20, true)]);
-	
+
 	//Cryptogram
 	printFormat.push(['N', JSReceiptUtils.format('Cryptogram', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.Cryptogram , 20, true)]);
-	
+
 	//CryptogramType
 	printFormat.push(['N', JSReceiptUtils.format('Cryptogram Type', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.CryptogramType , 20, true)]);
-	
+
 	//PINStatement
 	printFormat.push(['N', JSReceiptUtils.format('PIN Statement', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.PINStatement , 20, true)]);
-	
+
 	printFormat.push(['N', '']);
 	printFormat.push(['N', '']);
-    
+
     printFormat.push(['PAPER_CUT']);
-    
+
     var format = [];
 	format.push(['CENTER']);
 	format.push(['N', '']);
 	format.push(['H2', '** Customer Copy **']);
 	format.push(['N', '']);
 	format.push(['N', '']);
-	format = format.concat(printFormat);    	
-	
+	format = format.concat(printFormat);
+
 	format.push(['N', '']);
 	format.push(['H2', '** Merchant Copy **']);
 	format.push(['N', '']);
 	format.push(['N', '']);
 	format = format.concat(printFormat);
-	
+
 	printFormat = format;
-    
+
 	return printFormat;
 };
 
@@ -1054,77 +1064,77 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
 
     var LINE_WIDTH = this.getLineWidth();
     var LINE_SEPARATOR = JSReceiptUtils.replicate('-', LINE_WIDTH);
-    
-    
+
+
     var receiptTitle = 'Receipt';
     var docStatusName = 'Completed';
     var paymentRuleName = 'Cash';
-    
+
     var store_name = order['store_name'];
     var user_name = order['user_name'];
     var terminal_name = order['terminal_name'];
     var customer_name = order['customer_name'];
-    
-    var location = order['location'];    
+
+    var location = order['location'];
     var dateOrdered = order['dateorderedfull'];
-    
+
     var account = order['account'];
-    
-    var printFormat = [     
-                       
+
+    var printFormat = [
+
        ['FEED'],
        ['CENTER'],
-       
+
        ['H4', account.businessname ]
     ];
-    
+
     if( location &&  location.length > 0 ){
     	printFormat.push( ['B', location ] );
     }
-    
+
     if( account.phone1 &&  account.phone1.length > 0 ){
     	printFormat.push( ['B', 'Tel: ' + account.phone1 ] );
     }
-    
+
     if( account.website &&  account.website.length > 0 ){
     	printFormat.push( ['B', account.website ] );
     }
-    
+
     var orderHeader = [
-       
+
        ['N', LINE_SEPARATOR ],
-       
+
        ['H4', 'ORDER# ' + order.documentno ],
-       
+
        ['N', JSReceiptUtils.format(dateOrdered, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Employee: ' + user_name, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Terminal: ' + terminal_name, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Customer' + ': ' + customer_name, LINE_WIDTH)],
-       
+
        ['N', LINE_SEPARATOR ]
-       
+
       ];
-    
+
     printFormat = printFormat.concat( orderHeader );
-    
-    
+
+
     var PRICE_SIZE = 10;
     var QTY_SIZE = 5;
-    
+
     var OFFSET;
-    
+
     var text, line;
-    
+
     /* add order body */
     for (var i = 0; i < order.lines.length; i++) {
-    	
+
         line = order.lines[i];
-        
+
         OFFSET = "       ".substring(0, (line.qtyentered + 'x ').length);
 
-        text = line.qtyentered + 'x ' + line.name;        
+        text = line.qtyentered + 'x ' + line.name;
         text = JSReceiptUtils.format(text, LINE_WIDTH - PRICE_SIZE) + JSReceiptUtils.format(Number(line.lineamt).toFixed(2), PRICE_SIZE, true);
-        
+
         printFormat.push(['N', text]);
 
         if (line.boms != null)
@@ -1133,7 +1143,7 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
 
                 text = " " + bom.qtyentered  + 'x ' +  bom.name;
                 text = JSReceiptUtils.format(text, LINE_WIDTH - PRICE_SIZE) + JSReceiptUtils.format(Number(bom.lineamt).toFixed(2), PRICE_SIZE, true);
-                
+
                 printFormat.push(['N', text]);
 
             }
@@ -1141,25 +1151,25 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
         if (line.modifiers != null)
         for (var j = 0; j < line.modifiers.length; j++) {
             var modifier = line.modifiers[j];
-            
+
             text = OFFSET + modifier.name;
             text = JSReceiptUtils.format(text, LINE_WIDTH - PRICE_SIZE) + JSReceiptUtils.format(Number(modifier.lineamt).toFixed(2), PRICE_SIZE, true);
-            
+
             printFormat.push(['N', text]);
         }
-        
+
         if (line.discountamt > 0) {
         	var discountMessage = "Discount(" + Number(line.discountpercentage).toFixed(2) + "%). Saved $" + Number(line.discountamt).toFixed(2);
             printFormat.push(['N', JSReceiptUtils.format(discountMessage, LINE_WIDTH)]);
         }
     }
-    
+
     /* add order total*/
     printFormat.push(['N', LINE_SEPARATOR]);
 
     var cursymbol = '$';
 
-    
+
 
     /*
     for (var j = 0; j < receipt.taxes.length; j++) {
@@ -1180,26 +1190,26 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
 
     if (order.discountamt > 0) {
         printFormat.push(['N', discountStr]);
-    }    
+    }
 
     printFormat.push(['N', LINE_SEPARATOR]);
     printFormat.push(['B', totalStr]);
     printFormat.push(['N', LINE_SEPARATOR]);
     printFormat.push(['N', '']);
-    
+
     if( order.paymenttype == 'CASH' ){
-    	
+
     	if(order.payments.length > 0 ){
-    		
+
     		var tendered = order.tendered;
     		var change = order.change;
-    		
+
     		var s = JSReceiptUtils.format('Cash (' + cursymbol + ')', LINE_WIDTH - 12) + JSReceiptUtils.format(Number(tendered).toFixed(2), 12, true);
     		printFormat.push(['N', s]);
-    		
+
     		s = JSReceiptUtils.format('Change (' + cursymbol + ')', LINE_WIDTH - 12) + JSReceiptUtils.format(Number(change).toFixed(2), 12, true);
-    		printFormat.push(['B', s]);  		
-    		
+    		printFormat.push(['B', s]);
+
     	}
     }
     else
@@ -1210,78 +1220,78 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
         */
     	var payment = order.payments[0];
     	payment.isEMV = false;
-    	
+
     	if( payment.AdditionalParameters && payment.AdditionalParameters.EMV ){
-    		
+
     		var emvInfo = payment.AdditionalParameters.EMV;
-    		
+
     		payment.isEMV = true;
     		payment.ExpDate = emvInfo.CardInformation.CardExpiryDate;
-    		
+
     		payment.AID = emvInfo.ApplicationInformation.Aid;
     		payment.ApplicationLabel = emvInfo.ApplicationInformation.ApplicationLabel;
-    		
+
     		payment.CryptogramType = emvInfo.ApplicationCryptogram.CryptogramType;
     		payment.Cryptogram = emvInfo.ApplicationCryptogram.Cryptogram;
-    		
-    		payment.PINStatement = emvInfo.PINStatement;    		
-    		
+
+    		payment.PINStatement = emvInfo.PINStatement;
+
     	}
-    	
+
     	//Show discount if any
     	if(order.discounts.length > 0){
-    		
+
     		var discount = null;
-    		
+
     		for( var i = 0; i < order.discounts.length; i++ ){
-    			
+
     			discount = order.discounts[i];
-    			
+
     			var s = JSReceiptUtils.format(discount['Message'], LINE_WIDTH - 12) + JSReceiptUtils.format(discount['Amount'], 12, true);
     			printFormat.push(['B', JSReceiptUtils.format(s, LINE_WIDTH) ]);
     		}
-    		
+
     		printFormat.push(['N', '']);
     	}
-    	
+
     	//Check tip
     	if( order.tipamt > 0){
-    		
+
     		var c = 'Tip ' + cursymbol +   Number(order.tipamt).toFixed(2);
         	printFormat.push(['B', JSReceiptUtils.format(c, LINE_WIDTH) ]);
-    	}    	
-    	
+    	}
+
     	//Check cashback
     	if( order.cashback > 0){
-    		
+
     		var c = 'Cashback ' + cursymbol +   Number(order.cashback).toFixed(2);
         	printFormat.push(['B', JSReceiptUtils.format(c, LINE_WIDTH) ]);
     	}
-    	
+
     	//Check surcharge
     	if( order.surcharge > 0){
-    		
+
     		var c = 'Surcharge ' + cursymbol +   Number(order.surcharge).toFixed(2);
         	printFormat.push(['B', JSReceiptUtils.format(c, LINE_WIDTH) ]);
     	}
-    	
+
     	//Check donation
     	if( order.donation > 0){
-    		
+
     		var c = 'Donation ' + cursymbol +   Number(order.donation).toFixed(2);
         	printFormat.push(['B', JSReceiptUtils.format(c, LINE_WIDTH) ]);
     	}
-    	
-    	
+
+
     	printFormat.push(['N', '']);
     	var s = payment.PaymentType + ' ' + payment.TransactionType + ' ' + cursymbol +   Number(payment.amount).toFixed(2);
     	printFormat.push(['B', JSReceiptUtils.format(s, LINE_WIDTH) ]);
-    	
+
     	printFormat.push(['N', '']);
-    	
+
     	//Merchant ID
     	printFormat.push(['N', JSReceiptUtils.format('Merchant ID', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.MerchantId , 20, true)]);
-    	
+
     	//Auth Code
     	if( payment.AuthCode )
     	{
@@ -1291,104 +1301,104 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
     	{
     		printFormat.push(['N', JSReceiptUtils.format('Approval Code', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.AuthorizationCode , 20, true)]);
     	}
-    	
-    	
+
+
     	//Ref No
     	if( payment.RefID )
         	printFormat.push(['N', JSReceiptUtils.format('Ref ID', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.RefID , 20, true)]);
-        	
-    	
+
+
     	//Transaction Id
     	if( payment.TransactionID )
     		printFormat.push(['N', JSReceiptUtils.format('Transaction ID', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.TransactionID , 20, true)]);
-    	
+
     	//Card Brand
     	printFormat.push(['N', JSReceiptUtils.format('Card brand', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.PaymentType , 20, true)]);
-    	
+
     	//PAN
     	printFormat.push(['N', JSReceiptUtils.format('PAN', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.AccountNumber , 20, true)]);
-    	
+
     	if( payment.PaymentType == 'AMEX' && payment.isEMV == true ){
-    		
+
     		//Expiration Date
     		printFormat.push(['N', JSReceiptUtils.format('Exp. Date', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.ExpDate , 20, true)]);
-    		
+
     	}
-    	
+
     	//Entry Mode
     	printFormat.push(['N', JSReceiptUtils.format('Entry Mode', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.EntryMode , 20, true)]);
-    	
+
     	//EMV Compliance
     	if( payment.isEMV == true ){
-    		
+
     		//AID
     		printFormat.push(['N', JSReceiptUtils.format('AID', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.AID , 20, true)]);
-    		
+
     		//Application Label
     		printFormat.push(['N', JSReceiptUtils.format('Application Label', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.ApplicationLabel , 20, true)]);
-    		
+
     		//Cryptogram
     		printFormat.push(['N', JSReceiptUtils.format('Cryptogram', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.Cryptogram , 20, true)]);
-    		
+
     		//CryptogramType
     		printFormat.push(['N', JSReceiptUtils.format('Cryptogram Type', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.CryptogramType , 20, true)]);
-    		
+
     		//PINStatement
     		printFormat.push(['N', JSReceiptUtils.format('PIN Statement', LINE_WIDTH - 20) + JSReceiptUtils.format( payment.PINStatement , 20, true)]);
-    		
+
     	}
-    	
+
     	printFormat.push(['N', '']);
-        
+
         printFormat.push(['N', JSReceiptUtils.format( 'I agree to pay above total amount' , LINE_WIDTH)]);
         printFormat.push(['N', JSReceiptUtils.format( 'according to card issuer agreement' , LINE_WIDTH)]);
         printFormat.push(['N', JSReceiptUtils.format( '(merchant agreement if credit voucher)' , LINE_WIDTH)]);
 
         printFormat.push(['N', '']);
-        
+
         printFormat.push(['N', JSReceiptUtils.format('x________________________________________________________________________', LINE_WIDTH)]);
-        
+
         printFormat.push(['N', JSReceiptUtils.format( payment.Cardholder , LINE_WIDTH) ]);
-        
+
         printFormat.push(['N', '']);
-        
+
         printFormat.push(['N', 'Please retain this copy for your records.']);
-    	
-    }    
-    
-    
+
+    }
+
+
     printFormat.push(['N', '']);
-    
-    printFormat.push(['N', 'All sales are final. No refunds or exchanges.']);  
-    
-    printFormat.push(['N', '']);    
-    
+
+    printFormat.push(['N', 'All sales are final. No refunds or exchanges.']);
+
+    printFormat.push(['N', '']);
+
     printFormat.push(['N', 'Thank you.']);
-    
+
     printFormat.push(['N', '']);
-    
+
     printFormat.push(['PAPER_CUT']);
-    
-       
+
+
     if(order.paymenttype != 'CASH'){
-    	
+
     	var format = [];
     	format.push(['CENTER']);
     	format.push(['N', '']);
     	format.push(['H2', '** Customer Copy **']);
     	format.push(['N', '']);
     	format.push(['N', '']);
-    	format = format.concat(printFormat);    	
-    	
+    	format = format.concat(printFormat);
+
     	format.push(['N', '']);
     	format.push(['H2', '** Merchant Copy **']);
     	format.push(['N', '']);
     	format.push(['N', '']);
     	format = format.concat(printFormat);
-    	
+
     	printFormat = format;
     }
-    
+
     /* open cash drawer */
     if (openDrawer != null && openDrawer == true) {
         var openDrawerFormat = [
@@ -1397,20 +1407,20 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
         openDrawerFormat = openDrawerFormat.concat(printFormat);
         printFormat = openDrawerFormat;
     }
-    
+
     /* RA Cellular */
     if( order.vouchers && order.vouchers.length > 0 ){
-    	
+
     	var voucher = null;
-    	
+
     	for(var i=0; i<order.vouchers.length; i++){
-    		
+
     		voucher = order.vouchers[i];
     		printFormat.push(['N', voucher + '\n']);
-    		
+
     	}
-    	
-    	
+
+
     }
 
     return printFormat;
@@ -1424,57 +1434,57 @@ PrinterManager.getKitchenReceiptPrintFormat = function (order, openDrawer) {
 
     var LINE_WIDTH = this.getLineWidth();
     var LINE_SEPARATOR = JSReceiptUtils.replicate('-', LINE_WIDTH);
-    
-      
+
+
     var store_name = order['store_name'];
     var user_name = order['user_name'];
     var terminal_name = order['terminal_name'];
     var customer_name = order['customer_name'];
-    
-    var location = order['location'];    
+
+    var location = order['location'];
     var dateOrdered = order['dateorderedfull'];
-    
+
     var receiptTitle = 'Receipt';
     var docStatusName = 'Completed';
     var paymentRuleName = 'Cash';
-    
-    var printFormat = [     
-                       
+
+    var printFormat = [
+
        ['FEED'],
        ['CENTER'],
-       
-       ['H1', '* KITCHEN COPY *' ], 
-       
+
+       ['H1', '* KITCHEN COPY *' ],
+
        ['N', LINE_SEPARATOR ],
-       
+
        ['H1', '#' + order.documentno ],
-       
+
        ['N', JSReceiptUtils.format(dateOrdered, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Employee: ' + user_name, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Terminal: ' + terminal_name, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Customer' + ': ' + customer_name, LINE_WIDTH)],
-       
+
        ['N', LINE_SEPARATOR ]
-       
+
       ];
-    
-    
+
+
     var QTY_SIZE = 5;
-    
+
     var OFFSET;
-    
+
     var text, line;
-    
+
     /* add order body */
     for (var i = 0; i < order.lines.length; i++) {
-    	
+
         line = order.lines[i];
-        
+
         OFFSET = "       ".substring(0, (line.qtyentered + 'x ').length);
 
-        text = line.qtyentered + 'x ' + line.name;        
+        text = line.qtyentered + 'x ' + line.name;
         text = JSReceiptUtils.format(text, LINE_WIDTH);
-        
+
         printFormat.push(['N', text]);
 
         if (line.boms != null)
@@ -1483,7 +1493,7 @@ PrinterManager.getKitchenReceiptPrintFormat = function (order, openDrawer) {
 
                 text = " " + bom.qtyentered  + 'x ' +  bom.name;
                 text = JSReceiptUtils.format(text, LINE_WIDTH);
-                
+
                 printFormat.push(['N', text]);
 
             }
@@ -1491,53 +1501,53 @@ PrinterManager.getKitchenReceiptPrintFormat = function (order, openDrawer) {
         if (line.modifiers != null)
         for (var j = 0; j < line.modifiers.length; j++) {
             var modifier = line.modifiers[j];
-            
+
             text = OFFSET + modifier.name;
             text = JSReceiptUtils.format(text, LINE_WIDTH);
-            
+
             printFormat.push(['N', text]);
         }
-        
+
         if (line.note != null && line.note.length > 0) {
         	printFormat.push(['N', JSReceiptUtils.format('Note: ' + line.note, LINE_WIDTH)]);
         }
     }
-    
+
     /* add order total*/
     printFormat.push(['N', LINE_SEPARATOR]);
     printFormat.push(['B', 'No of items: ' + order.qtytotal]);
     printFormat.push(['N', LINE_SEPARATOR]);
-    
+
     if(order.note && order.note.length > 0){
     	printFormat.push(['N', JSReceiptUtils.format('Note: ' + order.note, LINE_WIDTH)]);
     }
-    
+
     printFormat.push(['N', '']);
-    
+
     printFormat.push(['PAPER_CUT']);
-    
+
     return printFormat;
 
 };
 
 PrinterManager.getTillPrintFormat = function( till ) {
-	
+
 	var configuration = this.getPrinterConfiguration();
 
     var LINE_WIDTH = this.getLineWidth();
     var LINE_SEPARATOR = JSReceiptUtils.replicate('-', LINE_WIDTH);
-     	
+
  	var storeName  = till["store_name"];
   	var terminalName  = till["terminal_name"];
- 	
+
  	var salesRep_open_name = till["openby_name"];
 	var salesRep_close_name = till["closeby_name"];
-	
+
 	var openingDate = till["openingdatefull"];
 	var closingDate = till["closingdatefull"];
-	
-	var beginningBalance = new Number(till.openingamt).toFixed(2);		
-	
+
+	var beginningBalance = new Number(till.openingamt).toFixed(2);
+
 	var cashAmt = new Number(till.cashamt).toFixed(2);
 	var adjustmentTotal = new Number(till.adjustmenttotal).toFixed(2);
 	/*
@@ -1548,21 +1558,21 @@ PrinterManager.getTillPrintFormat = function( till ) {
 	var giftAmt = new Number(till.gift).toFixed(2);
 	var loyaltyAmt = new Number(till.loyalty).toFixed(2);
 	*/
-	
 
-	var endingBalance = new Number(till.openingamt + till.cashamt + till.adjustmenttotal).toFixed(2);	
-	
+
+	var endingBalance = new Number(till.openingamt + till.cashamt + till.adjustmenttotal).toFixed(2);
+
 	var cashAmtEntered = new Number(till.closingamt).toFixed(2);
-	var cashDifference = new Number(till.closingamt - (till.openingamt + till.cashamt + till.adjustmenttotal)).toFixed(2);	
-	
-	
+	var cashDifference = new Number(till.closingamt - (till.openingamt + till.cashamt + till.adjustmenttotal)).toFixed(2);
+
+
 	var grandTotal = new Number(till.grandtotal).toFixed(2);
 	var taxTotal = new Number(till.taxtotal).toFixed(2);
 	var subTotal = new Number(till.subtotal).toFixed(2);
-	var noOfOrders = new Number(till.nooforders).toFixed(0);	
+	var noOfOrders = new Number(till.nooforders).toFixed(0);
 	var discountTotal = new Number(till.discounttotal).toFixed(2);
-	
-	    
+
+
   	var printFormat = [
             ['FEED'],
             ['CENTER'],
@@ -1576,20 +1586,20 @@ PrinterManager.getTillPrintFormat = function( till ) {
             ['N',JSReceiptUtils.format(("Opened:"),LINE_WIDTH-22) + JSReceiptUtils.format((openingDate),22, true)],
             ['N',JSReceiptUtils.format(("Closed:"),LINE_WIDTH-22) + JSReceiptUtils.format((closingDate),22, true)],
             ['N',LINE_SEPARATOR],
-           
+
             ['N',JSReceiptUtils.format(("Beginning Balance:"),LINE_WIDTH-10) + JSReceiptUtils.format((beginningBalance),10, true)],
             ['N',JSReceiptUtils.format(("Cash Sales:"),LINE_WIDTH-10) + JSReceiptUtils.format((cashAmt),10, true)],
-            ['N',JSReceiptUtils.format(("Cash Adjustments:"),LINE_WIDTH-10) + JSReceiptUtils.format((adjustmentTotal),10, true)],            
+            ['N',JSReceiptUtils.format(("Cash Adjustments:"),LINE_WIDTH-10) + JSReceiptUtils.format((adjustmentTotal),10, true)],
             ['N',LINE_SEPARATOR],
             ['B',JSReceiptUtils.format(("Expected Balance:"),LINE_WIDTH-10) + JSReceiptUtils.format((endingBalance),10, true)],
             ['N',LINE_SEPARATOR],
-            ['N',JSReceiptUtils.format(("Cash Amount Entered:"),LINE_WIDTH-10) + JSReceiptUtils.format((cashAmtEntered),10, true)],            
-            ['B',JSReceiptUtils.format(("Cash Difference:"),LINE_WIDTH-10) + JSReceiptUtils.format((cashDifference),10, true)],	                    
+            ['N',JSReceiptUtils.format(("Cash Amount Entered:"),LINE_WIDTH-10) + JSReceiptUtils.format((cashAmtEntered),10, true)],
+            ['B',JSReceiptUtils.format(("Cash Difference:"),LINE_WIDTH-10) + JSReceiptUtils.format((cashDifference),10, true)],
             ['N',LINE_SEPARATOR],
-            
+
             /*
-            ['FEED'],            
-            
+            ['FEED'],
+
             ['N',JSReceiptUtils.format(("Credit Card Amount:"),LINE_WIDTH-10) + JSReceiptUtils.format((cardAmt),10, true)],
             ['N',JSReceiptUtils.format(("Cheque Amount:"),LINE_WIDTH-10) + JSReceiptUtils.format((chequeAmt),10, true)],
             ['N',JSReceiptUtils.format(("External Credit Card Amount:"),LINE_WIDTH-10) + JSReceiptUtils.format((externalCreditCardAmt),10, true)],
@@ -1597,13 +1607,13 @@ PrinterManager.getTillPrintFormat = function( till ) {
             ['N',JSReceiptUtils.format(("Gift Card Amount:"),LINE_WIDTH-10) + JSReceiptUtils.format((giftAmt),10, true)],
             ['N',JSReceiptUtils.format(("Loyalty Amount:"),LINE_WIDTH-10) + JSReceiptUtils.format((loyaltyAmt),10, true)],
             */
-            
+
             ['FEED'],
             ['N',LINE_SEPARATOR],
-            
+
             ['H1', 'Summary'],
             ['N',LINE_SEPARATOR],
-            
+
             ['B',JSReceiptUtils.format(("Total Gross Sales:"),LINE_WIDTH-10) + JSReceiptUtils.format((grandTotal),10,true)],
             ['B',JSReceiptUtils.format(("Total Tax:"),LINE_WIDTH-10) + JSReceiptUtils.format((taxTotal),10,true)],
             ['B',JSReceiptUtils.format(("Total Net Sales:"),LINE_WIDTH-10) + JSReceiptUtils.format((subTotal),10,true)],
@@ -1612,28 +1622,28 @@ PrinterManager.getTillPrintFormat = function( till ) {
             /*
             ['B',JSReceiptUtils.format(("Total No of Returns:"),LINE_WIDTH-10) + JSReceiptUtils.format((noOfReturns),10,true)],
             */
-            
+
             ['N', ''],
-            
+
             ['PAPER_CUT']
   	];
-  	
+
   	return printFormat;
 };
 
 var HTMLPrinter = {
 		getHTML : function( printFormat ){
 			var html = "<pre><div style='text-align:center;background-color: #F7F3F3;border: solid 1px #8C8888;width: 400px;padding-bottom: 20px;'>";
-			
+
 			/* parse print format */
-            for (var i = 0; i < printFormat.length; i++) 
+            for (var i = 0; i < printFormat.length; i++)
             {
                 var line = printFormat[i];
-                
-                if (line.length == 1) 
+
+                if (line.length == 1)
                 {
                     var command = line[0];
-                    
+
                     if( 'FEED' == command )
                     {
                     	html = html + '<br><br>';
@@ -1645,14 +1655,14 @@ var HTMLPrinter = {
                     var text = line[1];
 
                     if (text == null) continue;
-                    
+
                     if (text.length == 0) text = "&nbsp;";
 
                     if (line.length > 2) {
                         var label = line[2];
                         text = label + text;
                     }
-                    
+
                     if( 'B' == font )
                     {
                     	html = html + ( '<div><strong>' + text + '</strong></div>' );
@@ -1665,12 +1675,12 @@ var HTMLPrinter = {
                     {
                     	html = html + ( '<div>' + text + '</div>' );
                     }
-                    
+
                 }
             }
-            
+
             html = html + '</div></pre>';
-            
+
             return html;
 		}
 };
@@ -1685,87 +1695,87 @@ var Base64 = {
 
 	// private property
 	_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-	
+
 	// public method for encoding
 	encode : function (input) {
 	    var output = "";
 	    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
 	    var i = 0;
-	
+
 	    input = Base64._utf8_encode(input);
-	
+
 	    while (i < input.length) {
-	
+
 	        chr1 = input.charCodeAt(i++);
 	        chr2 = input.charCodeAt(i++);
 	        chr3 = input.charCodeAt(i++);
-	
+
 	        enc1 = chr1 >> 2;
 	        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
 	        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
 	        enc4 = chr3 & 63;
-	
+
 	        if (isNaN(chr2)) {
 	            enc3 = enc4 = 64;
 	        } else if (isNaN(chr3)) {
 	            enc4 = 64;
 	        }
-	
+
 	        output = output +
 	        this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
 	        this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-	
+
 	    }
-	
+
 	    return output;
 	},
-	
+
 	// public method for decoding
 	decode : function (input) {
 	    var output = "";
 	    var chr1, chr2, chr3;
 	    var enc1, enc2, enc3, enc4;
 	    var i = 0;
-	
+
 	    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-	
+
 	    while (i < input.length) {
-	
+
 	        enc1 = this._keyStr.indexOf(input.charAt(i++));
 	        enc2 = this._keyStr.indexOf(input.charAt(i++));
 	        enc3 = this._keyStr.indexOf(input.charAt(i++));
 	        enc4 = this._keyStr.indexOf(input.charAt(i++));
-	
+
 	        chr1 = (enc1 << 2) | (enc2 >> 4);
 	        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
 	        chr3 = ((enc3 & 3) << 6) | enc4;
-	
+
 	        output = output + String.fromCharCode(chr1);
-	
+
 	        if (enc3 != 64) {
 	            output = output + String.fromCharCode(chr2);
 	        }
 	        if (enc4 != 64) {
 	            output = output + String.fromCharCode(chr3);
 	        }
-	
+
 	    }
-	
+
 	    output = Base64._utf8_decode(output);
-	
+
 	    return output;
-	
+
 	},
-	
+
 	// private method for UTF-8 encoding
 	_utf8_encode : function (string) {
 	    string = string.replace(/\r\n/g,"\n");
 	    var utftext = "";
-	
+
 	    for (var n = 0; n < string.length; n++) {
-	
+
 	        var c = string.charCodeAt(n);
-	
+
 	        if (c < 128) {
 	            utftext += String.fromCharCode(c);
 	        }
@@ -1778,22 +1788,22 @@ var Base64 = {
 	            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
 	            utftext += String.fromCharCode((c & 63) | 128);
 	        }
-	
+
 	    }
-	
+
 	    return utftext;
 	},
-	
+
 	// private method for UTF-8 decoding
 	_utf8_decode : function (utftext) {
 	    var string = "";
 	    var i = 0;
 	    var c = c1 = c2 = 0;
-	
+
 	    while ( i < utftext.length ) {
-	
+
 	        c = utftext.charCodeAt(i);
-	
+
 	        if (c < 128) {
 	            string += String.fromCharCode(c);
 	            i++;
@@ -1809,10 +1819,89 @@ var Base64 = {
 	            string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
 	            i += 3;
 	        }
-	
+
 	    }
-	
+
 	    return string;
 	}
 
+};
+
+/* Pole Display */
+var POLE_DISPLAY = {
+	
+	getPrinterConfiguration : function() {
+		
+		return PrinterManager.getPrinterConfiguration();
+	},
+	
+	printTestData:function(){
+    	this.display("Welcome to", "Posterita POS");
+    },
+   
+    clearDisplay:function(){
+        var printJob = PoleDisplay_ESC_COMMANDS.CLEAR;           
+        this.print(printJob);
+    },
+   
+    display:function(line1,line2){
+    	/* truncate long text */
+    	line1 = JSReceiptUtils.format(line1, 20); 	
+    	
+        /* clear display */
+        var printJob = PoleDisplay_ESC_COMMANDS.CLEAR;
+        printJob = printJob + line1;
+       
+        if(line2){
+        	line2 = JSReceiptUtils.format(line2, 20);
+            printJob = printJob + line2;
+        }
+       
+        this.print(printJob);
+    },
+    
+    print : function(printData) {
+    	
+    	var configuration = this.getPrinterConfiguration();
+    	
+    	if( !configuration.ENABLE_POLE ){
+    		
+    		return;
+    		
+    	}
+    	
+    	/*
+    	if( POSTERITA_Bridge.isPresent() ){
+    		
+    		POSTERITA_Bridge.print(configuration.POLE_DISPLAY_NAME, printData);
+    		
+    		return;    		
+    	}
+    	*/
+    	
+        var base64encodedstr = Base64.encode(printData);
+        
+        /* use xmlhttprequest driectly */
+        var xhttp;
+        if (window.XMLHttpRequest) {
+            xhttp = new XMLHttpRequest();
+            } else {
+            // code for IE6, IE5
+            xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        
+        xhttp.onreadystatechange = function() {
+        	  if (xhttp.readyState == 4 && xhttp.status == 200) {
+        	    //console.log(xhttp.responseText);
+        	  }
+        };
+        
+        xhttp.open("POST", "/printing/", false);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        
+        var postData = "action=print&printer=" + encodeURIComponent(configuration.POLE_DISPLAY_NAME) + "&job=" + encodeURIComponent(base64encodedstr);
+                
+        xhttp.send(postData);
+    }
+    
 };

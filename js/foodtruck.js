@@ -3116,32 +3116,46 @@ module.controller('TillController', function($scope, APP) {
 // Printing
 module.controller('PrinterSettingsController', function($scope, OrderScreen, APP) {
 	
-	$scope.settings = APP.PRINTER_SETTINGS.getSettings();
+	var settings = APP.PRINTER_SETTINGS.getSettings();
+	
+	//set defaults
+	settings.lineWidth = settings.lineWidth || 40;
+	 
+	$scope.settings = settings;
+	
+	NODEJS_Printer.getPrinters().done(function(printers){
+		
+		$scope.printers = printers;
+		
+	}).fail(function(error){
+		
+		ons.notification.alert({
+			  message: 'Printer settings successfully saved.',
+			  title: 'Information',
+			  callback: function() {
+			    // Alert button is closed!
+				// menu.setMainPage('page/order-screen.html', {closeMenu:
+				// true});
+			  }
+			});
+		
+	});
 	
 	$scope.save = function(){
 		if(this.validate()){
 			
-			APP.PRINTER_SETTINGS.saveSettings( $scope.settings );
+			APP.PRINTER_SETTINGS.saveSettings( $scope.settings );			
 			
-			ons.notification.alert({
-	  			  message: 'Printer settings successfully saved.',
-	  			  title: 'Information',
-	  			  callback: function() {
-	  			    // Alert button is closed!
-	  				// menu.setMainPage('page/order-screen.html', {closeMenu:
-					// true});
-	  			  }
-	  			});
 		}
 		
 	};
 	
-	$scope.test = function(){	
-		if(this.validate()){
+	$scope.testPrinter = function(){	
+		if(this.validatePrinter()){
 			
 			modal.show();
 			
-			APP.PRINTER_SETTINGS.testSettings( $scope.settings ).done(function(){
+			APP.PRINTER_SETTINGS.testPrinterSettings( $scope.settings ).done(function(){
 				
 			}).fail(function(){
 				
@@ -3163,39 +3177,89 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 		}
 	};
 	
-	$scope.validate = function(){
-		if(!this.settings.enablePrinter){
-			return true;
+	
+	$scope.testPoleDisplay = function(){	
+		if(this.validatePoleDisplay()){
+			
+			modal.show();
+			
+			APP.PRINTER_SETTINGS.testPoleDisplaySettings( $scope.settings ).done(function(){
+				
+			}).fail(function(){
+				
+				ons.notification.alert({
+		  			  message: 'Failed to pole display.',
+		  			  title: 'Error',
+		  			  callback: function() {
+		  			    // Alert button is closed!
+		  				// menu.setMainPage('page/order-screen.html',
+						// {closeMenu: true});
+		  			  }
+		  			});
+				
+			}).always(function(){
+				
+				modal.hide();
+				
+			});			
+		}
+	};
+	
+	$scope.validatePrinter = function(){
+		
+		if(this.settings.enablePrinter){
+			//validate printer settings
+			//validate printer name
+			if(this.form.printerName == null || this.form.printerName == ""){
+				
+				ons.notification.alert({
+		  			  message: 'Choose a printer.',
+		  			  title: 'Error',
+		  			  callback: function() {
+		  			    // Alert button is closed!
+		  			  }
+		  			});
+				
+				return false;
+			}
+			
+			//validate printer line width
+			if(this.form.lineWidth == null || this.form.lineWidth == ""){
+				
+				ons.notification.alert({
+		  			  message: 'Enter a valid line width',
+		  			  title: 'Error',
+		  			  callback: function() {
+		  			    // Alert button is closed!
+		  			  }
+		  			});
+				
+				return false;
+			}
+		}	
+		
+		return true;
+	};
+	
+	$scope.validatePoleDisplay = function(){
+				
+		if(this.settings.enablePoleDisplay){
+			//validate pole display settings
+			//validate pole display name
+			if(if(this.form.poleDisplayName == null || this.form.poleDisplayName == ""){){
+				
+				ons.notification.alert({
+		  			  message: 'Choose a pole display.',
+		  			  title: 'Error',
+		  			  callback: function() {
+		  			    // Alert button is closed!
+		  			  }
+		  			});
+				
+				return false;
+			}
 		}
 		
-		// validate printer type
-		if(this.form.printerType.$error.required){
-			
-			ons.notification.alert({
-	  			  message: 'Choose a printer type.',
-	  			  title: 'Error',
-	  			  callback: function() {
-	  			    // Alert button is closed!
-	  			  }
-	  			});
-			
-			return false;
-		}
-		
-		// validate ip address
-		if(this.form.ipAddress.$error.pattern || this.form.ipAddress.$error.required){
-			
-			ons.notification.alert({
-	  			  message: 'Please enter a valid ip address.',
-	  			  title: 'Error',
-	  			  callback: function() {
-	  			    // Alert button is closed!
-	  				document.getElementById('printer-ip-address-text').select();
-	  			  }
-	  			});
-			
-			return false;
-		}
 		
 		return true;
 	};

@@ -25,42 +25,70 @@
 	       <ons-switch modifier="list-item" ng-model="settings.enablePrinter"></ons-switch>
        </ons-list-item>
        
+       <!-- 
        <ons-list-item ng-show="settings.enablePrinter">
 	       <label>Enable Kitchen Receipt</label>
 	       <ons-switch modifier="list-item" ng-model="settings.enableKitchenPrinter"></ons-switch>
        </ons-list-item>
+        -->
        
        <ons-list-item ng-show="settings.enablePrinter">
        		<label>Enable Cash Drawer</label>
        		<ons-switch modifier="list-item" ng-model="settings.enableDrawer"></ons-switch>
-       </ons-list-item>
+       </ons-list-item>  
        
-       <ons-list-header ng-show="settings.enablePrinter">Printer Type</ons-list-header>
+       <ons-list-header ng-show="settings.enablePrinter">Choose Printer</ons-list-header> 
+       <ons-list-item ng-show="settings.enablePrinter">
+       		<ons-row>
+	       		<ons-col>
+	       		<select ng-model="settings.printerName" required>
+	       			<option ng-repeat="printer in printers" value="{{printer}}">
+						{{printer}}
+					</option>
+	       		</select>
+	       		</ons-col>
+	       		<ons-col width="150px">
+	        		<div style="text-align:right;">
+	        			<ons-button class="button" ng-click="testPrinter()">Test Printer</ons-button>
+	        		</div>
+	        	</ons-col>  
+       		</ons-row>
+       </ons-list-item>  
        
-       <ons-list-item modifier="tappable" ng-show="settings.enablePrinter">
-          <label class="radio-button radio-button--list-item">
-            <input type="radio" name="printerType" value="star" ng-model="settings.printerType" required>
-            <div class="radio-button__checkmark radio-button--list-item__checkmark"></div>
-            Star WebPRNT
-          </label>
-        </ons-list-item>
+       <ons-list-header ng-show="settings.enablePrinter">Enter Printer line width</ons-list-header> 
+       <ons-list-item ng-show="settings.enablePrinter">
+       		<ons-row>
+       			<input type="text" name="lineWidth" id="printer-line-width-text" placeholder="Enter Printer line width"
+        			ng-model="settings.lineWidth"
+        			required 
+        			class="text-input text-input--transparent" style="margin-top:8px; width: 100%;">
+       		</ons-row>
+       </ons-list-item> 
+       
+       <ons-list-item>
+       		<label>Enable Pole Display</label>
+       		<ons-switch modifier="list-item" ng-model="settings.enablePoleDisplay"></ons-switch>
+       </ons-list-item>  
+       
+       <ons-list-header ng-show="settings.enablePoleDisplay">Choose Pole Display</ons-list-header> 
+       <ons-list-item ng-show="settings.enablePoleDisplay">
+       		<ons-row>
+	       		<ons-col>
+	       			<select ng-model="settings.poleDisplayName" required>
+		       			<option ng-repeat="printer in printers" value="{{printer}}">
+							{{printer}}
+						</option>
+	       			</select>
+	       		</ons-col>
+	       		<ons-col width="150px">
+	        		<div style="text-align:right;">
+	        			<ons-button class="button" ng-click="testPoleDisplay()">Test Pole Display</ons-button>
+	        		</div>
+	        	</ons-col>       		
+       		</ons-row>
+       </ons-list-item>  
         
-        <ons-list-item modifier="tappable" ng-show="settings.enablePrinter">
-          <label class="radio-button radio-button--list-item">
-            <input type="radio" name="printerType" value="epson" ng-model="settings.printerType" required>
-            <div class="radio-button__checkmark radio-button--list-item__checkmark"></div>
-            Epson ePOS-Print
-          </label>
-        </ons-list-item>
-        
-        <ons-list-item modifier="tappable" ng-show="settings.enablePrinter">
-          <label class="radio-button radio-button--list-item">
-            <input type="radio" name="printerType" value="posterita" ng-model="settings.printerType" required>
-            <div class="radio-button__checkmark radio-button--list-item__checkmark"></div>
-            Posterita Printer Server
-          </label>
-        </ons-list-item>
-        
+        <!-- 
         <ons-list-header ng-show="settings.enablePrinter && settings.printerType != null">Printer IP Address</ons-list-header>
         <ons-list-item ng-show="settings.enablePrinter && settings.printerType != null">
         	<ons-row>
@@ -68,8 +96,6 @@
         		
         			<input type="text" name="ipAddress" id="printer-ip-address-text" placeholder="Enter printer ip address"
         			ng-model="settings.ipAddress"
-        			ng-minlength="7" ng-maxlength="21"
-        			ng-pattern="'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(:\\d+)?$'"
         			required 
         			class="text-input text-input--transparent" style="margin-top:8px; width: 100%;">
 					        			
@@ -81,6 +107,7 @@
         		</ons-col>
         	</ons-row>        	
         </ons-list-item>
+         -->
 	</ons-list>
         
     <div style="margin: 20px 8px 0px;">
