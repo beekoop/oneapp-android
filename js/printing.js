@@ -1422,6 +1422,8 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
     		printFormat.push(['N', voucher + '\n']);
 
     	}
+    	
+    	printFormat.push(['PAPER_CUT']);
 
 
     }

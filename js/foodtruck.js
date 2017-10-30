@@ -35,6 +35,7 @@ function initializeCayan(){
 		});	
 		*/	
 		
+		/*
 		var c = jQuery( ShoppingCart );	
 		
 		c.on('cart.clear', function( event ){
@@ -103,6 +104,7 @@ function initializeCayan(){
 			CayanCED.deleteItem(OrderNumber, ItemId, OrderTotal, OrderTax);
 			
 		});
+		*/
 		
 	}
 	
@@ -992,7 +994,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		if( "RA Cellular" == product_name ){			
 			
-			
+			/*
 			OrderScreen.showIframe();
 			
 			// add message listner
@@ -1016,16 +1018,18 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			};
 			
 			return;
+			*/
 			
 			
 			
-			/*
 			var data = {
 			    "MessageType": "Voucher",
 			    "PrintString": "\u001b|N\u001b|3C\u001b|bC\u001b|cASHOP NAME\n\u001b|lA\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\u001b|N\u001b|1CDate : 2017-10-20 13:46:03\nCashier : Selwin\nHOST : TILL1\n\u001b|3CVodacom R2\n\u001b|4C\u001b|4C 1023 5080 5345\n\u001b|N\u001b|1C\nPrice : 2.00\nSerial : 15340959387\nTo Recharge Dial :\n*100*01*PIN# Customer Care : 111\nor\nSMS PIN to 100\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n600698600144\n DSTV \u0026 PREPAID ELECTRICITY\n  NOW AVAILABLE IN STORE!\n  www.buyprepaid.co.za\n",
 			    "Cost": 1.96,
+			    "CostVat":0.24070175438596486,
 			    "HasVat": true,
 			    "Value": 2.0,
+			    "ValueVat":0.24561403508771917,
 			    "VariableRate": false,
 			    "VoucherCode": "VOD000002",
 			    "VoucherName": "Vodacom R2",
@@ -1038,14 +1042,21 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			OrderScreen.lastSale = null;
 			
 			var line = ShoppingCart.addLine(103, 1);
-			ShoppingCart.updatePrice(line.index, data.Value);
+			//ShoppingCart.updatePrice(line.index, data.Value);
 			ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
 			ShoppingCart.vouchers.push(data.PrintString);
+			
+			line.taxAmt = parseFloat(new Number(data.ValueVat).toFixed(2));
+			line.lineAmt = parseFloat(new Number(parseFloat(data.Value) - parseFloat(data.ValueVat)).toFixed(2));
+			line.lineNetAmt = parseFloat(new Number(data.Value).toFixed(2));
+			line.costAmt = parseFloat(new Number(parseFloat(data.Cost) - parseFloat(data.CostVat)).toFixed(2));
+			
+			ShoppingCart.updateTotal();
 			
 			$scope.currentLineIndex = line.index;
 			
 			return;
-			*/
+			
 			
 			
 		}
@@ -1243,10 +1254,12 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			$scope.processGiftCard( order );
 			/* END - CAYAN GIFT CARD */
 			
+			/*
 			setTimeout(function(){
 				CayanCED.startOrder( APP.UTILS.ORDER.getDocumentNo() );
 				modal.hide();	
 			}, 5000);
+			*/
 			
 		}).fail(function(msg){
 			
@@ -3131,8 +3144,8 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 	}).fail(function(error){
 		
 		ons.notification.alert({
-			  message: 'Printer settings successfully saved.',
-			  title: 'Information',
+			  message: 'Failed to load printers.',
+			  title: 'Error',
 			  callback: function() {
 			    // Alert button is closed!
 				// menu.setMainPage('page/order-screen.html', {closeMenu:
@@ -3146,7 +3159,17 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 		
 		if( this.validatePrinter() && this.validatePoleDisplay() ){
 			
-			APP.PRINTER_SETTINGS.saveSettings( $scope.settings );			
+			APP.PRINTER_SETTINGS.saveSettings( $scope.settings );
+			
+			ons.notification.alert({
+				  message: 'Printer settings successfully saved.',
+				  title: 'Information',
+				  callback: function() {
+				    // Alert button is closed!
+					// menu.setMainPage('page/order-screen.html', {closeMenu:
+					// true});
+				  }
+				});
 			
 		}
 		
