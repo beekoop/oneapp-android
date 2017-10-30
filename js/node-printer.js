@@ -6,12 +6,7 @@ var doIt = require("child_process").execSync;
 var NODEJS_Printer = {
 
     getPrinterConfiguration: function() {
-        //return PrinterManager.getPrinterConfiguration();
-
-        return {
-            LINE_WIDTH: 40,
-            PRINTER_NAME: 'EPSON_TM-T20'
-        };
+        return PrinterManager.getPrinterConfiguration();
     },
 
     format: function(printFormat) {
@@ -180,30 +175,9 @@ var NODEJS_Printer = {
         return request;
     },
 
-    print : function( printData ) {
+    print : function( printerName, printData ) {
 
         var dfd = new jQuery.Deferred();
-
-        /*
-        // better than win here, list printers only
-        var listCommand = "lpstat -v";
-        //run the command and collect output
-        var listResult = doIt(listCommand, {
-            encoding: 'utf8'
-        });
-        // split output into single lines
-        listResultLines = listResult.split("\n");
-        for (var d = 0; d < listResultLines.length; d++) {
-            // lpstat delivers "device for PRINTERNAME : ADDITIONAL info"
-            // so first check for colon (:) then split by the word for
-            if (listResultLines[d].indexOf(":") > 0) {
-                listLineParts = listResultLines[d].split(":");
-                detailParts = listLineParts[0].split("for");
-                //name is the second part so push it
-                console.log(detailParts[1].trim());
-            }
-        }
-        */
 
         var tempdir = operatingSys.tmpdir();
         var filename = tempdir + "/escpos.prt";
@@ -223,15 +197,14 @@ var NODEJS_Printer = {
         printData = printData + String.fromCharCode(10);
         // write our content to the RAW printer file
         fileSys.appendFileSync(filename, printData, 'binary');
-
-        var configuration = this.getPrinterConfiguration();
-        var printername = configuration.PRINTER_NAME;
+        
+        var OS = this.getOS();
 
         // finally use OS specific method to copy to printer or print it via cups lp implementation
         // Windows needs try catch , while cups delivers a result anyway
         if (OS == "WIN") {
             try {
-                fileSys.writeFileSync('//localhost/' + printername, fileSys.readFileSync(filename));
+                fileSys.writeFileSync('//localhost/' + printerName, fileSys.readFileSync(filename));
                 dfd.resolve("data printed");
             } catch (e) {
               dfd.reject("Error copying prt file : " + e.message);
@@ -239,7 +212,7 @@ var NODEJS_Printer = {
         }
 
         if (OS == "LINUX") {
-            printcommand = "lp -d " + printername + " " + filename;
+            printcommand = "lp -d " + printerName + " " + filename;
             var error = doIt(printcommand, {
                 encoding: 'UTF-8'
             });
@@ -261,24 +234,7 @@ var NODEJS_Printer = {
 
         var printers = [];
 
-        // first detect OS defaulting it to whatever you like Win in this case
-        var osOriginal = operatingSys.platform();
-        switch (osOriginal) {
-            case "win32":
-                OS = "WIN";
-                break;
-            case "win64":
-                OS = "WIN";
-                break;
-            case "darwin":
-                OS = "OSX";
-                break;
-            case "linux":
-                OS = "LINUX";
-                break;
-            default:
-                OS = "WIN";
-        }
+        var OS = this.getOS();
 
         // running os specific command to detect printers i.e. net view on Windows lp on linux like
         // using ifs here because if we vcant detect on which system we run its not worth the whole thing so no case/default scheme
@@ -348,5 +304,32 @@ var NODEJS_Printer = {
 
         dfd.resolve(printers);
         return dfd.promise();
+    },
+    
+    getOS: function(){
+    	
+    	// first detect OS defaulting it to whatever you like Win in this case
+        var osOriginal = operatingSys.platform();
+        var OS = "WIN";
+        
+        switch (osOriginal) {
+            case "win32":
+                OS = "WIN";
+                break;
+            case "win64":
+                OS = "WIN";
+                break;
+            case "darwin":
+                OS = "OSX";
+                break;
+            case "linux":
+                OS = "LINUX";
+                break;
+            default:
+                OS = "WIN";
+        }
+        
+        return OS;
+    	
     }
 };

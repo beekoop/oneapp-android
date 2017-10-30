@@ -118,7 +118,10 @@ PrinterManager.print = function (printFormat) {
 
     var printData = printer.format(printFormat);
 
-    return printer.print(printData);
+    var configuration = this.getPrinterConfiguration();
+    var printerName = configuration.PRINTER_NAME;
+    
+    return printer.print(printerName, printData);
 };
 
 PrinterManager.setPrinterConfiguration = function ( config ) {
@@ -131,9 +134,9 @@ PrinterManager.getPrinterConfiguration = function () {
 
 	var settings = APP.PRINTER_SETTINGS.getSettings();
 
-    configuration.PRINTER_IMPLEMENTATION = settings.printerType;
-	configuration.IP_ADDRESS = settings.ipAddress;
-	configuration.LINE_WIDTH = 40;
+    configuration.PRINTER_NAME = settings.printerName;
+    configuration.POLE_DISPLAY_NAME = settings.poleDisplayName;
+	configuration.LINE_WIDTH = settings.lineWidth || 40;
 
     return configuration;
 };

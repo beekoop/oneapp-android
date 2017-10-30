@@ -1513,7 +1513,13 @@ APP.PRINTER_SETTINGS.testPrinterSettings = function( settings ){
 	format.push(['FEED']);
 	format.push(['PAPER_CUT']);
 	
-	PrinterManager.print( format ).done(function(){
+	
+	var printer = NODEJS_Printer;
+	var printerName = settings['printerName'];
+	
+	var printData = printer.format(format);
+	
+	printer.print(printerName, printData).done(function(){
 		
 		dfd.resolve();
 		

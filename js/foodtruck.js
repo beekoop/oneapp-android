@@ -992,7 +992,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		if( "RA Cellular" == product_name ){			
 			
-			/*
+			
 			OrderScreen.showIframe();
 			
 			// add message listner
@@ -1016,10 +1016,10 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			};
 			
 			return;
-			*/
 			
 			
 			
+			/*
 			var data = {
 			    "MessageType": "Voucher",
 			    "PrintString": "\u001b|N\u001b|3C\u001b|bC\u001b|cASHOP NAME\n\u001b|lA\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\u001b|N\u001b|1CDate : 2017-10-20 13:46:03\nCashier : Selwin\nHOST : TILL1\n\u001b|3CVodacom R2\n\u001b|4C\u001b|4C 1023 5080 5345\n\u001b|N\u001b|1C\nPrice : 2.00\nSerial : 15340959387\nTo Recharge Dial :\n*100*01*PIN# Customer Care : 111\nor\nSMS PIN to 100\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n600698600144\n DSTV \u0026 PREPAID ELECTRICITY\n  NOW AVAILABLE IN STORE!\n  www.buyprepaid.co.za\n",
@@ -1045,6 +1045,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			$scope.currentLineIndex = line.index;
 			
 			return;
+			*/
 			
 			
 		}
@@ -3142,7 +3143,8 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 	});
 	
 	$scope.save = function(){
-		if(this.validate()){
+		
+		if( this.validatePrinter() && this.validatePoleDisplay() ){
 			
 			APP.PRINTER_SETTINGS.saveSettings( $scope.settings );			
 			
@@ -3150,7 +3152,8 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 		
 	};
 	
-	$scope.testPrinter = function(){	
+	$scope.testPrinter = function(){
+		
 		if(this.validatePrinter()){
 			
 			modal.show();
@@ -3210,7 +3213,7 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 		if(this.settings.enablePrinter){
 			//validate printer settings
 			//validate printer name
-			if(this.form.printerName == null || this.form.printerName == ""){
+			if(this.settings.printerName == null || this.settings.printerName == ""){
 				
 				ons.notification.alert({
 		  			  message: 'Choose a printer.',
@@ -3224,7 +3227,7 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 			}
 			
 			//validate printer line width
-			if(this.form.lineWidth == null || this.form.lineWidth == ""){
+			if(this.settings.lineWidth == null || this.settings.lineWidth == ""){
 				
 				ons.notification.alert({
 		  			  message: 'Enter a valid line width',
@@ -3246,7 +3249,7 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 		if(this.settings.enablePoleDisplay){
 			//validate pole display settings
 			//validate pole display name
-			if(if(this.form.poleDisplayName == null || this.form.poleDisplayName == ""){){
+			if(this.settings.poleDisplayName == null || this.settings.poleDisplayName == ""){
 				
 				ons.notification.alert({
 		  			  message: 'Choose a pole display.',

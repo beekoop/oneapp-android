@@ -42,7 +42,7 @@
        		<ons-row>
 	       		<ons-col>
 	       		<select ng-model="settings.printerName" required>
-	       			<option ng-repeat="printer in printers" value="{{printer}}">
+	       			<option ng-repeat="printer in printers track by $index" value="{{printer}}"  ng-selected="printer == settings.printerName">
 						{{printer}}
 					</option>
 	       		</select>
@@ -75,7 +75,7 @@
        		<ons-row>
 	       		<ons-col>
 	       			<select ng-model="settings.poleDisplayName" required>
-		       			<option ng-repeat="printer in printers" value="{{printer}}">
+		       			<option ng-repeat="printer in printers track by $index" value="{{printer}}"  ng-selected="printer == settings.poleDisplayName">
 							{{printer}}
 						</option>
 	       			</select>
