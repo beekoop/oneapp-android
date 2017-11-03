@@ -915,6 +915,27 @@ module.service('OrderScreen', function() {
 		
 		screen.shouldShowIframe = true;	
 		
+		
+		// RA Cellular
+		var raCellularSettings = localStorage.getItem("RA_CELLULAR_SETTINGS") || {};
+		var raCellularSettings = JSON.parse( raCellularSettings );
+		
+		var terminal = APP.TERMINAL.getById(APP.TERMINAL_KEY);
+		var user = APP.USER.getById(APP.USER_KEY);
+		
+		raCellularSettings.operator = user['username'];
+		raCellularSettings.isAdmin = "1";
+		raCellularSettings.tillName = terminal['name'];
+		
+		document.getElementById("iframe-form").action = raCellularSettings['url'];
+		document.getElementById("racellular-client-type").value = raCellularSettings['clientType'];
+		document.getElementById("racellular-username").value = raCellularSettings['username'];
+		document.getElementById("racellular-password").value = raCellularSettings['password'];
+		document.getElementById("racellular-operator-name").value = raCellularSettings['operator'];
+		document.getElementById("racellular-is-operator-admin").value = raCellularSettings['isAdmin'];
+		document.getElementById("racellular-till-name").value = raCellularSettings['tillName'];
+		document.getElementById("racellular-printer-width").value = raCellularSettings['printerWidth'];
+		
 		document.getElementById("iframe-form").submit();
 	}
 	
@@ -928,7 +949,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 	var terminal = APP.TERMINAL.getById(APP.TERMINAL_KEY);
 	var store = APP.STORE.getById(terminal.store_id);
 	
-	$scope.terminalInfo = store.name + ", " + terminal.name;
+	$scope.terminalInfo = store.name + ", " + terminal.name;	
 	
 	// enable menu
    	menu.setSwipeable(true);
@@ -994,7 +1015,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		if( "RA Cellular" == product_name ){			
 			
-			/*
+			
 			OrderScreen.showIframe();
 			
 			// add message listner
@@ -1011,6 +1032,13 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 				ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
 				ShoppingCart.vouchers.push(data.PrintString);
 				
+				line.taxAmt = parseFloat(new Number(data.ValueVat).toFixed(2));
+				line.lineAmt = parseFloat(new Number(parseFloat(data.Value) - parseFloat(data.ValueVat)).toFixed(2));
+				line.lineNetAmt = parseFloat(new Number(data.Value).toFixed(2));
+				line.costAmt = parseFloat(new Number(parseFloat(data.Cost) - parseFloat(data.CostVat)).toFixed(2));
+				
+				ShoppingCart.updateTotal();
+				
 				$scope.currentLineIndex = line.index;
 				
 				console.log(data);				
@@ -1018,10 +1046,10 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			};
 			
 			return;
-			*/
 			
 			
 			
+			/*
 			var data = {
 			    "MessageType": "Voucher",
 			    "PrintString": "\u001b|N\u001b|3C\u001b|bC\u001b|cASHOP NAME\n\u001b|lA\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\u001b|N\u001b|1CDate : 2017-10-20 13:46:03\nCashier : Selwin\nHOST : TILL1\n\u001b|3CVodacom R2\n\u001b|4C\u001b|4C 1023 5080 5345\n\u001b|N\u001b|1C\nPrice : 2.00\nSerial : 15340959387\nTo Recharge Dial :\n*100*01*PIN# Customer Care : 111\nor\nSMS PIN to 100\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n600698600144\n DSTV \u0026 PREPAID ELECTRICITY\n  NOW AVAILABLE IN STORE!\n  www.buyprepaid.co.za\n",
@@ -1057,7 +1085,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			
 			return;
 			
-			
+			*/
 			
 		}
 		
@@ -2954,7 +2982,11 @@ module.controller('TillController', function($scope, APP) {
 		var grandtotal = 0;
 		var nooforders = orders.length;
 		
-		for(var i=0; i<orders.length; i++)
+		//RA Cellular vouchers
+		var vouchers = {};
+		var i, j, orderlines, orderline;
+		
+		for( i=0; i<orders.length; i++ )
 		{
 			if( 'CASH' == orders[i].paymenttype ){
 				
@@ -2965,7 +2997,35 @@ module.controller('TillController', function($scope, APP) {
 			taxtotal = taxtotal + orders[i].taxtotal;
 			discounttotal = discounttotal + orders[i].discountamt;
 			grandtotal = grandtotal + orders[i].grandtotal;
+			
+			orderlines = orders[i].lines;
+			
+			for( j=0; j<orderlines.length; j++ )
+			{
+				orderline = orderlines[j];
+				
+				if(orderline.product_id == 103){
+					
+					if(vouchers['' + orderline.name]){
+						
+						vouchers['' + orderline.name].total += orderline.linenetamt; 
+						vouchers['' + orderline.name].qty += orderline.qtyentered; 
+						
+					}
+					else
+					{
+						vouchers['' + orderline.name] = {
+								'name' : orderline.name,
+								'qty' : 1,
+								'total' : orderline.linenetamt
+						};
+					}
+					
+				}
+			}
 		}
+		
+		till.vouchers = vouchers;
 		
 		// get adjustments
 		var adjustmenttotal = 0;
@@ -3025,6 +3085,9 @@ module.controller('TillController', function($scope, APP) {
 		till.grandtotal = grandtotal;
 		
 		till.nooforders = nooforders;
+		
+		//RA Cellular vouchers
+		till.vouchers = vouchers;
 		
 		APP.TILL.saveTill( till ).done(function(record, msg){
 			console.log( msg );
@@ -3752,6 +3815,39 @@ module.controller('SocialMediaController', function($scope) {
 	};
 	
 });
+
+
+module.controller('RACellularSettingsController', function($scope) {
+	
+	var settings = localStorage.getItem("RA_CELLULAR_SETTINGS") || '{}'; 
+	
+	settings = JSON.parse(settings);
+	
+	settings.clientType = settings.clientType || "POSTERITA";
+	settings.printerWidth = settings.printerWidth || "80";
+	
+	$scope.settings = settings; 
+	
+	$scope.save = function(){
+		
+		//todo validations
+		
+		localStorage.setItem("RA_CELLULAR_SETTINGS", JSON.stringify($scope.settings));
+		
+		ons.notification.alert({
+		  message: 'RA Cellular settings successfully saved.',
+		  title: 'Information',
+		  callback: function() {
+		    // Alert button is closed!
+			// menu.setMainPage('page/order-screen.html', {closeMenu:
+			// true});
+		  }
+		});
+		
+	}
+	
+});
+
 
 
 

@@ -49,6 +49,14 @@ APP.getDatabaseName = function(){
 APP.setTerminalKey = function(key){
 	this.TERMINAL_KEY = key;
 	localStorage.setItem('TERMINAL_KEY', key);
+	
+	var terminal = APP.TERMINAL.getById( APP.TERMINAL_KEY );
+	
+	var sequence = terminal['sequence'];
+	var prefix = terminal['prefix'];	
+	
+	localStorage.setItem('DOCUMENT_NO', sequence);
+	localStorage.setItem('DOCUMENT_NO_PREFIX', prefix);
 };
 
 APP.setUserKey = function(key){
@@ -1107,6 +1115,7 @@ APP.UTILS.ORDER = {
 		
 		getDocumentNo : function(){
 			
+			/*
 			var today = moment().startOf('day').valueOf();	
 			var count = APP.ORDER.search({status : ['CO','VO'], dateordered : {'>' : today}}).length;
 			
@@ -1117,6 +1126,29 @@ APP.UTILS.ORDER = {
 			padding = padding.substr(0, padding.length - documentNo.length);
 			
 			documentNo = padding + documentNo;
+			*/
+			
+			var number = localStorage.getItem('DOCUMENT_NO') || -1;
+			var prefix = localStorage.getItem('DOCUMENT_NO_PREFIX') || '';
+			
+			if(number < 0){
+				
+				var terminal = APP.TERMINAL.getById( APP.TERMINAL_KEY );
+				number = terminal['sequence'];
+				prefix = terminal['prefix'];	
+				
+				localStorage.setItem('DOCUMENT_NO_PREFIX', prefix);
+			}
+			
+			localStorage.setItem('DOCUMENT_NO', parseInt(number) + 1);
+			
+			var documentNo = localStorage.getItem('DOCUMENT_NO');
+			
+			var padding = "000000000";
+			
+			padding = padding.substr(0, padding.length - documentNo.length);
+			
+			documentNo = prefix + padding + documentNo;
 			
 			return documentNo;
 			
@@ -1430,6 +1462,16 @@ APP.synchronizeTills = function(){
 	
 };
 
+APP.synchronizeDocumentNo = function(){
+	
+	var info = {};
+	info['terminal_id'] = this.TERMINAL_KEY;
+	info['document_no'] = localStorage.getItem('DOCUMENT_NO');
+	
+	return DocumentNoService.sync(info);
+	
+};
+
 /*
 APP.pushData().done(function(msg){console.log(msg);}).fail(function(msg){console.log(msg);});
 /*/
@@ -1439,7 +1481,8 @@ APP.pushData = function(){
 	
 	$.when(			
 			APP.synchronizeOrders(),
-			APP.synchronizeTills()
+			APP.synchronizeTills(),
+			APP.synchronizeDocumentNo()
 			
 	).done(function(){
 		

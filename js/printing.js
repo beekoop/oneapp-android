@@ -1628,10 +1628,32 @@ PrinterManager.getTillPrintFormat = function( till ) {
             ['B',JSReceiptUtils.format(("Total No of Returns:"),LINE_WIDTH-10) + JSReceiptUtils.format((noOfReturns),10,true)],
             */
 
-            ['N', ''],
-
-            ['PAPER_CUT']
+            ['N', '']
   	];
+  	
+  	//RA Cellular integration
+  	var keys = Object.keys(till.vouchers);
+  	if(keys.length > 0){
+  		
+  		printFormat.push(['FEED']);
+  		printFormat.push(['N',LINE_SEPARATOR]);
+  		printFormat.push(['H1', 'RA Cellular']);
+  		printFormat.push(['N',LINE_SEPARATOR]);
+  		
+  		var voucher;
+  		
+  		for(var i=0; i<keys.length; i++){
+  			
+  			voucher = till.vouchers[keys[i]];
+  			
+  			printFormat.push(['N',JSReceiptUtils.format( voucher.qty + 'x ' + voucher.name  ,LINE_WIDTH-10) + JSReceiptUtils.format( voucher.total ,10,true)]);
+  			
+  		}
+  	}
+  	
+  	printFormat.push(['FEED']);
+  	printFormat.push(['FEED']);
+  	printFormat.push(['PAPER_CUT']);
 
   	return printFormat;
 };

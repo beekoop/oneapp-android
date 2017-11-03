@@ -156,6 +156,22 @@ var TillService = jQuery.extend({
 	
 }, Service);
 
+var DocumentNoService = jQuery.extend({	
+	
+	sync : function( info ){		
+		var url = "app/sync-document-no";
+		var errorMessage = "Failed to sync document no!";
+		
+		var params = {
+				'info' : JSON.stringify(info),
+				'account_key' : APP.ACCOUNT_KEY
+		};
+		
+		return this.call(url, params, errorMessage);
+	},
+	
+}, Service);
+
 var DatabaseService = jQuery.extend({	
 	
 	requestUpdates : function(){		
