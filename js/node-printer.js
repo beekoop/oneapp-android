@@ -162,6 +162,12 @@ var NODEJS_Printer = {
                         request = request + "<image>" + imageBase64 + "<image>";
                         text = "";
                         break;
+                        
+                    case 'BASE64':
+                        var encoded = text;
+                        request = request + Buffer.from(encoded, "base64").toString() + ESC_COMMANDS.LINE_FEED;
+                        text = "";
+                        break;
 
                 }
 

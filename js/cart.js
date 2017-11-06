@@ -306,6 +306,7 @@ function Cartline( cart, index, product_id, qty, ismodifier){
 	this.discountPercentage = 0;
 	this.enableTax = true;
 	this.ismodifier = ismodifier;
+	this.voidable = true;
 	
 	this.modifiers = new HashMap();
 

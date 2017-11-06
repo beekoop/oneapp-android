@@ -1419,7 +1419,7 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
     	for(var i=0; i<order.vouchers.length; i++){
 
     		voucher = order.vouchers[i];
-    		printFormat.push(['N', voucher + '\n']);
+    		printFormat.push(['BASE64', voucher ]);
 
     	}
     	

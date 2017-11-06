@@ -1013,79 +1013,86 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		var product_name = product['name'];
 		
-		if( "RA Cellular" == product_name ){			
+		if( "RA Cellular" == product_name ){
 			
+			var testMode = true;
 			
-			OrderScreen.showIframe();
-			
-			// add message listner
-			$window.onmessage = function(response){
+			if(!testMode){
 				
-				var data = response.data;
+				OrderScreen.showIframe();
 				
-				//add product to cart
+				// add message listner
+				$window.onmessage = function(response){
+					
+					var data = response.data;
+					
+					$scope.addRACellularLine( data );
+					
+					console.log(data);				
+					
+				};
 				
-				OrderScreen.lastSale = null;
+			}
+			else {
 				
-				var line = ShoppingCart.addLine(103, 1);
-				ShoppingCart.updatePrice(line.index, data.Value);
-				ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
-				ShoppingCart.vouchers.push(data.PrintString);
+				//voucher
+				var voucher = {
+						
+				    "MessageType": "Voucher",
+				    "PrintString": "G0AbIRAbRQEbYQFTSE9QIE5BTUUKG2EAPT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KG0UAGyEARGF0ZSA6IDIwMTctMTEtMDMgMTU6MTQ6MDYKQ2FzaGllciA6IFNlbHdpbgpIT1NUIDogREVGQVVMVFRFUk1JTkFMChshEE1UTiBSMgobITAbITAgMTc2MCAwNjYzIDEwMzkKGyEwICAgICAgNDYzOQobRQAbIQAKUHJpY2UgOiAyLjAwClNlcmlhbCA6IFNBQ00wTVIyV040SgpUbyBSZWNoYXJnZSBEaWFsIDoKKjE0MSpQSU4jIEN1c3RvbWVyIENhcmUgOiAxNzMKPT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KNjAwOTYzNzE0ODEzCiBEU1RWICYgUFJFUEFJRCBFTEVDVFJJQ0lUWQogIE5PVyBBVkFJTEFCTEUgSU4gU1RPUkUhCiAgd3d3LmJ1eXByZXBhaWQuY28uemEK",
+				    "Cost": 1.96,
+				    "CostVat": 0.24070175438596486,
+				    "HasVat": true,
+				    "Value": 2.0,
+				    "ValueVat": 0.24561403508771917,
+				    "VariableRate": false,
+				    "VoucherCode": "MTN000002",
+				    "VoucherName": "MTN R2",
+				    "Voidable": true
+				};
 				
-				line.taxAmt = parseFloat(new Number(data.ValueVat).toFixed(2));
-				line.lineAmt = parseFloat(new Number(parseFloat(data.Value) - parseFloat(data.ValueVat)).toFixed(2));
-				line.lineNetAmt = parseFloat(new Number(data.Value).toFixed(2));
-				line.costAmt = parseFloat(new Number(parseFloat(data.Cost) - parseFloat(data.CostVat)).toFixed(2));
 				
-				ShoppingCart.updateTotal();
+				$scope.addRACellularLine( voucher );
 				
-				$scope.currentLineIndex = line.index;
+				//electricity
+				var electricity = {
+						
+						"MessageType":"Voucher",
+						"PrintString":"e0MyfUNyZWRpdCBWZW5kCntDMH17QUx9e1VTfURpc3RyaWJ1dG9yICAgICAgICAgIFZBVCBOdW1iZXIKe1VSfUNpdHkgb2YgVHNod2FuZSAgICAgICAgIDQwMDAxNDIyNjcKCntVU31BZGRyZXNzCntVUn0KCkRhdGUgICAgICA6IDIwMTctMTAtMzEgMDk6MDk6MTgKUmVjcHQgTm8gIDogMTYyNTMvNDQ4NzgxNzYKQ2xpZW50IElEIDogMTAwMDAwMDAwMDAzMApUZXJtIElEICAgOiBEVjAwMDIKCntVU31NZXRlciBObyAgICAgIFRvayBUZWNoICAgICBBbGcKe1VSfTE0MjI1NTk4NjQ5ICAgICAgICAgICAgICAgICAgIAp7VVN9U0dDICAgICAgICAgICAgIEtSTiAgICAgICAgIFRJCntVUn0wMDAyMjUgICAgICAgICAgICAxICAgICAgICAgMDEKe0FMfQp7VVN9RGVzY2lwdGlvbgp7VVJ9e0MyfUVsZWN0cmljaXR5IENyZWRpdAp7QzB9UmNwdCAxNjI1My80NDg3ODE3Ngp7VVN9RW5lcmd5ICprV2ggICAgICAgICAgVG9rZW4gQW10CntVUn0yLjQwICAgICAgICAgICAgICAgICAgICAgIDUuMDAKe0MzfTA4MTAgIDI0NTQgIDY4NTcgCntDM30gIDI5MDggIDcyMDcgCgp7QzB9RG9tZXN0aWMgU2luZ2xlIFBoYXNlIEAxODIuOWMva1doCntBTH0KCiAgICAgd3d3LmJ1eXByZXBhaWQuY28uemEKe0MyfSAgICAgICAgVkFUIEluY2x1ZGVkIGF0IDE0JQp7QzB9e0FMfQ",
+						"Cost":4.5,
+						"CostVat":0.0,
+						"HasVat":false,
+						"Value":5.0,
+						"ValueVat":0.0,
+						"VariableRate":true,
+						"VoucherCode":"ID_CASHPOWER_TSHWANE",
+						"VoucherName":"ID_CASHPOWER_TSHWANE",
+						"Voidable":false
+					};
 				
-				console.log(data);				
+				$scope.addRACellularLine( electricity );
 				
-			};
+				
+				//DSTV
+				var dstv = {
+						
+						"MessageType":"Voucher",
+						"PrintString":"e0MyfSAgICBEU1RWIFBBWU1FTlQKe0MwfQpEYXRlICAgIDogMjAxNy0xMC0zMSAwOToxMDozOApSY3B0IE5vIDogMTcxODE2ODIKVGVybSBJRCA6IERWMDAwMgoKTmFtZSA6IEogQUNIQURJTkhBCkNlbGwgOiA3MTYwNTM1MDUKUXVvdGUgQU1UICA6IDUzLjAwCgpQYXltZW50IFR5cGUgICA6IEJPWE9GRklDRQpDdXN0b21lck51bWJlciA6IDg1NTI4MzgyCkFjY291bnQgTnVtYmVyIDogNjk3ODY0NjYKQWNjb3VudCBTdGF0dXMgOiBPcGVuCgp7QzF9U2VydmljZSBGZWU6IDAuMDAKe0MxfVRvdGFsIFBhaWQgOiA1LjAwCgp7QzF9RFNUViBQQUlEICA6IDUuMDAKe0MwfQogICBWQVQgSW5jbHVkZWQgYXQgMTQlCgpGb3IgQXNzaXRhbmNlIHZpc2l0Cnd3dy5zZWxmc2VydmljZS5kc3R2LmNvbQpvciBjYWxsCkpvYnVyZyAgICA6IDAxMSAyODkgMjIyMgpQcmV0b3JpYSAgOiAwMTIgNDIyIDIyMjIKRHVyYmFuICAgIDogMDMxIDcxMCAyMjIyCkNhcGUgVG93biA6IDAyMSA1MDggMjIyMgpQRSAgICAgICAgOiAwNDEgMzk1IDIyMjIKQmxvZW0gICAgIDogMDUxIDUwMyAyMjIyCgpGb3IgQmFsYW5jZSByZXF1ZXN0ClNNUyAnYmFsJytTbWFydCBDYXJkIE51bWJlcgpvciBJRCBOdW1iZXIgdG8gMzE0MDE",
+						"Cost":5.0,
+						"CostVat":0.6140350877192979,
+						"HasVat":true,
+						"Value":5.0,
+						"ValueVat":0.6140350877192979,
+						"VariableRate":true,
+						"VoucherCode":"DSTV_PAYMENT",
+						"VoucherName":"DSTV_PAYMENT",
+						"Voidable":false
+					};
+				
+				$scope.addRACellularLine( dstv );
+			}
 			
-			return;
-			
-			
-			
-			/*
-			var data = {
-			    "MessageType": "Voucher",
-			    "PrintString": "\u001b|N\u001b|3C\u001b|bC\u001b|cASHOP NAME\n\u001b|lA\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\u001b|N\u001b|1CDate : 2017-10-20 13:46:03\nCashier : Selwin\nHOST : TILL1\n\u001b|3CVodacom R2\n\u001b|4C\u001b|4C 1023 5080 5345\n\u001b|N\u001b|1C\nPrice : 2.00\nSerial : 15340959387\nTo Recharge Dial :\n*100*01*PIN# Customer Care : 111\nor\nSMS PIN to 100\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n600698600144\n DSTV \u0026 PREPAID ELECTRICITY\n  NOW AVAILABLE IN STORE!\n  www.buyprepaid.co.za\n",
-			    "Cost": 1.96,
-			    "CostVat":0.24070175438596486,
-			    "HasVat": true,
-			    "Value": 2.0,
-			    "ValueVat":0.24561403508771917,
-			    "VariableRate": false,
-			    "VoucherCode": "VOD000002",
-			    "VoucherName": "Vodacom R2",
-			    "Voidable": true
-			};
-			
-			
-			//add product to cart
-			
-			OrderScreen.lastSale = null;
-			
-			var line = ShoppingCart.addLine(103, 1);
-			//ShoppingCart.updatePrice(line.index, data.Value);
-			ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
-			ShoppingCart.vouchers.push(data.PrintString);
-			
-			line.taxAmt = parseFloat(new Number(data.ValueVat).toFixed(2));
-			line.lineAmt = parseFloat(new Number(parseFloat(data.Value) - parseFloat(data.ValueVat)).toFixed(2));
-			line.lineNetAmt = parseFloat(new Number(data.Value).toFixed(2));
-			line.costAmt = parseFloat(new Number(parseFloat(data.Cost) - parseFloat(data.CostVat)).toFixed(2));
-			
-			ShoppingCart.updateTotal();
-			
-			$scope.currentLineIndex = line.index;
-			
-			return;
-			
-			*/
+			return;	
 			
 		}
 		
@@ -1097,6 +1104,29 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		var line = ShoppingCart.addLine(product_id, qty);
 		$scope.currentLineIndex = line.index;
+	};
+	
+	$scope.addRACellularLine = function( data ){
+		
+		//add product to cart
+		
+		OrderScreen.lastSale = null;
+		
+		var line = ShoppingCart.addLine(103, 1);
+		//ShoppingCart.updatePrice(line.index, data.Value);
+		ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
+		ShoppingCart.vouchers.push(data.PrintString);
+		
+		line.taxAmt = parseFloat(new Number(data.ValueVat).toFixed(2));
+		line.lineAmt = parseFloat(new Number(parseFloat(data.Value) - parseFloat(data.ValueVat)).toFixed(2));
+		line.lineNetAmt = parseFloat(new Number(data.Value).toFixed(2));
+		line.costAmt = parseFloat(new Number(parseFloat(data.Cost) - parseFloat(data.CostVat)).toFixed(2));
+		line.voidable = data.Voidable;
+		
+		ShoppingCart.updateTotal();
+		
+		$scope.currentLineIndex = line.index;
+		
 	};
 	
 	$scope.addModifier = function( modifier_id ){	
@@ -1172,6 +1202,14 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		var line = ShoppingCart.getLine(index);
 		
+		if(line.product_id == 103){
+			
+			OrderScreen.shouldShowProductSelector = true;
+			OrderScreen.shouldShowLineDetails = false;
+			
+			return;
+		}
+		
 		var currentLine = angular.copy(line);
 		currentLine.selectedModifiers = [];
 		
@@ -1200,7 +1238,29 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		$scope.screen.currentLine = currentLine;
 	};
 	
-	$scope.removeLine = function(index){		
+	$scope.removeLine = function(index){
+		
+		var line = ShoppingCart.getLine(index);
+		
+		if(!line.voidable){
+			
+			ons.notification.alert({
+				
+  				title : 'Error',
+  				
+  			    'message': 'Current line is not voidable!',
+  			    
+  			    callback: function() {
+  			    	// Do something here.
+  			    }
+  			});
+			
+			OrderScreen.shouldShowProductSelector = true;
+			OrderScreen.shouldShowLineDetails = false;
+			
+			return;
+		}
+		
 		ShoppingCart.removeLine(index);
 		
 		// check view panel
@@ -3848,8 +3908,10 @@ module.controller('RACellularSettingsController', function($scope) {
 	
 });
 
-
-
+//TODO put in tal.js
+module.controller('TalFormController', function($scope){
+	
+});
 
 function transportwebcallback( response ){
 	
@@ -3868,3 +3930,15 @@ function transportwebcallback( response ){
  * <ons-page ng-device-backbutton="doSomething()"> Some page content </ons-page>
  */
 
+module.directive('selectOnFocus', function() {
+	return {
+		restrict: 'A',
+		link: function(scope, element)
+		{
+			element.on("focus", function()
+			{
+				element.select();
+			});
+		}
+	};
+});

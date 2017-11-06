@@ -104,10 +104,12 @@
 	             <input type="radio" name="navi-segment-a" ng-model="currentLine.selection" value="general" checked>
 	             <button class="button-bar__button">General</button>
 	           </div>
+	           <!-- 
 	           <div class="button-bar__item">
 	             <input type="radio" name="navi-segment-a" ng-model="currentLine.selection" value="modifier">
 	             <button class="button-bar__button">Modifiers</button>
 	           </div>
+	            -->
 	         </div>
 			
 			</div>
@@ -127,7 +129,9 @@
 					</ons-col>
 					
 					<ons-col width="100px">
+						 <!-- 
 						 <strong>Tax</strong>&nbsp;<ons-switch ng-model="enableTax"></ons-switch>
+						  -->
 					</ons-col>
 					
 				</ons-row>
@@ -150,7 +154,10 @@
 					</ons-col>
 					
 					<ons-col width="100px">
-						<strong>{{currentLine.qty}}</strong>
+						<div class="form-default" style="margin: 0px;">
+							<input type="number" ng-model="currentLine.qty" selectOnFocus="true" style="width:70px;">
+							<!-- <strong>{{currentLine.qty}}</strong>  -->
+						</div>
 					</ons-col>
 					
 					<ons-col width="100px">
