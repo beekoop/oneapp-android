@@ -119,6 +119,14 @@ function initializeCayan(){
 	}
 	
 	/* END CAYAN GIFT CARD */
+	
+	/* RA Cellular */
+	APP.RA_CELLULAR_PRODUCT_ID = 0;
+	var results = APP.PRODUCT.search({name:'RA Cellular'});
+	if( results.length > 0 ){
+		var product = results[0];
+		APP.RA_CELLULAR_PRODUCT_ID = product['product_id'];
+	}
 }
 
 function initializeBuffer(){
@@ -1011,9 +1019,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		/* Start RACellular integration */
 		
-		var product_name = product['name'];
-		
-		if( "RA Cellular" == product_name ){
+		if( APP.RA_CELLULAR_PRODUCT_ID == product_id ){
 			
 			var testMode = true;
 			
@@ -1112,7 +1118,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		OrderScreen.lastSale = null;
 		
-		var line = ShoppingCart.addLine(103, 1);
+		var line = ShoppingCart.addLine(APP.RA_CELLULAR_PRODUCT_ID, 1);
 		//ShoppingCart.updatePrice(line.index, data.Value);
 		ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
 		ShoppingCart.vouchers.push(data.PrintString);
@@ -1202,7 +1208,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		var line = ShoppingCart.getLine(index);
 		
-		if(line.product_id == 103){
+		if(line.product_id == APP.RA_CELLULAR_PRODUCT_ID){
 			
 			OrderScreen.shouldShowProductSelector = true;
 			OrderScreen.shouldShowLineDetails = false;
@@ -3064,7 +3070,7 @@ module.controller('TillController', function($scope, APP) {
 			{
 				orderline = orderlines[j];
 				
-				if(orderline.product_id == 103){
+				if(orderline.product_id == APP.RA_CELLULAR_PRODUCT_ID){
 					
 					if(vouchers['' + orderline.name]){
 						
