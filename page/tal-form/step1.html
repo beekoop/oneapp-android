@@ -1,0 +1,465 @@
+<html>
+<head>
+	<link rel="stylesheet" href="../../css/bootstrap/bootstrap.css" />
+	<link rel="stylesheet" href="../../css/foodtruck.css" />
+</head>
+<body>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Policy Details</legend>
+	<div class="form-group col-md-12">
+		<!-- provide 20 character spaces -->
+		<label>Policy no:</label>
+		<input type="number" step="any" ng-model="policyNumber" name="policyNumber" class="form-control" placeholder="Policy no" />
+	</div>	
+
+	<div class="form-row">
+		<div class="form-group col-md-3">
+			<label>Method of Payment</label>
+			<select name="methodOfPayment" ng-model="methodOfPayment" class="form-control" ng-init="methodOfPayment=''">
+				<option value=""></option>
+				<option value="cash">Cash</option>
+				<option value="bankstoporder">Bank Stop Order</option>
+				<option value="grant">Grant</option>
+				<option value="persal">Persal</option>
+				<option value="bankdebitorder">Bank Debit Order</option>
+			</select>
+		</div>
+		<div class="form-group col-md-9">
+	   		<label for="">Basic Plan</label>
+	   		<input type="text" class="form-control" name="basicPlan" ng-model="basicPlan" placeholder="Basic Plan" />
+	   </div>
+	</div>
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Main Member Personal Details</legend>
+	<div class="form-row">
+		<div class="form-group col-md-3">
+		   	<label for="">Title</label>
+		    <select name="title" ng-model="title" class="form-control" placeholder="Title">
+				<option value="mr.">Mr.</option>
+				<option value="mrs.">Mrs.</option>
+				<option value="miss.">Miss.</option>
+				<option value="dr.">Dr.</option>
+				<option value="prof.">Prof.</option>
+				<option value="ms.">Ms.</option>
+			</select>
+	   </div>
+	   <div class="form-group col-md-9">
+	   	<label for="">ID Number</label>
+	   	<input type="text" class="form-control" name="id" ng-model="id" placeholder="ID" />
+	   </div>
+	</div>
+	<div class="form-group col-md-12">
+	  <label>Name</label>
+	  <input type="text" class="form-control" name="name" ng-model="name" placeholder="Name"/>
+	</div>
+	<div class="form-group col-md-12">
+	  <label>Surname</label>
+	  <input type="text" class="form-control" name="surname" ng-model="surname" placeholder="Surname" />
+	</div>
+	
+	<div class="form-group col-md-3">
+		<label for="">Marital Status</label>
+	    <select name="maritalStatus" ng-model="maritalStatus" class="form-control" placeholder="Marital Status">
+			<option value="single">Single</option>
+			<option value="married">Married</option>
+			<option value="divorced">Divorced</option>
+			<option value="widowed">Widowed</option>
+		</select>
+   </div>
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Spouse Personal Details</legend>
+	<div class="form-row">
+		<div class="form-group col-md-3">
+	   	<label for="">Title</label>
+	    <select name="title" ng-model="title" class="form-control" placeholder="Title">
+			<option value="mr.">Mr.</option>
+			<option value="mrs.">Mrs.</option>
+			<option value="miss.">Miss.</option>
+			<option value="dr.">Dr.</option>
+			<option value="prof.">Prof.</option>
+			<option value="ms.">Ms.</option>
+		</select>
+	   </div>
+	   <div class="form-group col-md-9">
+	   	<label for="">ID Number</label>
+	   	<input type="text" class="form-control" name="id" ng-model="id" placeholder="ID" />
+	   </div>
+	</div>
+	<div class="form-group col-md-12">
+	  <label>Name</label>
+	  <input type="text" class="form-control" name="name" ng-model="name" placeholder="Name" />
+	</div>
+	<div class="form-group col-md-12">
+	  <label>Surname</label>
+	  <input type="text" class="form-control" name="surname" ng-model="surname" placeholder="Surname" />
+	</div>
+	<div class="form-group col-md-3">
+		<label for="">Marital Status</label>
+	    <select name="maritalStatus" ng-model="maritalStatus" class="form-control" placeholder="Marital Status">
+			<option value="single">Single</option>
+			<option value="married">Married</option>
+			<option value="divorced">Divorced</option>
+			<option value="widowed">Widowed</option>
+		</select>
+   </div>
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Contact Details</legend>
+	<div class="form-row">
+		<div class="form-group col-md-4">
+			<!-- provide 20 character spaces -->
+			<label>H:</label>
+			<input type="number" step="any" ng-model="homeNumber" name="homeNumber" class="form-control" placeholder="Home" />
+		</div>
+		<div class="form-group col-md-4">
+			<!-- provide 20 character spaces -->
+			<label>W:</label>
+			<input type="number" step="any" ng-model="workNumber" name="homeNumber" class="form-control" placeholder="Work" />
+		</div>
+		<div class="form-group col-md-4">
+			<!-- provide 20 character spaces -->
+			<label>Cell:</label>
+			<input type="number" step="any" ng-model="cellNumber" name="homeNumber" class="form-control" placeholder="Cell" />
+		</div>	
+	</div>
+	
+	<div class="form-row">
+		<div class="form-group col-md-9">
+	   		<label for="">Postal Address</label>
+	    	<input type="text" class="form-control" name="postalAddress" ng-model="postalAddress" placeholder="Postal Address" />
+	   </div>
+	   <div class="form-group col-md-3">
+	   		<label for="">Code</label>
+	   		<input type="text" class="form-control" name="code" ng-model="code" placeholder="Code">
+	   </div>
+	</div>
+	
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Cover for Children</legend>
+	<div class="form-group col-md-12">
+		<!-- provide 20 character spaces -->
+		<label>First name and Initials</label>
+		<input type="text" ng-model="firstNameAndInitials" name="firstNameAndInitials" class="form-control" placeholder="First Name and Initials" />
+	</div>	
+	<div class="form-group col-md-12">
+		<!-- provide 20 character spaces -->
+		<label>Surname</label>
+		<input type="text" ng-model="surname" name="surname" class="form-control" placeholder="Surname" />
+	</div>
+	<div class="form-row">
+		<div class="form-group col-md-4">
+	   		<label for="">ID/Date of Birth</label>
+	    	<input type="text" class="form-control" name="idDateOfBirth" ng-model="idDateOfBirth" placeholder="ID/Date of Birth" />
+	   </div>
+	   <div class="form-group col-md-4">
+	   		<label for="">Age</label>
+	   		<input type="number" class="form-control" name="age" ng-model="age" placeholder="age">
+	   </div>
+	   <div class="form-group col-md-4">
+			<label for="">Sex</label>
+		    <select name="sex" name="sex" ng-model="sex" class="form-control" placeholder="Sex">
+				<option value="male">Male</option>
+				<option value="female">Female</option>
+			</select>
+	   </div>
+	</div>	
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Cover for Parents-in-law</legend>
+	<div class="form-group col-md-12">
+		<!-- provide 20 character spaces -->
+		<label>First name and Initials</label>
+		<input type="text" ng-model="firstNameAndInitials" name="firstNameAndInitials" class="form-control" placeholder="First Name and Initials" />
+	</div>	
+	<div class="form-group col-md-12">
+		<!-- provide 20 character spaces -->
+		<label>Surname</label>
+		<input type="text" ng-model="surname" name="surname" class="form-control" placeholder="Surname" />
+	</div>
+	<div class="form-row">
+		<div class="form-group col-md-3">
+	   		<label for="">ID/Date of Birth</label>
+	    	<input type="text" class="form-control" name="idDateOfBirth" ng-model="idDateOfBirth" placeholder="ID/Date of Birth" />
+	   </div>
+	   <div class="form-group col-md-2">
+	   		<label for="">Age</label>
+	   		<input type="number" class="form-control" name="age" ng-model="age" placeholder="age" />
+	   </div>
+	   <div class="form-group col-md-2">
+			<label for="">Relationship</label>
+		    <select name="relationship" ng-model="relationship" class="form-control" placeholder="Relationship">
+				<option value="fatherinlaw">Father-in-Law</option>
+				<option value="motherinlaw">Mother-in-Law</option>
+				<option value="uncle">Uncle</option>
+				<option value="aunt">Aunt</option>
+				<option value="nephew">Nephew</option>
+				<option value="niece">Niece</option>
+			</select>
+	   </div>
+	   <div class="form-group col-md-2">
+			<label for="">Cover</label>
+		    <select name="cover" ng-model="cover" class="form-control" placeholder="Cover">
+				<option value="r1000">R1000</option>
+				<option value="r2000">R2000</option>
+				<option value="r3000">R3000</option>
+				<option value="r4000">R4000</option>
+				<option value="r5000">R5000</option>
+			</select>
+	   </div>
+	   <div class="form-group col-md-3">
+	   		<label for="">Premium</label>
+	   		<input type="number" class="form-control" name="premium" ng-model="premium" placeholder="premium" />
+	   </div>
+	</div>	
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Cover for Extended family</legend>
+	<div class="form-group col-md-4">
+		<!-- provide 20 character spaces -->
+		<label>Total Premium</label>
+		<input type="number" ng-model="totalPremiumForExtendedFamily" name="totalPremiumForExtendedFamily" class="form-control" placeholder="Total Premium For Extended Family" />
+	</div>	
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Total Premium</legend>
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Employee Details</legend>
+	<div class="form-group col-md-4">
+		<label>Government employees/Persal/Perso number</label>
+		<input type="number" ng-model="employeeNumber" name="employeeNumber" class="form-control" placeholder="Employee Number" />
+	</div>
+	<div class="form-group col-md-12">
+		<label>Employee Name</label>
+		<input type="text" ng-model="employeeName" name="employeeName" class="form-control" placeholder="Employee Name" />
+	</div>
+	<div class="form-group col-md-2">
+		<label for="">Salary date</label>
+	    <select name="salaryDate" ng-model="salaryDate" class="form-control" placeholder="Salary Date">
+			<option value="1">1</option>
+			<option value="7">7</option>
+			<option value="15">15</option>
+			<option value="21">21</option>
+			<option value="31">31</option>
+		</select>
+   </div>
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Banking Details</legend>
+	<div class="form-row">
+		<div class="form-group col-md-3">
+			<label for="">Bank</label>
+		    <select name="bank" ng-model="bank" class="form-control" placeholder="Bank">
+				<option value="capitec">Capitec</option>
+				<option value="absa">ABSA</option>
+				<option value="fnb">FNB</option>
+				<option value="standard bank">Standard Bank</option>
+				<option value="nedbank">Nedbank</option>
+				<option value="first rand">First Rand</option>
+				<option value="african bank">African Bank</option>
+				<option value="investec">Investec</option>
+				<option value="ubank limited">Ubank Limited</option>
+				<option value="bidvest bank">Bidvest Bank</option>
+				<option value="mercantile bank">Mercantile Bank</option>
+				<option value="sasfin bank">Sasfin Bank</option>
+				<option value="development bank of southern africa">Development Bank of Southern Africa</option>
+				<option value="wesbank">Wesbank</option>
+				<option value="nbs">NBS</option>
+			</select>
+	   </div>
+	   <div class="form-group col-md-6">
+			<label>Branch</label>
+			<input type="text" ng-model="branch" name="branch" class="form-control" placeholder="Branch" />
+		</div>
+		<div class="form-group col-md-3">
+			<label>Branch Code</label>
+			<input type="text" ng-model="branchCode" name="branchCode" class="form-control" placeholder="Branch Code" />
+		</div>
+   </div>
+   <div class="form-row">
+	   <div class="form-group col-md-6">
+			<label>Account Number</label>
+			<input type="text" ng-model="accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" />
+		</div>
+		<div class="form-group col-md-3">
+			<label for="">Account type</label>
+		    <select name="accountType" ng-model="accountType" class="form-control" placeholder="Account Type">
+				<option value="cheque">Cheque</option>
+				<option value="savings">Savings</option>
+			</select>
+	   </div>
+	   <div class="form-group col-md-3">
+			<label for="">First Debit Date</label>
+		    <select name="firstDebitDate" ng-model="firstDebitDate" class="form-control" placeholder="First Debit Date">
+				<option value="1">1</option>
+				<option value="7">7</option>
+				<option value="15">15</option>
+				<option value="21">21</option>
+				<option value="31">31</option>
+			</select>
+	   </div>	   
+	   <div class="form-group col-md-12">
+			<label>Account Holder</label>
+			<input type="text" ng-model="accountHolder" name="accountHolder" ng-maxlength="" class="form-control" placeholder="Account Holder" required>
+		</div>
+		
+   </div>
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Premium Payer Details</legend>
+	<div class="form-group col-md-12">
+		<label>Signature of Main Member</label>
+		<input type="text" ng-model="mainMemberSignature" name="mainMemberSignature" class="form-control" placeholder="" />
+	</div>
+	 <div class="form-row">
+		<div class="form-group col-md-6">
+			<label>Signature of Premium Payer</label>
+			<input type="text" ng-model="premiumPayerSignature" name="premiumPayerSignature" class="form-control" placeholder="" />
+		</div>
+		<div class="form-group col-md-3">
+			<label for="">Relationship to Main Member</label>
+		    <select name="relationshipToMainMember" ng-model="relationshipToMainMember" class="form-control" placeholder="Relationship to Main Member">
+				<option value="spouse">Spouse</option>
+				<option value="partner">Partner</option>
+				<option value="child">Child</option>
+				<option value="extended family member">Extended Family member</option>
+				<option value="other">Other</option>
+			</select>
+	   </div>
+   </div>
+   <div class="form-group col-md-12" ng-show="relationshipToMainMember =='other'">
+		<label>Other</label>
+		<input type="text" ng-model="otherRelationship" name="otherRelationship" class="form-control" placeholder="Other" />
+	</div>
+	<div class="form-group col-md-12">
+		<label>Name of premium payer</label>
+		<input type="text" ng-model="premiumPayerName" name="premiumPayerName" class="form-control" placeholder="Name of premium payer" />
+	</div>
+	<div class="form-group col-md-12">
+		<label>ID / passport number of premium payer</label>
+		<input type="text" ng-model="idPassportNumber" name="idPassportNumber" class="form-control" placeholder="ID / passport number of premium payer" />
+	</div>
+	<div class="form-row">
+		<div class="form-group col-md-3">
+			<label>Signed at</label>
+			<input type="text" ng-model="signedAt" name="signedAt" class="form-control" placeholder="Signed at" />
+		</div>
+		<div class="form-group col-md-3">
+			<label>On this</label>
+			<input type="text" ng-model="onThis" name="onThis" class="form-control" placeholder="On this" />
+		</div>
+		<div class="form-group col-md-3">
+			<label>day of</label>
+			<select name="dayOf" ng-model="dayOf" class="form-control" placeholder="day of">
+				<option value="january">January</option>
+				<option value="february">February</option>
+				<option value="march">March</option>
+				<option value="april">April</option>
+				<option value="may">May</option>
+				<option value="june">June</option>
+				<option value="july">July</option>
+				<option value="august">August</option>
+				<option value="september">September</option>
+				<option value="october">October</option>
+				<option value="november">November</option>
+				<option value="december">December</option>
+			</select>
+		</div>
+		<div class="form-group col-md-3">
+			<label>Year</label>
+			<select name="year" ng-model="year" class="form-control" placeholder="Year">
+				<option value="2017">2017</option>
+				<option value="2018">2018</option>
+				<option value="2019">2019</option>
+			</select>
+		</div>
+	</div>
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<legend class="scheduler-border">Beneficiary Details</legend>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label>Rep. Name</label>
+			<input type="text" ng-model="repName" name="repName" class="form-control" placeholder="Rep Name" />
+		</div>
+		<div class="form-group col-md-6">
+			<label>Rep. Signature</label>
+			<input type="text" ng-model="repSignature" name="repSignature" class="form-control" placeholder="Rep Signature" />
+		</div>
+   </div>
+   <div class="form-row">
+		<div class="form-group col-md-6">
+			<label>Beneficiary name</label>
+			<input type="text" ng-model="beneficiaryName" name="beneficiaryName" class="form-control" placeholder="Beneficiary Name" />
+		</div>
+		<div class="form-group col-md-6">
+			<label>Surname</label>
+			<input type="text" ng-model="surname" name="surname" class="form-control" placeholder="Surname" />
+		</div>
+   </div>
+    <div class="form-row">
+		<div class="form-group col-md-6">
+			<label>Relationship</label>
+			<input type="text" ng-model="relationship" name="relationship" class="form-control" placeholder="Relationship" />
+		</div>
+		<div class="form-group col-md-6">
+			<label>ID</label>
+			<input type="text" ng-model="id" name="id" class="form-control" placeholder="ID" />
+		</div>
+   </div>
+</fieldset>
+
+<fieldset class="scheduler-border">
+	<div class="container">
+		<div class="form-group col-md-12">
+			<p class="text-justify">FSB Licence No.21200 (We are a Financial Services Provider)</p>
+		</div>
+		<div class="form-group col-md-12">
+			<p class="text-justify">Kindly note that our representatives are rendering a service under supervision</p>
+		</div>
+	</div>
+</fieldset>
+
+<!-- <div class="form-group">
+	<label>Country</label>
+	<select name="country" ng-model="country" class="form-control">
+		<option value="sa">South Africa</option>
+		<option value="mauritius">Mauritius</option>
+	</select>
+</div>
+
+<div class="form-group" ng-show="country == 'sa'">
+	origin South Africa
+	<select name="southAfricaId" ng-model="southAfricaId" class="form-control">
+		<option value="id">S.A. I.D</option>
+		<option value="passport">S.A Passport</option>
+	</select>
+</div>
+
+<div class="form-group" ng-show="country != 'sa'">
+	origin other than South Africa
+	<select name="noneSouthAfricaId" ng-model="noneSouthAfricaId" class="form-control">
+		<option value="passport">Passport</option>
+		<option value="workpermit">Work Permit</option>
+		<option value="id">S.A. I.D</option>
+	</select>
+</div> -->
+
+</body>
+
+</html>
