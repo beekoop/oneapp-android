@@ -1128,13 +1128,15 @@ APP.UTILS.ORDER = {
 			documentNo = padding + documentNo;
 			*/
 			
-			var number = localStorage.getItem('DOCUMENT_NO') || -1;
+			var number = localStorage.getItem('DOCUMENT_NO') || '-1';
 			var prefix = localStorage.getItem('DOCUMENT_NO_PREFIX') || '';
+			
+			number = parseInt(number);
 			
 			if(number < 0){
 				
 				var terminal = APP.TERMINAL.getById( APP.TERMINAL_KEY );
-				number = terminal['sequence'];
+				number = terminal['sequence'] || "0";
 				prefix = terminal['prefix'];	
 				
 				localStorage.setItem('DOCUMENT_NO_PREFIX', prefix);
