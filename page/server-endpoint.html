@@ -10,7 +10,7 @@
 
 	<div class="input-group">
 		<label>Server Endpoint URL</label>
-		<input type="url" placeholder="Server Endpoint URL" value="http://192.168.0.92:8080/openapp-backoffice" name="endpoint" ng-model="endpoint" required="required">
+		<input type="url" placeholder="Server Endpoint URL" value="" name="endpoint" ng-model="endpoint" required="required" ng-enter="form.$valid ? continue() : void(0)" autofocus>
 	  	<div ng-show="form.$submitted || form.endpoint.$touched" class="error">
 	    	<span ng-show="form.endpoint.$error.required">Enter a URL</span>
 	    	<span ng-show="form.endpoint.$error.url">Please enter a valid URL.</span>

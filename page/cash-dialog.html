@@ -11,7 +11,7 @@
     
     <div class="input-group">
 		<label>Enter amount tendered</label>
-		<input type="number" step="any" ng-model="cash_dialog_amount" name="cash_dialog_amount" id="cash_dialog_amount" required>
+		<input type="number" step="any" ng-model="cash_dialog_amount" name="cash_dialog_amount" id="cash_dialog_amount" ng-enter="form.$valid ? cash_dialog_validate() : void(0)" required>
 		<div ng-show="cash_dialog_error" class="error">
 		   {{cash_dialog_error_message}}
 		</div>

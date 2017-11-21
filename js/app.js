@@ -5,7 +5,7 @@ APP.DOCUMENT_NO = 0;
 APP.TEMP_DOCUMENT_NO = 0;
 
 APP.loadSettings = function(){
-	this.SERVER_ENDPOINT_URL = localStorage.getItem('SERVER_ENDPOINT_URL') || "https://my.posterita.com/oneapp" ;
+	this.SERVER_ENDPOINT_URL = localStorage.getItem('SERVER_ENDPOINT_URL') || "http://test.posterita.com/oneapp" ;
 	this.ACCOUNT_KEY = localStorage.getItem('ACCOUNT_KEY');
 	
 	this.TERMINAL_KEY = localStorage.getItem('TERMINAL_KEY');

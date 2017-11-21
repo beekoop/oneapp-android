@@ -10,7 +10,7 @@
 	   
 	   <div class="input-group">
 		<label>Enter amount</label>
-		<input type="number" step="any" ng-model="adjust_price_dialog_amount" name="adjust_price_dialog_amount" id="adjust_price_dialog_amount" required>
+		<input type="number" step="any" ng-model="adjust_price_dialog_amount" name="adjust_price_dialog_amount" id="adjust_price_dialog_amount" ng-enter="form.$valid ? adjustPrice( adjust_price_dialog_amount ) : void(0)" required>
 		<div ng-show="cash_dialog_error" class="error">
 		   {{cash_dialog_error_message}}
 		</div>

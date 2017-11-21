@@ -30,7 +30,7 @@
 	
 	<div class="input-group">
 		<label>Reason *</label>
-		<textarea ng-model="reason" name="reason" required rows="5" placeholder="Enter a reason"></textarea>
+		<textarea ng-model="reason" name="reason" required rows="5" placeholder="Enter a reason" ng-enter="form.$valid ? adjustTill(action, amount, reason) : void(0)"></textarea>
 	</div>
 	
 	<div class="input-group">

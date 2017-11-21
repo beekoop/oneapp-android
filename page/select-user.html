@@ -13,7 +13,7 @@
 
 	<div class="input-group">
 		<label>Select a User</label>
-		<select ng-model="user_id" id="user_id" class="select-large">
+		<select ng-model="user_id" id="user_id" class="select-large" autofocus >
 			<option ng-repeat="user in userList" value="{{user.user_id}}">
 				{{user.username}}
 			</option>
@@ -22,7 +22,7 @@
 	
 	<div class="input-group">
 		<label>Enter PIN</label>
-		<input type="password" class="text-input-large" placeholder="PIN" value="" name="pin" ng-model="pin" required="required" id="pin">
+		<input type="password" class="text-input-large" placeholder="PIN" value="" name="pin" ng-model="pin" required="required" id="pin" ng-enter="form.$valid ? logIn() : void(0)">
 	</div>
 	
 	<div class="input-group">

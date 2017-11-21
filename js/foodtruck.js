@@ -549,6 +549,9 @@ module.controller('ServerEndpointController', function($scope) {
 			if(timeout && timeout == true){
 				// connection timeout
 				
+				var activeElement = document.activeElement;
+				activeElement.blur();
+				
 				ons.notification.alert({
 		  			  message: error,
 		  			  title: 'Error',
@@ -558,11 +561,16 @@ module.controller('ServerEndpointController', function($scope) {
 		  			  callback: function() {
 		  			    // Alert button is closed!
 		  			    // $('#email').focus();
+		  				  
+		  				activeElement.focus();
 		  			  }
 			  	});
 			}
 			else
 			{
+				var activeElement = document.activeElement;
+				activeElement.blur();
+				
 				ons.notification.alert({
 	  			  message: "Server endpoint entered is not a valid endpoint!",
 	  			  title: 'Error',
@@ -572,6 +580,8 @@ module.controller('ServerEndpointController', function($scope) {
 	  			  callback: function() {
 	  			    // Alert button is closed!
 	  			    // $('#email').focus();
+	  				  
+	  				activeElement.focus();
 	  			  }
 		  		});
 			}			
@@ -613,6 +623,9 @@ module.controller('SignInController', function($scope) {
 			
 			modal.hide();
 			
+			var activeElement = document.activeElement;
+			activeElement.blur();
+			
 			ons.notification.alert({
 	  			  message: error,
 	  			  // or messageHTML: '<div>Message in HTML</div>',
@@ -622,7 +635,7 @@ module.controller('SignInController', function($scope) {
 	  			  // modifier: 'optional-modifier'
 	  			  callback: function() {
 	  			    // Alert button is closed!
-	  			    $('#email').focus();
+	  			    activeElement.focus();
 	  			  }
 	  			});			
 			
@@ -743,6 +756,9 @@ module.controller('UserController', function($scope) {
 		
 		if(user == null){
 			
+			var activeElement = document.activeElement;
+			activeElement.blur();
+			
 			ons.notification.alert({
 	  			  message: 'User not found!',
 	  			  // or messageHTML: '<div>Message in HTML</div>',
@@ -762,6 +778,9 @@ module.controller('UserController', function($scope) {
 		{
 			if( user['pin'] != pin ){
 				
+				var activeElement = document.activeElement;
+				activeElement.blur();
+				
 				ons.notification.alert({
 		  			  message: 'Invalid PIN!',
 		  			  // or messageHTML: '<div>Message in HTML</div>',
@@ -771,7 +790,7 @@ module.controller('UserController', function($scope) {
 		  			  // modifier: 'optional-modifier'
 		  			  callback: function() {
 		  			    // Alert button is closed!
-		  			    $('#pin').focus();
+		  				activeElement.focus();
 		  			  }
 		  			});
 				
@@ -963,6 +982,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
    	menu.setSwipeable(true);
    	
    	// last sales info
+   	OrderScreen.reset();
    	OrderScreen.lastSale = null;
 	
 	var productList = APP.PRODUCT.getAll();
@@ -1308,7 +1328,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			});
 			
 			/* START - CAYAN GIFT CARD */
-			$scope.processGiftCard( order );
+			//$scope.processGiftCard( order );
 			/* END - CAYAN GIFT CARD */
 			
 			
@@ -1345,7 +1365,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			});	
 			
 			/* START - CAYAN GIFT CARD */
-			$scope.processGiftCard( order );
+			//$scope.processGiftCard( order );
 			/* END - CAYAN GIFT CARD */
 			
 			/*
@@ -1357,11 +1377,11 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			
 		}).fail(function(msg){
 			
-			modal.hide();	
+			console.error(msg);	
 			
 		}).always(function(msg){
 			
-				
+			modal.hide();	
 			
 		});	
 		
@@ -3947,4 +3967,24 @@ module.directive('selectOnFocus', function() {
 			});
 		}
 	};
+});
+
+
+//Directive
+module.directive('ngEnter', function () {
+	
+    return function(scope, element, attrs) {
+    	
+        element.bind('keydown keypress', function(event) {
+        	
+            if (event.which === 13) {
+            	
+                scope.$apply(function() {
+                	scope.$eval(attrs.ngEnter || attrs.ngClick, {$event:event});
+                });
+                
+                event.preventDefault();
+            }
+        });
+    };
 });
