@@ -3935,38 +3935,7 @@ module.controller('RACellularSettingsController', function($scope) {
 });
 
 //TODO put in tal.js
-module.controller('TalFormController', function($scope){	
-	
-	ons.createDialog('page/signature-capture-dialog.html', {parentScope: $scope}).then(function(dialog) {
-		
-      	$scope.signature_capture_dialog = dialog;
-      	
-      	var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
-  		  backgroundColor: 'rgba(255, 255, 255, 0)',
-  		  penColor: 'rgb(0, 0, 0)'
-	  	});
-	  	
-	  	$scope.signaturePad = signaturePad;
-	  	
-	  	$scope.clearSignature = function(){
-	  		
-	  		$scope.signaturePad.clear();
-	  		
-	  	};
-      
-    });
-	
-	$scope.showSignatureDialog = function(){
-		
-		$scope.signature_capture_dialog.show({
-			
-			animation:'slide', 
-			callback : function(){
-				//
-			} 
-		});
-		
-	};
+module.controller('TalFormController', function($scope){
 	
 });
 
