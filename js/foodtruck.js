@@ -334,7 +334,7 @@ function initializeGooglePlaceSearch($scope)
     });
 }
 
-var module = ons.bootstrap('my-app', ['onsen','ngScrollGlue','angularMoment']);
+var module = ons.bootstrap('my-app', ['onsen','ngScrollGlue','angularMoment','720kb.datepicker']);
 
 module.controller('AppController', function($scope) {
 	
@@ -3957,6 +3957,7 @@ module.controller('TalFormController', function($scope){
     });
 	
 	$scope.showSignatureDialog = function(){
+		$scope.signaturePad.clear();
 		
 		$scope.signature_capture_dialog.show({
 			
@@ -3967,6 +3968,111 @@ module.controller('TalFormController', function($scope){
 		});
 		
 	};
+	
+	var ctrl = this;
+	
+ 	ctrl.getPlanDetail = function(){
+ 		
+ 		var opt_value = ctrl.menu2;
+
+ 		if( opt_value != "" ){
+ 			var opt = document.getElementById('menu2');
+ 	 		var opt_text = opt.options[opt.selectedIndex].text;
+ 	 		
+ 	 		ctrl.opt_text = opt_text.replace(/ *\([^)]*\) */g, "");
+ 		}
+ 		else
+ 		{
+ 			ctrl.opt_text = "";
+ 		}
+ 		
+ 		
+ 	 	
+ 	 	//var planList = TalService.getPlanListObj( opt_value );
+ 	 	//console.log( planList );
+ 	 	
+ 	 	ctrl.planDetails = planDetails;
+ 	 	
+ 	 	//ctrl.planList = planList;
+ 	 	
+ 	 	//if( ctrl.planList != null){
+ 	 		//ctrl.basicPremium = ctrl.planList.Premium;
+ 	 	//}
+ 	 	
+ 	 	
+ 	 	TalService.getPlanListObj( opt_value ).done(function( response ){
+ 	 		alert( opt_value );
+ 	 		
+ 	 		var basicPremium = '';
+ 	 		
+ 	 		for (var i = 0; i < response.length; i++) {
+				if (response[i]['PlanID'] == parseInt( opt_value )) {
+					response =  response[i] ;
+					var basicPremium = response['Premium']; 
+					ctrl.basicPremium = basicPremium;
+					console.log(response);
+					console.log(ctrl.basicPremium);
+				}
+		    }
+		    return null;
+	    		  
+    	  }).fail(function( error ){
+    		  alert('error--');
+    		  
+    	  });
+ 	 	
+ 	 	var planDetails = TalService.getPlanDetail( opt_value );
+ 	 	console.log( planDetails );
+ 	 	
+ 	},
+ 	
+	TalService.getIncomeBracketType().done(function( response){
+		
+		ctrl.incomes = response;
+	});
+ 	
+ 	/*capture signature*/
+ 	/*var canvas = document.querySelector("canvas");
+ 	
+ 	if(canvas != null){
+ 		
+ 		var canvas = document.querySelector("canvas");
+		var ratio =  window.devicePixelRatio || 1;
+	    canvas.width = canvas.offsetWidth * ratio;
+	    canvas.height = canvas.offsetHeight * ratio;
+	    canvas.getContext("2d").scale(ratio, ratio);
+	    
+		var signaturePad = new SignaturePad(canvas);
+ 		
+ 		ctrl.clearSignature = function(){
+ 	 		
+ 		 	signaturePad.clear();
+ 	 	}
+ 		
+ 		ctrl.saveSignature = function(){
+ 			
+ 			if(signaturePad.isEmpty()){
+ 				
+ 				ons.notification.alert({
+ 					  message: 'Signature is blank! ',
+ 					  title: 'Error',
+ 					  buttonLabel: 'OK',
+ 					  animation: 'default', // or 'none'
+ 					  callback: function() {
+ 						  
+ 					  }
+ 					});
+ 				
+ 				return;
+        	}
+ 			
+ 			var dataURL = signaturePad.toDataURL();
+        	jQuery('#signature').val(dataURL);
+        	
+        	alert(dataURL);
+ 		}
+ 		
+ 	}*/
 	
 });
 

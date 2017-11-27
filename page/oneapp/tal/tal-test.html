@@ -1,0 +1,670 @@
+<ons-page> 
+<ons-toolbar fixed-style>
+	<div class="left">
+		<ons-toolbar-button ng-click="menu.toggle()">
+		<ons-icon icon="ion-navicon"></ons-icon>
+		</ons-toolbar-button>
+	</div>
+  	<div class="center">Capture A New Policy</div>
+</ons-toolbar>
+
+<div class="tal-form" style="margin-left: 20px;margin-right: 20px;" ng-controller="TalFormController as ctrl">
+<form name="talForm" method="get" action="" novalidate>
+		<div><h3 style="color:green;">Capture A New Policy</h3></div>
+		
+			
+			<div class="form-group" style="width:40%">
+				<label>Select Product:</label>
+				<select name="menu2" id="menu2"  ng-model="ctrl.menu2" class="form-control" ng-change="ctrl.getPlanDetail();" ng-init="ctrl.menu2=''">
+					<Option Value="">Make Selection</Option>
+									                
+		            <option value="1684" >One App - FAMILY PLAN A COVER R3000 (R35)</option>
+		            
+		            <option value="1685" >One App - FAMILY PLAN AA  (R70)</option>
+		            
+		            <option value="1686" >One App - FAMILY PLAN B COVER R10000 (R80)</option>
+		            
+		            <option value="1687" >One App - FAMILY PLAN BB COVER R10000 (R90)</option>
+		            
+		            <option value="1688" >One App - FAMILY PLAN C COVER R1500 (R100)</option>
+		            
+		            <option value="1689" >One App - FAMILY PLAN CC COVER R15000 (R110)</option>
+		            
+		            <option value="1690" >One App - FAMILY PLAN D COVER R20000 (R120)</option>
+		            
+		            <option value="1691" >One App - FAMILY PLAN DD COVER R20000 (R130)</option>
+				</select>
+			</div>
+		
+	
+		<div class="form-group" ng-show="ctrl.menu2 != ''">
+			<h5>Policy Info: {{ ctrl.opt_text }}</h5>
+		</div>
+		<div ng-hide="ctrl.menu2 == ''">
+		<div class="form-group">
+			<table id="plan-detail-table">
+				<thead>
+					  <tr>
+					  	<th>Cover</th>
+					  	<th>Description</th>
+					  	<th>Max Deps</th>
+					  	<th>Additional Premium</th>
+					  </tr>
+				  </thead>
+				  <tbody>
+					   <tr ng-repeat="planDetail in ctrl.planDetails">
+					    <td>.R {{ planDetail.ChildCover }}</td>
+					    <td>{{ planDetail.ChildDescription }}</td>
+					    <td>{{ planDetail.ChildItemLimit }}</td>
+					    <td>R {{ planDetail.ChildPremium }} per Dep</td>
+					  </tr>
+				  </tbody>
+			</table>
+		</div>
+		<div class="form-group">
+			<p>Basic Premium: <strong>R {{ ctrl.basicPremium }}</strong></p>
+		</div>
+	
+		<div class="form-group">
+			<h5>Step 1: Capture Policy / Main Member Information:</h5>
+		</div>
+	
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>ID Number *</label>
+			    <input class="form-control" name="id" ng-model="ctrl.id" placeholder="ID" style="width:80% " required/>	
+			</div>
+			<div class="form-group right-input">
+		      	<label for="">Gender</label>
+			    <select name="GenderID" ng-model="genderType" class="form-control" placeholder="Gender" style="width:30% ">
+					<option Value="3">Female</Option>
+									
+					<option Value="2">Male</Option>
+					
+					<option Value="1">Unknown</Option>
+				</select>
+			</div>
+	   </div>
+   
+	   <div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label for="">Marital Status</label>
+			    <select name="MarriedStatusID" ng-model="MarriedStatusID" class="form-control" placeholder="Marital Status" style="width:30% ">
+					<option Value="3">Divorced</Option>
+									
+					<option Value="6">Married</Option>
+					
+					<option Value="4">Other</Option>
+					
+					<option Value="2">Single</Option>
+					
+					<option Value="1">Unknown</Option>
+					
+					<option Value="5">Windowed</Option>
+				</select>								
+			</div>
+			<div class="form-group right-input">
+		      	<label for="">Has Spouse</label>
+			    <select name="HasSpouse" ng-model="HasSpouse" class="form-control" placeholder="Has Spouse" style="width:20% ">
+					<option Value="False">No</option>
+					
+					<option Value="True">Yes</option>
+				</select>								
+			</div>
+	   </div>
+	
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label for="">Number of Children</label>
+			    <select name="NoChildren" ng-model="NoChildren" class="form-control" placeholder="Number of Children" style="width:30% ">
+					
+					<option Value="0">0</option>
+					
+					<option Value="1">1</option>
+					
+					<option Value="2">2</option>
+					
+					<option Value="3">3</option>
+					
+					<option Value="4">4</option>
+					
+					<option Value="5">5</option>
+					
+					<option Value="6">6</option>
+					
+					<option Value="7">7</option>
+					
+					<option Value="8">8</option>
+					
+					<option Value="9">9</option>
+					
+					<option Value="10">10</option>
+					
+					<option Value="11">11</option>
+					
+					<option Value="12">12</option>
+					
+					<option Value="13">13</option>
+					
+					<option Value="14">14</option>
+					
+					<option Value="15">15</option>					
+				</select>								
+			</div>
+			<div class="form-group right-input">
+		      	<label for="">Number of Adult Dependents</label>
+			    <select name="NoDependents" ng-model="NoDependents" class="form-control" placeholder="Number of Adult Dependents" style="width:30% ">
+					<option Value="0">0</option>
+					
+					<option Value="1">1</option>
+					
+					<option Value="2">2</option>
+					
+					<option Value="3">3</option>
+					
+					<option Value="4">4</option>
+					
+					<option Value="5">5</option>
+					
+					<option Value="6">6</option>
+					
+					<option Value="7">7</option>
+					
+					<option Value="8">8</option>
+					
+					<option Value="9">9</option>
+					
+					<option Value="10">10</option>
+					
+					<option Value="11">11</option>
+					
+					<option Value="12">12</option>
+					
+					<option Value="13">13</option>
+					
+					<option Value="14">14</option>
+					
+					<option Value="15">15</option>
+				</select>								
+			</div>
+		</div>
+		
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>First Name *</label>
+			    <input type="text" class="form-control" name="MainFirstName" ng-model="MainFirstName" placeholder="First Name" style="width:80% " required />		
+			    <p ng-show="talForm.MainFirstName.$invalid && !talForm.MainFirstName.$pristine" class="help-block">First Name is required.</p>						
+			</div>
+			<div class="form-group right-input">
+			    <label>Last Name *</label>
+			    <input type="text" class="form-control" name="MainSurName" ng-model="MainSurName" placeholder="Last Name" style="width:80% " required />			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Work Permit Number</label>
+			    <input type="text" class="form-control" name="WorkPermitNumber" ng-model="WorkPermitNumber" placeholder="Work Permit Number" style="width:80% "/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Passport Number</label>
+			    <input type="text" class="form-control" name="PassportNumber" ng-model="PassportNumber" placeholder="Passport Number" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Tel Work</label>
+			    <input type="text" class="form-control" name="MainTelWork" ng-model="MainTelWork" placeholder="Tel Work" style="width:80% "/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Tel Home</label>
+			    <input type="text" class="form-control" name="MainTelHome" ng-model="MainTelHome" placeholder="Tel Home" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Cell Number *</label>
+			    <input class="form-control" name="MainTelCell" ng-model="MainTelCell" placeholder="Cell Number" style="width:80% " required />								
+			</div>
+			<div class="form-group right-input">
+			    <label>Email Address</label>
+			    <input type="email" class="form-control" name="MainEmailAddress" ng-model="MainEmailAddress" placeholder="Email Address" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Physical Address 1</label>
+			    <input type="text" class="form-control" name="PhysicalAddress1" ng-model="PhysicalAddress1" placeholder="Physical Address 1" style="width:80% "/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Physical Address 2</label>
+			    <input type="text" class="form-control" name="PhysicalAddress2" ng-model="PhysicalAddress2" placeholder="Physical Address 2" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Physical Address 3</label>
+			    <input type="text" class="form-control" name="PhysicalAddress3" ng-model="PhysicalAddress3" placeholder="Physical Address 3" style="width:80% "/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Physical Code</label>
+			    <input type="text" class="form-control" name="PhysicalCode" ng-model="PhysicalCode" placeholder="Physical Code" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Postal Address 1</label>
+			    <input type="text" class="form-control" name="PostalAddress1" ng-model="PostalAddress1" placeholder="Postal Address 1" style="width:80% "/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Postal Address 2</label>
+			    <input type="text" class="form-control" name="PostalAddress2" ng-model="PostalAddress2" placeholder="Postal Address 2" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Postal Address 3</label>
+			    <input type="text" class="form-control" name="PostalAddress3" ng-model="PostalAddress3" placeholder="Postal Address 3" style="width:80% "/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Postal Code</label>
+			    <input type="text" class="form-control" name="PostalCode" ng-model="PostalCode" placeholder="Postal Code" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group seperator-grey">
+		</div>
+   		
+   		<div class="form-group">
+			<h5>Step 2: Financial Information:</h5>
+		</div>
+
+		<div class="form-group">
+	      	<label for="">Any Other Funeral Cover</label>
+		    <select name="AnyOtherCover" ng-model="AnyOtherCover" class="form-control" placeholder="Any Other Funeral Cover" style="width:10% ">
+				<option Value="False">No</option>
+				
+				<option Value="True">Yes</option>
+			</select>								
+		</div>
+		
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>If 'Yes' From What Date ?</label>
+			    <!-- <input type="text" class="form-control" name="AnyOtherCoverDate" ng-model="AnyOtherCoverDate" placeholder="" style="width:50% "/> -->
+			    
+			    <datepicker date-format="yyyy-MM-dd" selector="form-control"  button-prev="<i class='fa fa-arrow-left'></i>" button-next="<i class='fa fa-arrow-right'></i>">
+				  <input class="form-control" name="AnyOtherCoverDate" ng-model="AnyOtherCoverDate" type="text" style="width:50%;" placeholder="Choose a date"/>
+				</datepicker>
+												
+			</div>
+			<div class="form-group right-input">
+			    <label>Cover Amount</label>
+			    <input type="number" class="form-control" name="AnyOtherCoverAmount" ng-model="AnyOtherCoverAmount" placeholder="Cover Amount" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Income Per Month</label>
+			    <!-- <select name="IncomePerMonthID" ng-model="IncomePerMonthID" class="form-control" placeholder="Income Per Month" style="width:30% ">
+					<option Value="1">R0 - R3000</option>
+					
+					<option Value="2">R3001 - R6000</option>
+					
+					<option Value="3">> R6000</option>
+				</select> -->							
+				
+				<select ng-model="genderType">
+		           <option ng-repeat="income in incomes" value="{{gender.key}}">{{gender.value}}</option>
+		        </select>
+				
+			</div>
+			<div class="form-group right-input">
+			    <label>Expenditure Per Month</label>
+			    <input type="text" class="form-control" name="ExpenditurePerMonth" ng-model="ExpenditurePerMonth" placeholder="Expenditure Per Month" style="width:80% "/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	      	<label for="">Payment Method</label>
+		    <select name="PaymentType" ng-model="PaymentType" class="form-control" placeholder="Payment Method" style="width:15% ">
+				<option Value="7">Bank Deposit</option>
+				
+				<option Value="3">Cash</option>
+				
+				<option Value="2">Debit Order</option>
+				
+				<option Value="4">EasyPay</option>
+				
+				<option Value="5">Flash</option>
+				
+				<option Value="9">Grindrod</option>
+				
+				<option Value="6">Other</option>
+				
+				<option Value="1">SASSA     </option>
+				
+				<option Value="8">Stop Order</option>
+			</select>								
+		</div>
+		
+		<div id="debit-bank-container" ng-show="PaymentType == 2">
+			<div class="form-group">
+			    <label>Bank</label>
+			    <select name="PayDebitBank" ng-model="PayDebitBank" class="form-control" placeholder="Bank" style="width:50% ">
+					<option Value="4">ABSA</Option>
+												
+					<option Value="7">African Bank</Option>
+					
+					<option Value="8">Albaraka Bank</Option>
+					
+					<option Value="18">Bidvest Bank</Option>
+					
+					<option Value="9">Capitec Bank</Option>
+					
+					<option Value="2">First National Bank</Option>
+					
+					<option Value="10">HSBC</Option>
+					
+					<option Value="11">Investec Bank</Option>
+					
+					<option Value="12">MTN Banking</Option>
+					
+					<option Value="5">Nedbank</Option>
+					
+					<option Value="13">Postbank</Option>
+					
+					<option Value="14">Sasfin</Option>
+					
+					<option Value="3">Standard Bank</Option>
+					
+					<option Value="15">Standard Chartered Bank</Option>
+					
+					<option Value="16">State Bank of India</Option>
+					
+					<option Value="6">Unibank</Option>
+					
+					<option Value="1">Unknown</Option>
+					
+					<option Value="17">VBS Mutual</Option>
+				</select>			
+			</div>
+			
+			<div class="form-group">
+		      	<label>Branch Code:</label>
+			    <input type="text" class="form-control" name="PayDebitBranchCode" ng-model="PayDebitBranchCode" placeholder="Branch Code" style="width:100% "/>								
+			</div>
+			
+			<div class="form-group">
+		      	<label>Acc Number:</label>
+			    <input type="text" class="form-control" name="PayDebitAccNo" ng-model="PayDebitAccNo" placeholder="Acc Number" style="width:100% "/>								
+			</div>
+			
+			<div class="form-group">
+		      	<label for="">Account Type:</label>
+			    <select name="PayDebitAccType" ng-model="PayDebitAccType" class="form-control" placeholder="Account Type" style="width:40% ">
+					<option Value="5">Current</Option>
+					
+					<option Value="3">Savings</Option>
+					
+					<option Value="4">Transmission</Option>
+				</select>								
+			</div>
+			
+			<div class="form-group">
+		      	<label for="">Debit Day:</label>
+			    <select name="PayDebitDayID" ng-model="PayDebitDayID" class="form-control" placeholder="Debit Day" style="width:40% ">
+					<option Value="1">1</Option>
+					
+					<option Value="2">2</Option>
+					
+					<option Value="3">3</Option>
+					
+					<option Value="4">4</Option>
+					
+					<option Value="5">5</Option>
+					
+					<option Value="6">6</Option>
+					
+					<option Value="7">7</Option>
+					
+					<option Value="8">8</Option>
+					
+					<option Value="9">9</Option>
+					
+					<option Value="10">10</Option>
+					
+					<option Value="11">11</Option>
+					
+					<option Value="12">12</Option>
+					
+					<option Value="13">13</Option>
+					
+					<option Value="14">14</Option>
+					
+					<option Value="15">15</Option>
+					
+					<option Value="16">16</Option>
+					
+					<option Value="17">17</Option>
+					
+					<option Value="18">18</Option>
+					
+					<option Value="19">19</Option>
+					
+					<option Value="20">20</Option>
+					
+					<option Value="21">21</Option>
+					
+					<option Value="22">22</Option>
+					
+					<option Value="23">23</Option>
+					
+					<option Value="24">24</Option>
+					
+					<option Value="25">25</Option>
+					
+					<option Value="26">26</Option>
+					
+					<option Value="27">27</Option>
+					
+					<option Value="28">28</Option>
+					
+					<option Value="29">Last Day</Option>
+				</select>								
+			</div>
+			
+			<div class="form-group">
+		      	<label for="">Payment Provider:</label>
+			    <select name="PayProviderID" ng-model="PayProviderID" class="form-control" placeholder="Payment Provider" style="width:40% ">
+					<option Value="1">Sage Pay</Option>
+					
+					<option Value="2">Stratcol</Option>
+				</select>								
+			</div>
+			
+			<div class="form-group">
+		      	<label for="">The Policy holder is a foriegn national ? Skip ID Number Check.</label>
+			    <input type="checkbox" name="IDTickBox" Value="Yes" ng-model="IDTickBox">							
+			</div>
+			
+		</div>
+		
+		<div id="easy-pay-container" ng-show="PaymentType == 4">
+			<div class="form-group">
+		      	<label for="">Easypay Option: The Policy holder is a foriegn national ? Rather generate a system based EasyPay Number.</label>
+			    <input type="checkbox" name="EasyPayTickBox" Value="Yes" ng-model="EasyPayTickBox">							
+			</div>		
+		</div>
+		
+		<div id="grindrod-contianer" ng-show="PaymentType == 9">
+			<div class="form-group">
+		      	<label>Grindrod Number:</label>
+			    <input type="text" class="form-control" name="GrindrodUSNNo" ng-model="GrindrodUSNNo" placeholder="Grindrod Number" style="width:40% "/>								
+			</div>
+		</div>
+		
+		<div class="form-group seperator-grey">
+		</div>
+   		
+   		<div class="form-group">
+			<h5>Step 3: Beneficiary Information:</h5>
+		</div>
+		
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>First Name *</label>
+			    <input type="text" class="form-control" name="BenName" ng-model="BenName" placeholder="First Name" style="width:80% " required />								
+			</div>
+			<div class="form-group right-input">
+			    <label>Last Name *</label>
+			    <input type="text" class="form-control" name="BenSurname" ng-model="BenSurname" placeholder="Last Name" style="width:80% " required />			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>ID Number *</label>
+			    <input type="text" class="form-control" name="BenID" ng-model="BenID" placeholder="ID Number" style="width:80% " required />								
+			</div>
+			<div class="form-group right-input">
+			    <label>Relationship *</label>
+			    <select name="BenRelationshipID" ng-model="BenRelationshipID" class="form-control" placeholder="Relationship" style="width:30% " required>
+					<option Value="5">Aunt</option>
+
+                    <option Value="18">Brother</option>
+
+                    <option Value="13">Child</option>
+
+                    <option Value="3">Daughter</option>
+
+                    <option Value="14">Extended</option>
+
+                    <option Value="2">Father</option>
+
+                    <option Value="9">Friend</option>
+
+                    <option Value="8">Grand Father</option>
+
+                    <option Value="7">Grand Mother</option>
+
+                    <option Value="12">Husband</option>
+
+                    <option Value="1">Mother</option>
+
+                    <option Value="15">None</option>
+
+                    <option Value="10">Other</option>
+
+                    <option Value="20">Secondary Spouse</option>
+
+                    <option Value="19">Sister</option>
+
+                    <option Value="4">Son</option>
+
+                    <option Value="11">Spouse</option>
+
+                    <option Value="6">Uncle</option>
+
+                    <option Value="17">Unknown</option>
+				</select>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group seperator-grey">
+		</div>
+		
+		<div class="form-group">
+			<h5>Step 4: Advice Record:</h5>
+		</div>
+		
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Monthly Contribution Available *</label>
+			    <input type="number" class="form-control" name="MonthlyContributionAvailable" ng-model="MonthlyContributionAvailable" placeholder="Monthly Contribution Available" style="width:80% " required />								
+			</div>
+			<div class="form-group right-input">
+			    <label>Cover Required *</label>
+			    <input type="text" class="form-control" name="TypeOfCoverRequired" ng-model="TypeOfCoverRequired" placeholder="Cover Required" style="width:80% " required/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	      	<label for="">Needs And Objectives *</label>
+		    <select name="NeedAndObjectiveID" ng-model="NeedAndObjectiveID" class="form-control" placeholder="Needs And Objectives" style="width:25% " required>
+	           <option Value="3">Need cover for my extended dependents</option>
+	
+	           <option Value="2">Need cover for my immediate dependents</option>
+	
+	           <option Value="1">Need cover for myself</option>
+	
+	           <option Value="4">Other</option>
+			</select>								
+		</div>
+		
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>If Other Please Specify *</label>
+			    <input type="text" class="form-control" name="NeedAndObjectiveOther" ng-model="NeedAndObjectiveOther" placeholder="If Other Please Specify" style="width:80% " required/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Reason For Recommendation *</label>
+			    <input type="text" class="form-control" name="ReasonForRecommendation" ng-model="ReasonForRecommendation" placeholder="Reason For Recommendation" style="width:80% " required/>			
+			</div>
+   		</div>
+   		
+   		<div class="form-group">
+	    	<div class="form-group">
+		      	<label>Risk Profile *</label>
+			    <input type="text" class="form-control" name="RiskProfile" ng-model="RiskProfile" placeholder="Risk Profile" style="width:40% " required/>								
+			</div>
+   		</div>
+   		
+   		<div class="form-group seperator-grey">
+		</div>
+		
+   		<div class="form-group">
+	      	<label>Have you cancelled any policies in the last four months or will you be cancelling an existing policy as a result of this sale ? *</label>
+		    <select name="CancelledOtherPolicies" ng-model="CancelledOtherPolicies" class="form-control" placeholder="" style="width:10% " required>
+				<option value="False">No</option>
+				
+				<option value="True">Yes</option>				
+			</select>								
+		</div>
+		
+		<div class="form-group">
+	      	<label>Do you elect to follow the advice provided by Praveen Beekoo, and confirm that you have been duly advised of the full implications of your actions and, having considered same, I fully understand the course of action that I am about to take. I declare that I am aware of the fact that I must carefully consider whether the product selected is appropriate considering my objectives, circumstances and needs. The advisor gave me the relevant product disclosure in which comprehensive disclosures are made including the benefits of the contributions payable. *</label>
+		    <select name="ElectToFollowAdvice" ng-model="ElectToFollowAdvice" class="form-control" placeholder="" style="width:10% " required>
+				<option value="False">No</option>
+				
+				<option value="True">Yes</option>				
+			</select>								
+		</div>
+		
+		<div class="form-group">
+	      	<label>* Indicates Mandatory Field</label>
+		</div>
+		
+		<div class="form-group">
+	      	<button ng-click="showSignatureDialog()" type="button">Capture Signature</button>
+		</div>
+		
+		 
+		
+		<div class="form-group">
+	      	<button class="button button--large" type="button" ng-disabled="talForm.$invalid">Capture Policy</button>								
+		</div>
+		
+		</div>
+</form>
+</div>
+
+
+</ons-page> 

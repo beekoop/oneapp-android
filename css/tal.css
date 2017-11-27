@@ -1,0 +1,156 @@
+
+/**tal form css*/
+
+/* .tal-form input{
+    border: none;
+    border-bottom: 2px solid #000;
+    background: none;
+    width: 100%;
+} */
+
+/* .tal-form label{
+	float: left;
+} */
+
+.tal-form fieldset.scheduler-border {
+    border: 1px groove #ddd !important;
+    padding: 1.4em 1.4em 1.4em 1.4em !important;
+    margin: 0 4px 1.5em 4px !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+.tal-form legend.scheduler-border {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    width:auto;
+    padding:0 10px;
+    border-bottom:none;
+}
+
+
+.tal-form .col-md-12, .tal-form .col-md-9, .tal-form .col-md-4, .tal-form .col-md-3 {
+    float: left;
+}
+
+.tal-form .col-md-9 { width:75%}
+.tal-form .col-md-12 {width:100%}
+.tal-form .col-md-4 {width:33.333333%}
+.tal-form .col-md-3 {width:25%}
+
+.tal-form .form-control{}
+.tal-form .form-group{}
+
+.tal-form .form-control {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 30px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.tal-form .form-group {
+  margin-bottom: 15px;
+}
+
+.tal-form .left-input {
+	width: 50%;
+	float: left;
+}
+
+.tal-form .right-input {
+	width: 50%;
+	display: table;
+}
+
+.tal-form .seperator-grey{
+	border-top : 1px solid #d0d0d0;
+	width: 100%;
+}
+
+.tal-form label{
+	font-size : 15px;	
+}
+
+.tal-form #debit-bank-container{
+	width: 40%;
+	border: 1px solid #d0d0d0;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.tal-form #plan-detail-table{
+	width: 100%;
+	text-align: left;	
+}
+
+.tal-form #plan-detail-table, #plan-detail-table td{
+  border-collapse: collapse;
+  padding: 5px;
+}
+.tal-form #plan-detail-table tbody tr:nth-child(even) {
+  background: #f1f1f1 none repeat scroll 0 0;
+}
+.tal-form #plan-detail-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.tal-form #plan-detail-table thead tr{
+	background: #f5f5f5 none repeat scroll 0 0;
+}
+
+.tal-form #plan-detail-table{
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	margin: 0 0 18px;
+}
+
+.tal-form #plan-detail-table th{
+	padding: 8px 10px 7px	
+}
+
+.tal-form #plan-detail-table
+{
+    counter-reset: rowNumber;
+}
+
+.tal-form #plan-detail-table tr > td:first-child
+{
+    counter-increment: rowNumber;
+}
+                
+.tal-form #plan-detail-table tr td:first-child::before
+{
+    content: counter(rowNumber);
+    min-width: 1em;
+    margin-right: 0.5em;
+}
+.tal-form .help-block{
+	color: #a94442;	
+}
+
+._720kb-datepicker-calendar._720kb-datepicker-open {
+	width: 50%;
+}
+
+.tal-form ._720kb-datepicker-calendar-day._720kb-datepicker-today {
+  background:red;
+  color:white;
+}
+
+.tal-form ._720kb-datepicker-calendar-day:hover, .tal-form ._720kb-datepicker-calendar-day._720kb-datepicker-active{
+	background: #d0d0d0;
+}
