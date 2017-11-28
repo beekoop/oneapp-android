@@ -1,208 +1,125 @@
 /* Tal Service */
+var service_key = '4527472882761054349344862033393789429982';
 
 var TalService = {
 		
+		isConfigured : false,
+		
+		/*
+		 * This endpoint retrieves all the bank account types accepted by TAPS.
+		 */
 		getAccountType : function(){
-			
-			var service_key = '4527472882761054349344862033393789429982';
 			
 			var account_type_url = 'http://api.transafricaadmin.co.za/?method=accounttype';
 			
-			var accountTypes = [
-				  {
-				    "AccountID": 5,
-				    "AccountLabel": "Current"
-				  },
-				  {
-				    "AccountID": 3,
-				    "AccountLabel": "Savings"
-				  }
-				];
-			
-			/*$.ajax({
-				  url: account_type_url,
-				  type: 'GET',
-				  dataType: 'json',
-				  success: function( resp ) {
-					  
-				    console.log( resp );
-				  },
-				  error: function( req, status, err ) {
-					  
-				    console.log( 'error', status, err );
-				  }
-				});*/
-			
-			
-			/*var dfd = new jQuery.Deferred();
+			var dfd = new jQuery.Deferred();	        	        
 	        
-	        $.getJSON( bank_account_url ).done(function( response ){
-	            dfd.resolve( response );
-	            
-	            console.log( response );
-	            
-	        }).fail(function( jqxhr, textStatus, error ) {
-	        	
-	        	var err = textStatus + ", " + error;
-	        	
-	            dfd.reject( err );
-	            
-	            console.log( err );
-	        });         
-	        
-	        return dfd.promise();*/
+	        $.ajax({
+	            method: 'GET',
+	            url: account_type_url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();			
 			
-			/*$.getJSON( bank_account_url + '&callback=?', function(data) {
-			 console.log( data );
-			});*/
-			
-			return accountTypes;
 		},
 		
+		/*
+		 * This endpoint retrieves all the Bank Names currently accepted by TAPS.
+		 */
 		getBank : function(){
 			
 			var bank_url = 'http://api.transafricaadmin.co.za/?method=bank';
 			
-			var banks =[ 
-					{
-					  "BankID": 4,
-					  "BankLabel": "ABSA"
-					}
-					];
-			
-			return banks;
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: bank_url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();	
 			
 		},
 		
+		/*
+		 * This endpoint retrieves the payment types available in TAPS.
+		 */
+		getPaymentType : function(){
+			
+			var payment_type_url = 'http://api.transafricaadmin.co.za/?method=paymenttype';
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: payment_type_url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();	
+			
+		},
+		
+		/*
+		 * This endpoint retrieves a breakdown of a specific plan, along with dependent types, limits and any additional premiums. 
+		 * PlanID is drived from one of the plans available when retrieving method 'planlist'.
+		 */
 		getPlanDetail : function( planId ){
 			
-			var plan_detail_url = 'http://api.transafricaadmin.co.za/?method=plandetail&servicekey=1234567890098765432112345678900987654321&planid=1111';
+			var plan_detail_url = 'http://api.transafricaadmin.co.za/?method=plandetail&servicekey='+service_key+'&planid='+planId;
 			
-			var plan_id = planId;
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: plan_detail_url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
 			
-			if( plan_id == '1684'){
-				
-				var plan_detail = [
-					{
-					"ChildCover":1250,
-					"ChildDescription":"CHILDREN",
-					"ChildItemLimit":1,
-					"MinAge":0,
-					"MaxAge":21,
-					"ChildPremium":0
-					},
-					{
-						"ChildCover":3000,
-						"ChildDescription":"MAIN MEMBER",
-						"ChildItemLimit":1,
-						"MinAge":18,
-						"MaxAge":74,
-						"ChildPremium":0
-						}
-					];
-			}
-			
-			if( plan_id == '1685'){
-				
-				var plan_detail = [
-					{
-					"ChildCover":1250,
-					"ChildDescription":"CHILDREN",
-					"ChildItemLimit":1,
-					"MinAge":0,
-					"MaxAge":21,
-					"ChildPremium":0
-					},
-					{
-						"ChildCover":3000,
-						"ChildDescription":"MAIN MEMBER",
-						"ChildItemLimit":1,
-						"MinAge":18,
-						"MaxAge":74,
-						"ChildPremium":0
-						},
-						{
-							"ChildCover":3000,
-							"ChildDescription":"MAIN MEMBER",
-							"ChildItemLimit":1,
-							"MinAge":18,
-							"MaxAge":74,
-							"ChildPremium":0
-							},
-							{
-								"ChildCover":3000,
-								"ChildDescription":"MAIN MEMBER",
-								"ChildItemLimit":1,
-								"MinAge":18,
-								"MaxAge":74,
-								"ChildPremium":0
-								},
-								{
-									"ChildCover":3000,
-									"ChildDescription":"MAIN MEMBER",
-									"ChildItemLimit":1,
-									"MinAge":18,
-									"MaxAge":74,
-									"ChildPremium":0
-									}
-							
-					
-					];
-			}
-			
-			return plan_detail;
 		},
 		
-		getPlanListObj : function( planId ){
+		/*
+		 * This endpoint retrieves all the 3rd parties products / plans available in TAPS.
+		 */
+		getPlanList : function( planId ){
 			
-			var plan_list_url = "http://api.transafricaadmin.co.za/?method=planlist&servicekey=4527472882761054349344862033393789429982";
-			
-			/*var plan_list = [
-				{
-					"PlanID":1684,
-					"PlanName":"FAMILY PLAN A COVER R3000",
-					"Premium":35
-					},
-					{
-						"PlanID":1685,
-						"PlanName":"FAMILY PLAN AA ",
-						"Premium":70
-						},
-						{
-							"PlanID":1686,
-							"PlanName":"FAMILY PLAN B COVER R10000",
-							"Premium":80},{"PlanID":1687,
-							"PlanName":"FAMILY PLAN BB COVER R10000","Premium":90
-							},
-							{
-								"PlanID":1688,"PlanName":"FAMILY PLAN C COVER R1500",
-								"Premium":100
-								},
-								{
-									"PlanID":1689,
-									"PlanName":"FAMILY PLAN CC COVER R15000",
-									"Premium":110
-									},
-									{
-										"PlanID":1690,
-										"PlanName":"FAMILY PLAN D COVER R20000",
-										"Premium":120
-										},
-										{
-											"PlanID":1691,
-											"PlanName":"FAMILY PLAN DD COVER R20000",
-											"Premium":130
-											}
-										];*/
-			
-			
-			
-			/*for (var i = 0; i < plan_list.length; i++) {
-		        if (plan_list[i]['PlanID'] === parseInt( planId )) {
-		        	return plan_list[i];
-		        }
-		    }
-		    return null;*/
+			var plan_list_url = "http://api.transafricaadmin.co.za/?method=planlist&servicekey="+service_key;
 			
 			var dfd = new jQuery.Deferred();	        	        
 	        
@@ -223,15 +140,18 @@ var TalService = {
 	        return dfd.promise(); 
 		},
 		
+		/*
+		 * This endpoint retrieves all the income bracket types available in TAPS.
+		 */
 		getIncomeBracketType : function(){
 			
-			var incomeBracketType_url = 'http://api.transafricaadmin.co.za/?method=incomebrackettype';
+			var income_bracket_type_url = 'http://api.transafricaadmin.co.za/?method=incomebrackettype';
 			
 			var dfd = new jQuery.Deferred();	        	        
 	        
 	        $.ajax({
 	            method: 'GET',
-	            url: incomeBracketType_url,
+	            url: income_bracket_type_url,
 	            dataType: 'json',
 	            success: function( response ){
 	            	
@@ -245,7 +165,108 @@ var TalService = {
 	                
 	        return dfd.promise();
 			
+		},
+		
+		/*
+		 * This endpoint retrieves the different dependent and beneficiary relationship types available in TAPS.
+		 */
+		getRelationshipTypeId : function(){
+			
+			var relationship_type_id_url = 'http://api.transafricaadmin.co.za/?method=relationshiptypeid';
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: relationship_type_id_url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
+			
+		},
+		
+		/*
+		 * This endpoint retrieves the payment days available to set a debit order going off day, in other words the day of the month the debit order should fall on..
+		 */
+		getPayDebitDayId : function(){
+			
+			var pay_debit_day_id_url = 'http://api.transafricaadmin.co.za/?method=paydebitdayid';
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: pay_debit_day_id_url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
+		},
+		
+		/*
+		 * This endpoint retrieves all the needs and objective types available in TAPS.
+		 */
+		getNeedsAndObjectives : function(){
+			
+			var needs_and_objectives_url = 'http://api.transafricaadmin.co.za/?method=needsandobjectives';
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: needs_and_objectives_url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
+			
+		},
+		
+		validateIdNumber : function( id ){
+			
+			var validate_id_number_url = 'http://api.transafricaadmin.co.za/?method=validateidnumber&servicekey='+service_key+'&idnumber='+id;
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: validate_id_number_url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
 		}
-		
-		
 }

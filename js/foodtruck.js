@@ -4242,7 +4242,7 @@ module.controller('RACellularSettingsController', function($scope) {
 });
 
 //TODO put in tal.js
-module.controller('TalFormController', function($scope){	
+module.controller('TalFormController', function($scope, $timeout){	
 	
 	ons.createDialog('page/signature-capture-dialog.html', {parentScope: $scope}).then(function(dialog) {
 		
@@ -4278,65 +4278,166 @@ module.controller('TalFormController', function($scope){
 	
 	var ctrl = this;
 	
- 	ctrl.getPlanDetail = function(){
+	/*
+	 * This endpoint retrieves a breakdown of a specific plan, along with dependent types, limits and any additional premiums. 
+	 * PlanID is drived from one of the plans available when retrieving method 'planlist'.
+	 */
+ 	ctrl.getPlan = function(){
  		
  		var opt_value = ctrl.menu2;
 
  		if( opt_value != "" ){
  			var opt = document.getElementById('menu2');
- 	 		var opt_text = opt.options[opt.selectedIndex].text;
+ 	 		var policy_info = opt.options[opt.selectedIndex].text;
  	 		
- 	 		ctrl.opt_text = opt_text.replace(/ *\([^)]*\) */g, "");
+ 	 		ctrl.policy_info = policy_info.replace(/ *\([^)]*\) */g, "");
  		}
  		else
  		{
- 			ctrl.opt_text = "";
+ 			ctrl.policy_info = "";
  		}
  		
- 		
- 	 	
- 	 	//var planList = TalService.getPlanListObj( opt_value );
- 	 	//console.log( planList );
- 	 	
- 	 	ctrl.planDetails = planDetails;
- 	 	
- 	 	//ctrl.planList = planList;
- 	 	
- 	 	//if( ctrl.planList != null){
- 	 		//ctrl.basicPremium = ctrl.planList.Premium;
- 	 	//}
- 	 	
- 	 	
- 	 	TalService.getPlanListObj( opt_value ).done(function( response ){
- 	 		alert( opt_value );
+ 	 	TalService.getPlanDetail( opt_value ).done(function( json ){
  	 		
- 	 		var basicPremium = '';
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.planDetails = json;
+ 	 		}); 			
  	 		
- 	 		for (var i = 0; i < response.length; i++) {
-				if (response[i]['PlanID'] == parseInt( opt_value )) {
-					response =  response[i] ;
-					var basicPremium = response['Premium']; 
-					ctrl.basicPremium = basicPremium;
-					console.log(response);
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+ 	 	
+ 	 	TalService.getPlanList( opt_value ).done(function( json ){
+ 	 		
+ 	 		for (var i = 0; i < json.length; i++) {
+				if (json[i]['PlanID'] == parseInt( opt_value )) {
+					
+					json =  json[i] ;
+					var basicPremium = json['Premium']; 
+					
+					$scope.$apply(function(){
+		 	 			
+						ctrl.basicPremium = basicPremium;
+		 	 		});
+					
+					console.log(json);
 					console.log(ctrl.basicPremium);
 				}
 		    }
 		    return null;
 	    		  
     	  }).fail(function( error ){
-    		  alert('error--');
     		  
-    	  });
- 	 	
- 	 	var planDetails = TalService.getPlanDetail( opt_value );
- 	 	console.log( planDetails );
- 	 	
- 	},
+    		  dfd.reject( { 'ErrorMessage' : error } );   		  
+    	  }); 	 	
+ 	}, 	
  	
-	TalService.getIncomeBracketType().done(function( response){
+ 	/*
+	 * This endpoint retrieves all the bank account types accepted by TAPS.
+	 */
+ 	TalService.getAccountType().done(function( json ){
 		
-		ctrl.incomes = response;
+		ctrl.accountTypes = json;
+		
+	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
 	});
+ 	
+ 	/*
+	 * This endpoint retrieves all the Bank Names currently accepted by TAPS.
+	 */ 	
+ 	TalService.getBank().done(function( json ){
+		
+		ctrl.banks = json;
+		
+	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
+	});
+ 	
+ 	/*
+	 * This endpoint retrieves the payment types available in TAPS.
+	 */ 	
+ 	TalService.getPaymentType().done(function( json ){
+		
+		ctrl.paymentTypes = json;
+		
+	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
+	});
+ 	
+ 	/*
+	 * This endpoint retrieves all the income bracket types available in TAPS.
+	 */
+	TalService.getIncomeBracketType().done(function( json ){
+		
+		ctrl.incomes = json;
+		
+	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
+	});
+ 	
+	/*
+	 * This endpoint retrieves the different dependent and beneficiary relationship types available in TAPS.
+	 */
+ 	TalService.getRelationshipTypeId().done(function( json ){
+ 		
+ 		ctrl.relationships = json;
+ 		
+ 	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
+	});
+ 	
+ 	/*
+	 * This endpoint retrieves the payment days available to set a debit order going off day, in other words the day of the month the debit order should fall on..
+	 */
+ 	TalService.getPayDebitDayId().done(function( json ){
+ 		
+ 		ctrl.debitDays = json;
+ 		
+ 	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
+	});
+ 	
+ 	/*
+	 * This endpoint retrieves all the needs and objective types available in TAPS.
+	 */
+ 	TalService.getNeedsAndObjectives().done(function( json ){
+ 		
+ 		ctrl.needsAndObjectives = json;
+ 		
+ 	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
+	});
+ 	
+ 	ctrl.validateIdNumber = function(){
+ 		
+ 		var id = ctrl.id;
+ 		
+ 		TalService.validateIdNumber( id ).done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.status = json['IDNumber'];
+ 	 		});
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+ 		
+ 	}
+ 	
+ 	ctrl.coverAmount = ctrl.coverAmount || 0;
+ 	
  	
  	/*capture signature*/
  	/*var canvas = document.querySelector("canvas");
@@ -4418,7 +4519,6 @@ function transportwebcallback( response ){
 	console.log( response );
 	
 }
-
 
 /*
  * 
