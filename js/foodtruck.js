@@ -3963,7 +3963,9 @@ module.controller('TodayOrdersController', function($scope, ShoppingCart, OrderS
 	var today = moment().startOf('day').valueOf();	
 	
 	$scope.loadOrders = function(){
-		var orders  = APP.ORDER.search({status : ['CO','VO'], dateordered : {'>' : today}});
+		
+		//var orders  = APP.ORDER.search({status : ['CO','VO'], dateordered : {'>' : today}});
+		var orders  = APP.ORDER.search({status : ['CO','VO']});
 		
 		// use moment js
 		for(var i=0; i<orders.length; i++){
