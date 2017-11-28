@@ -954,7 +954,7 @@ module.service('OrderScreen', function() {
 		raCellularSettings.isAdmin = "1";
 		raCellularSettings.tillName = terminal['name'];
 		
-		document.getElementById("iframe-form").action = raCellularSettings['url'];
+		document.getElementById("iframe-form").action = raCellularSettings['url'] + "/LoginServlet";
 		document.getElementById("racellular-client-type").value = raCellularSettings['clientType'];
 		document.getElementById("racellular-username").value = raCellularSettings['username'];
 		document.getElementById("racellular-password").value = raCellularSettings['password'];
@@ -971,7 +971,7 @@ module.service('OrderScreen', function() {
 });
 
 // sales
-module.controller('OrderScreenController', function($scope, $timeout, $window, ShoppingCart, OrderScreen, Payments) {
+module.controller('OrderScreenController', function($scope, $timeout, $window, $http, $q, ShoppingCart, OrderScreen, Payments) {
 	
 	var terminal = APP.TERMINAL.getById(APP.TERMINAL_KEY);
 	var store = APP.STORE.getById(terminal.store_id);
@@ -1041,7 +1041,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		if( APP.RA_CELLULAR_PRODUCT_ID == product_id ){
 			
-			var testMode = true;
+			var testMode = false;
 			
 			if(!testMode){
 				
@@ -1051,10 +1051,15 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 				$window.onmessage = function(response){
 					
 					var data = response.data;
-					
-					$scope.addRACellularLine( data );
-					
-					console.log(data);				
+					data = JSON.parse( data );
+															
+					$scope.$apply(function(){
+			    		
+						$scope.addRACellularLine( data );
+						
+						console.log(data);
+			    		
+			    	});
 					
 				};
 				
@@ -1074,12 +1079,14 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 				    "VariableRate": false,
 				    "VoucherCode": "MTN000002",
 				    "VoucherName": "MTN R2",
-				    "Voidable": true
+				    "Voidable": true,
+				    "PinNumber" : '963417486692'
 				};
 				
 				
 				$scope.addRACellularLine( voucher );
 				
+								
 				//electricity
 				var electricity = {
 						
@@ -1148,6 +1155,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		line.lineNetAmt = parseFloat(new Number(data.Value).toFixed(2));
 		line.costAmt = parseFloat(new Number(parseFloat(data.Cost) - parseFloat(data.CostVat)).toFixed(2));
 		line.voidable = data.Voidable;
+		line.pinNumber = data.PinNumber || '';
 		
 		ShoppingCart.updateTotal();
 		
@@ -1170,7 +1178,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 	};
 	
 	
-	$scope.clearCart = function(){
+	$scope.clearCart = function(){	
 		
 		if( ShoppingCart.getLines().length == 0 ) return;
 		
@@ -1187,6 +1195,89 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		    // 0-: Button index from the left
 		    if(index == 0){
 		    	
+		    	// validate lines
+		    	var lines = ShoppingCart.getLines();
+				
+				if( lines.length == 0 ) return;
+				
+				var line = null;
+				
+				for(var i=0; i<lines.length; i++){
+					
+					line = lines[i];
+					
+					if( line.hasOwnProperty('voidable') && line.voidable == false ){
+						
+						ons.notification.alert({
+							
+			  				title : 'Error',
+			  				
+			  			    'message': 'Cannot clear cart. Line - ' + line.product['name'] + ' not voidable.',
+			  			    
+			  			    callback: function() {
+			  			    	// Do something here.
+			  			    }
+			  			});
+						
+						return;				
+					}
+				}
+				
+				//remove voucher lines one by one
+				var vouchers = [];
+				
+				for( var i=0; i<lines.length; i++ ){
+					
+					line = lines[i];
+					
+					if( line.hasOwnProperty('pinNumber')){
+						
+						vouchers.push({'index': line.index, 'pinNumber': line.pinNumber});						
+					}
+					
+				}
+				
+				var promises = [];
+				
+				if( vouchers.length > 0 ){
+					
+					for( var i=0; i<vouchers.length; i++ ){
+						
+						line = vouchers[i];
+						
+						promises.push( $scope.voidRACellularLine( line ) );
+						
+					}
+					
+					$q.all( promises ).then( function( values ){
+						
+						if( values.length == promises.length ){
+							
+							$scope.reset();
+							
+							return;
+						}
+						
+						
+					}, function( values ){
+						
+						ons.notification.alert({
+							
+			  				title : 'Error',
+			  				
+			  			    'message': 'Failed to clear cart. Unable to remove all RACellular vouchers.',
+			  			    
+			  			    callback: function() {
+			  			    	// Do something here.
+			  			    }
+			  			});
+						
+					} );
+					
+					return;
+				}
+		    	
+				// reset cart
 		    	$scope.$apply(function(){
 		    		
 		    		$scope.reset();
@@ -1197,7 +1288,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		  }
 		});		
 		
-	};
+	};//clearCart
 	
 	$scope.screen = OrderScreen;	
 	
@@ -1268,23 +1359,136 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 		
 		var line = ShoppingCart.getLine(index);
 		
-		if(!line.voidable){
+		if( APP.RA_CELLULAR_PRODUCT_ID == line.product_id && line.hasOwnProperty('voidable') ){
 			
-			ons.notification.alert({
+			if( line.voidable == false ){
 				
-  				title : 'Error',
-  				
-  			    'message': 'Current line is not voidable!',
-  			    
-  			    callback: function() {
-  			    	// Do something here.
-  			    }
-  			});
+				ons.notification.alert({
+					
+	  				title : 'Error',
+	  				
+	  			    'message': 'Current line is not voidable!',
+	  			    
+	  			    callback: function() {
+	  			    	// Do something here.
+	  			    }
+	  			});
+				
+				OrderScreen.shouldShowProductSelector = true;
+				OrderScreen.shouldShowLineDetails = false;
+				
+				return;
+				
+			}
+			else
+			{
+				modal.show();
+				
+				$scope.voidRACellularLine( line ).then( function( index ){
+					
+					modal.hide();
+					
+					ShoppingCart.removeLine( index );
+					
+					// check view panel
+					if(index == $scope.currentLineIndex){
+						
+						OrderScreen.shouldShowProductSelector = true;
+						OrderScreen.shouldShowLineDetails = false;
+						$scope.enableTax = true;
+						
+					}
+					
+				}, function( msg ){
+					
+					modal.hide();
+					
+					ons.notification.alert({
+						
+		  				title : 'Error',
+		  				
+		  			    'message': 'Failed to remove line. ' + msg,
+		  			    
+		  			    callback: function() {
+		  			    	// Do something here.
+		  			    }
+		  			});
+					
+				});
+				
+				return;
+				
+				/*
+				// call racellular service
+				var url = "http://192.168.0.30:8080/DesertView/VoidServlet";				
+				
+				var data = '{"ClientType" : "POSTERITA","Username" : "Selwin","Password" : "123456","OperatorName" : "Fred","isOperatorAdmin" : true,"TillName" : "BackOffice","PinNumber" : "963417486692"}';			
+				
+				
+				var req = {
+						 'method' : 'POST',
+						 'url' : url,
+						 'headers' : {
+						   'Content-Type' : 'application/json'
+						 },
+						 'data' : data
+						}
+				
+				
+				$http( req ).then( 
+						
+						function ( response ){
+							
+							modal.hide();
+							
+							var status = response.status;
+							var statusText = response.statusText;
+							
+							if( status == 200 ){
+								
+								ShoppingCart.removeLine(index);
+								
+								// check view panel
+								if(index == $scope.currentLineIndex){
+									
+									OrderScreen.shouldShowProductSelector = true;
+									OrderScreen.shouldShowLineDetails = false;
+									$scope.enableTax = true;
+									
+								}
+								
+							}
+							
+						}, 
+						
+						function ( response ){
+							
+							modal.hide();
+							
+							var status = response.status;
+							var statusText = response.statusText;
+							
+							ons.notification.alert({
+								
+				  				title : 'Error',
+				  				
+				  			    'message': 'Failed to remove line. ' + statusText,
+				  			    
+				  			    callback: function() {
+				  			    	// Do something here.
+				  			    }
+				  			});
+							
+						} 
+						
+				);
+				
+				return;
+				*/
+				
+			}
 			
-			OrderScreen.shouldShowProductSelector = true;
-			OrderScreen.shouldShowLineDetails = false;
 			
-			return;
 		}
 		
 		ShoppingCart.removeLine(index);
@@ -1297,6 +1501,107 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, S
 			$scope.enableTax = true;
 			
 		}
+	};
+	
+	$scope.voidRACellularLine = function( line ){
+		
+
+		var deferred = $q.defer();
+		
+		/*
+		if(line.index % 2 == 0){
+			
+			console.log("Voided => " + line.index);
+			ShoppingCart.removeLine( line.index );
+			deferred.resolve( line.index );				
+		}
+		else
+		{
+			deferred.reject( 'Failed to void => ' + line.index );
+		}		
+		
+		return deferred.promise;
+		*/
+		
+		// RA Cellular
+		var raCellularSettings = localStorage.getItem("RA_CELLULAR_SETTINGS") || {};
+		var raCellularSettings = JSON.parse( raCellularSettings );
+		
+		var terminal = APP.TERMINAL.getById(APP.TERMINAL_KEY);
+		var user = APP.USER.getById(APP.USER_KEY);
+		
+		raCellularSettings.operator = user['username'];
+		raCellularSettings.isAdmin = "1";
+		raCellularSettings.tillName = terminal['name'];
+		
+		document.getElementById("iframe-form").action = raCellularSettings['url'] + "/LoginServlet";
+		document.getElementById("racellular-client-type").value = raCellularSettings['clientType'];
+		document.getElementById("racellular-username").value = raCellularSettings['username'];
+		document.getElementById("racellular-password").value = raCellularSettings['password'];
+		document.getElementById("racellular-operator-name").value = raCellularSettings['operator'];
+		document.getElementById("racellular-is-operator-admin").value = raCellularSettings['isAdmin'];
+		document.getElementById("racellular-till-name").value = raCellularSettings['tillName'];
+		document.getElementById("racellular-printer-width").value = raCellularSettings['printerWidth'];
+		
+		
+		// call racellular service
+		var url = raCellularSettings['url'] + "/VoidServlet";				
+		
+		var data = {
+				"ClientType" : raCellularSettings['clientType'],
+				"Username" : raCellularSettings['username'],
+				"Password" : raCellularSettings['password'],
+				"OperatorName" : raCellularSettings['operator'],
+				"isOperatorAdmin" : true,
+				"TillName" : raCellularSettings['tillName'],
+				"PinNumber" : "963417486692"};	
+		
+		data.PinNumber = line.pinNumber;
+		
+		data = JSON.stringify( data );
+		
+		var req = {
+				 'method' : 'POST',
+				 'url' : url,
+				 'headers' : {
+				   'Content-Type' : 'application/json'
+				 },
+				 'data' : data
+				}
+		
+		
+		$http( req ).then( 
+				
+				function ( response ){					
+					
+					var status = response.status;
+					var statusText = response.statusText;
+					
+					if( status == 200 ){
+						
+						ShoppingCart.removeLine( line.index );
+						deferred.resolve( line.index );						
+					}
+					else
+					{
+						deferred.reject( statusText );
+					}
+					
+				}, 
+				
+				function ( response ){
+					
+					var status = response.status;
+					var statusText = response.statusText;
+					
+					deferred.reject( statusText );
+					
+				} 
+				
+		);
+		
+		return deferred.promise;	
+		
 	};
 	
 	$scope.fastCheckout = function(){	
@@ -4073,6 +4378,36 @@ module.controller('TalFormController', function($scope){
  		}
  		
  	}*/
+	
+});
+
+module.controller('TalSettingsController', function($scope){
+	
+var settings = localStorage.getItem("TAL_SETTINGS") || '{}'; 
+	
+	settings = JSON.parse(settings);
+	
+	settings.serviceKey = settings.serviceKey || "4527472882761054349344862033393789429982";
+	
+	$scope.settings = settings; 
+	
+	$scope.save = function(){
+		
+		//todo validations
+		
+		localStorage.setItem("TAL_SETTINGS", JSON.stringify($scope.settings));
+		
+		ons.notification.alert({
+		  message: 'TAL settings successfully saved.',
+		  title: 'Information',
+		  callback: function() {
+		    // Alert button is closed!
+			// menu.setMainPage('page/order-screen.html', {closeMenu:
+			// true});
+		  }
+		});
+		
+	}
 	
 });
 
