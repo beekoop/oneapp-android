@@ -28,23 +28,39 @@
 	        		</div>
 	        	</ons-col>       		
        		</ons-row>
+       		       		
+       </ons-list-item>
+       
+       <ons-list-header>Signature</ons-list-header>
+       
+       <ons-list-item>
+       <ons-row>
+	       		
+       		<ons-row>
+       			<ons-col>
+       				<p>
+       				This signature will be used when compiling clients policy documents, no policies can be captured until your signature has been added to the system.
+       				</p>
+       			</ons-col>
+       		</ons-row>
        		
        		<ons-row>
-	       		<ons-col width="150px">
-	       			<label>Signature:</label>
-	       		</ons-col>
-	       		<ons-col>
-	        		<div>
-	        			** Signature **
-	        		</div>
-	        	</ons-col>       		
+       			<ons-col>
+       				<button type="button" class="button" ng-click="showSignatureDialog()">Capture Signature</button>
+       			</ons-col>
+       		</ons-row>
+       		
+       		<ons-row>
+       			<ons-col>
+       				<img id="signature-image">
+       			</ons-col>
        		</ons-row>
        		
        </ons-list-item>
 	
         
     <div style="margin: 20px 8px 0px;">
-      <button class="button button--large" type="submit">Save</button>
+      <button class="button button--large" type="button" ng-click="save()">Save</button>
     </div>
     
     </form>

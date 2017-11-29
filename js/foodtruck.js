@@ -4260,6 +4260,44 @@ module.controller('TalFormController', function($scope, $timeout){
 	  		$scope.signaturePad.clear();
 	  		
 	  	};
+	  	
+	  	$scope.saveSignature = function(){
+	  		
+	  		if( signaturePad.isEmpty() ) return;
+	  		
+	  		var dataURL = signaturePad.toDataURL(); //image/png
+	  		
+	  		// convert base64 to raw binary data held in a string
+	  	    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+	  	    var byteString = atob(dataURL.split(',')[1]);
+	  	    // separate out the mime component
+	  	    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+	  	    // write the bytes of the string to an ArrayBuffer
+	  	    var ab = new ArrayBuffer(byteString.length);
+	  	    var dw = new DataView(ab);
+	  	    for(var i = 0; i < byteString.length; i++) {
+	  	        dw.setUint8(i, byteString.charCodeAt(i));
+	  	    }
+	  	    // write the ArrayBuffer to a blob, and you're done
+	  	    var blob = new Blob([ab], {type: mimeString});
+	  	    
+	  	    var fd = new FormData();
+	  	    fd.append("file1", blob, "signature.png");
+	  	    
+	  	    //fd.append('method','uploadpolicyholdersig');
+	  	    //fd.append('polid',123);
+	  	    //fd.append('servicekey','4527472882761054349344862033393789429982');
+	  	    
+	  	    
+	  	    var xhr = new XMLHttpRequest();
+	  	    xhr.open('POST', 'http://api.transafricaadmin.co.za/?method=uploadpolicyholdersig&ServiceKey=4527472882761054349344862033393789429982&PolID=123', true);
+	  	    xhr.onload = function(){
+	  	    	alert('upload complete');
+	  	    };
+	  	    
+	  	    xhr.send(fd);
+	  	    
+	  	};
       
     });
 	
@@ -4491,6 +4529,10 @@ var settings = localStorage.getItem("TAL_SETTINGS") || '{}';
 	settings = JSON.parse(settings);
 	
 	settings.serviceKey = settings.serviceKey || "4527472882761054349344862033393789429982";
+	settings.signature = settings.signature || "";
+	
+	var image = document.getElementById('signature-image');
+	image.src = settings.signature;
 	
 	$scope.settings = settings; 
 	
@@ -4511,6 +4553,58 @@ var settings = localStorage.getItem("TAL_SETTINGS") || '{}';
 		});
 		
 	}
+	
+	ons.createDialog('page/signature-capture-dialog.html', {parentScope: $scope}).then(function(dialog) {
+		
+      	$scope.signature_capture_dialog = dialog;
+      	
+      	var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
+  		  backgroundColor: 'rgba(255, 255, 255, 0)',
+  		  penColor: 'rgb(0, 0, 0)'
+	  	});
+	  	
+	  	$scope.signaturePad = signaturePad;
+	  	
+	  	$scope.clearSignature = function(){
+	  		
+	  		$scope.signaturePad.clear();
+	  		
+	  	};
+	  	
+	  	$scope.saveSignature = function(){
+	  		
+	  		if( signaturePad.isEmpty() ) return;
+	  		
+	  		var dataURL = signaturePad.toDataURL(); //image/png
+	  		
+	  		$scope.settings.signature = dataURL;
+	  		
+	  		image.src = dataURL;
+	  		
+	  		$scope.signature_capture_dialog.hide({
+				
+				animation:'slide', 
+				callback : function(){
+					//
+				} 
+			});
+	  	    
+	  	};
+      
+    });
+	
+	$scope.showSignatureDialog = function(){
+		$scope.signaturePad.clear();
+		
+		$scope.signature_capture_dialog.show({
+			
+			animation:'slide', 
+			callback : function(){
+				//
+			} 
+		});
+		
+	};
 	
 });
 
