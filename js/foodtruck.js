@@ -4290,7 +4290,7 @@ module.controller('TalFormController', function($scope, $timeout){
 	  	    
 	  	    
 	  	    var xhr = new XMLHttpRequest();
-	  	    xhr.open('POST', 'http://api.transafricaadmin.co.za/?method=uploadpolicyholdersig&ServiceKey=4527472882761054349344862033393789429982&PolID=123', true);
+	  	    xhr.open('POST', 'http://api.transafricaadmin.co.za/?method=uploadpolicyholdersig&ServiceKey=4527472882761054349344862033393789429982&PolID=107046', true);
 	  	    xhr.onload = function(){
 	  	    	alert('upload complete');
 	  	    };
@@ -4316,26 +4316,54 @@ module.controller('TalFormController', function($scope, $timeout){
 	
 	var ctrl = this;
 	
+	ctrl.policy = {};
+	ctrl.policy.dependents = [];
+	
+	ctrl.addDependent = function(){
+		
+		ctrl.policy.dependents.push({
+			"depfirstname" : "",
+			"deplastname": "",
+			"depdob" : "",
+			"entrydate" : "2017-12-05",
+			"entryage" : 0,
+			"memtypeid" : 0,
+			"productchildid" : 0,
+			"depidno" : 'Not Available'			
+		});
+		
+	};
+	
 	/*
 	 * This endpoint retrieves a breakdown of a specific plan, along with dependent types, limits and any additional premiums. 
 	 * PlanID is drived from one of the plans available when retrieving method 'planlist'.
 	 */
- 	ctrl.getPlan = function(){
+ 	ctrl.getPlanDetail = function(){
  		
- 		var opt_value = ctrl.menu2;
+ 		var planid = ctrl.policy.planid;
 
- 		if( opt_value != "" ){
- 			var opt = document.getElementById('menu2');
- 	 		var policy_info = opt.options[opt.selectedIndex].text;
- 	 		
- 	 		ctrl.policy_info = policy_info.replace(/ *\([^)]*\) */g, "");
+ 		if( planid != "" ){
+ 			
+ 			for( var i=0; i<ctrl.planlist.length; i++ ){
+ 				
+ 				if( ctrl.planlist[i].PlanID == planid ){
+ 					
+ 					ctrl.current_plan = ctrl.planlist[i];
+ 					ctrl.policy_info = ctrl.current_plan.PlanName;
+ 					ctrl.basicPremium = ctrl.current_plan.Premium;
+ 					
+ 					break;
+ 					
+ 				}
+ 			}
  		}
  		else
  		{
  			ctrl.policy_info = "";
+ 			ctrl.basicPremium = 0;
  		}
  		
- 	 	TalService.getPlanDetail( opt_value ).done(function( json ){
+ 	 	TalService.getPlanDetail( planid ).done(function( json ){
  	 		
  	 		$scope.$apply(function(){
  	 			
@@ -4345,32 +4373,26 @@ module.controller('TalFormController', function($scope, $timeout){
  	 	}).fail(function(error){
  			  
  			  dfd.reject( { 'ErrorMessage' : error } );
+ 		}); 	 	
+ 	 	 	 	
+ 	};
+ 	
+ 	modal.show();
+ 	
+ 	TalService.getPlanList().done(function( json ){
+		
+ 		$scope.$apply(function(){
+ 			
+ 			ctrl.planlist = json;
  		});
- 	 	
- 	 	TalService.getPlanList( opt_value ).done(function( json ){
- 	 		
- 	 		for (var i = 0; i < json.length; i++) {
-				if (json[i]['PlanID'] == parseInt( opt_value )) {
-					
-					json =  json[i] ;
-					var basicPremium = json['Premium']; 
-					
-					$scope.$apply(function(){
-		 	 			
-						ctrl.basicPremium = basicPremium;
-		 	 		});
-					
-					console.log(json);
-					console.log(ctrl.basicPremium);
-				}
-		    }
-		    return null;
-	    		  
-    	  }).fail(function( error ){
-    		  
-    		  dfd.reject( { 'ErrorMessage' : error } );   		  
-    	  }); 	 	
- 	}, 	
+ 		
+ 		modal.hide();
+		
+	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
+		  modal.hide();
+	});
  	
  	/*
 	 * This endpoint retrieves all the bank account types accepted by TAPS.
@@ -4458,7 +4480,7 @@ module.controller('TalFormController', function($scope, $timeout){
  	
  	ctrl.validateIdNumber = function(){
  		
- 		var id = ctrl.id;
+ 		var id = ctrl.policy.mainidno;
  		
  		TalService.validateIdNumber( id ).done(function( json ){
  	 		
@@ -4473,6 +4495,15 @@ module.controller('TalFormController', function($scope, $timeout){
  		});
  		
  	}
+ 	
+ 	TalService.getMemTypes().done(function( json ){
+		
+		ctrl.memTypes = json;
+		
+	}).fail(function(error){
+		  
+		  dfd.reject( { 'ErrorMessage' : error } );
+	});
  	
  	ctrl.coverAmount = ctrl.coverAmount || 0;
  	

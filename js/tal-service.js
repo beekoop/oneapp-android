@@ -117,7 +117,7 @@ var TalService = {
 		/*
 		 * This endpoint retrieves all the 3rd parties products / plans available in TAPS.
 		 */
-		getPlanList : function( planId ){
+		getPlanList : function(){
 			
 			var plan_list_url = "http://api.transafricaadmin.co.za/?method=planlist&servicekey="+service_key;
 			
@@ -268,5 +268,30 @@ var TalService = {
 	        });
 	                
 	        return dfd.promise();
+		},
+		
+		getMemTypes : function(){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=memtypes';
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
 		}
+		
+		
 }
