@@ -1,9 +1,10 @@
 /* Tal Service */
-var service_key = '4527472882761054349344862033393789429982';
 
 var TalService = {
 		
 		isConfigured : false,
+		
+		service_key : '4527472882761054349344862033393789429982',
 		
 		/*
 		 * This endpoint retrieves all the bank account types accepted by TAPS.
@@ -92,7 +93,7 @@ var TalService = {
 		 */
 		getPlanDetail : function( planId ){
 			
-			var plan_detail_url = 'http://api.transafricaadmin.co.za/?method=plandetail&servicekey='+service_key+'&planid='+planId;
+			var plan_detail_url = 'http://api.transafricaadmin.co.za/?method=plandetail&servicekey='+TalService.service_key+'&planid='+planId;
 			
 			var dfd = new jQuery.Deferred();	        	        
 	        
@@ -119,7 +120,7 @@ var TalService = {
 		 */
 		getPlanList : function(){
 			
-			var plan_list_url = "http://api.transafricaadmin.co.za/?method=planlist&servicekey="+service_key;
+			var plan_list_url = "http://api.transafricaadmin.co.za/?method=planlist&servicekey="+TalService.service_key;
 			
 			var dfd = new jQuery.Deferred();	        	        
 	        
@@ -249,7 +250,7 @@ var TalService = {
 		
 		validateIdNumber : function( id ){
 			
-			var validate_id_number_url = 'http://api.transafricaadmin.co.za/?method=validateidnumber&servicekey='+service_key+'&idnumber='+id;
+			var validate_id_number_url = 'http://api.transafricaadmin.co.za/?method=validateidnumber&servicekey='+TalService.service_key+'&idnumber='+id;
 			
 			var dfd = new jQuery.Deferred();	        	        
 	        
@@ -291,7 +292,81 @@ var TalService = {
 	        });
 	                
 	        return dfd.promise();
+		},
+		
+		addPolicy : function( policy ){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=addpolicy&servicekey='+TalService.service_key;
+			
+			return $.post( url, 'data=' + JSON.stringify(policy) );
+			
+		},
+		
+		uploadPolicyHolderSig : function( polid, signature ){
+			
+			var dataURL = signature;
+			
+			// convert base64 to raw binary data held in a string
+	  	    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+	  	    var byteString = atob(dataURL.split(',')[1]);
+	  	    // separate out the mime component
+	  	    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+	  	    // write the bytes of the string to an ArrayBuffer
+	  	    var ab = new ArrayBuffer(byteString.length);
+	  	    var dw = new DataView(ab);
+	  	    for(var i = 0; i < byteString.length; i++) {
+	  	        dw.setUint8(i, byteString.charCodeAt(i));
+	  	    }
+	  	    // write the ArrayBuffer to a blob, and you're done
+	  	    var blob = new Blob([ab], {type: mimeString});
+	  	    
+	  	    var fd = new FormData();
+	  	    fd.append("file1", blob, "signature.png");
+	  	    
+	  	    
+		  	return $.ajax({
+		  	    type: 'POST',
+		  	    url: 'http://api.transafricaadmin.co.za/?method=uploadpolicyholdersig&ServiceKey=' + TalService.service_key + '&PolID=' + polid,
+		  	    data: fd,
+		  	    processData: false,
+		  	    contentType: false		  	    
+		  	});
+			
+		},
+		
+		uploadAgentSig : function( polid, signature ){
+			
+			var dataURL = signature;
+			
+			// convert base64 to raw binary data held in a string
+	  	    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+	  	    var byteString = atob(dataURL.split(',')[1]);
+	  	    // separate out the mime component
+	  	    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+	  	    // write the bytes of the string to an ArrayBuffer
+	  	    var ab = new ArrayBuffer(byteString.length);
+	  	    var dw = new DataView(ab);
+	  	    for(var i = 0; i < byteString.length; i++) {
+	  	        dw.setUint8(i, byteString.charCodeAt(i));
+	  	    }
+	  	    // write the ArrayBuffer to a blob, and you're done
+	  	    var blob = new Blob([ab], {type: mimeString});
+	  	    
+	  	    var fd = new FormData();
+	  	    fd.append("file1", blob, "signature.png");
+	  	    
+	  	    
+		  	return $.ajax({
+		  	    type: 'POST',
+		  	    url: 'http://api.transafricaadmin.co.za/?method=uploadagentsig&ServiceKey=' + TalService.service_key + '&PolID=' + polid,
+		  	    data: fd,
+		  	    processData: false,
+		  	    contentType: false		  	    
+		  	});
+			
 		}
+		
+		
 		
 		
 }

@@ -14,18 +14,18 @@
 		
 		<div class="form-group" style="width:40%">
 			<label>Select Product:</label>
-			<select name="menu2" id="menu2"  ng-model="ctrl.policy.planid" class="form-control" ng-change="ctrl.getPlanDetail();" ng-init="ctrl.policy.planid=''">
+			<select name="menu2" id="menu2"  ng-model="ctrl.policy.planid" class="form-control" ng-change="ctrl.getPlanDetail();" ng-init="ctrl.policy.planid=0" convert-to-number>
 				
-				<option value="">Make Selection</Option>								                
+				<option value="0">Make Selection</Option>								                
 	            <option ng-repeat="plan in ctrl.planlist" value="{{ plan.PlanID }}" >{{ plan.PlanName }} (R{{ plan.Premium }})</option>
 			</select>
 		</div>
 	
-		<div class="form-group" ng-show="ctrl.policy.planid != ''">
+		<div class="form-group" ng-show="ctrl.policy.planid > 0">
 			<h5>Policy Info: {{ ctrl.policy_info }}</h5>
 		</div>
 		
-		<div ng-hide="ctrl.policy.planid == ''">
+		<div ng-hide="ctrl.policy.planid == 0">
 			<div class="form-group">
 				<table id="plan-detail-table">
 					<thead>
@@ -61,7 +61,7 @@
 				</div>
 				<div class="form-group right-input">
 			      	<label for="">Gender</label>
-				    <select name="GenderID" ng-model="ctrl.policy.genderid" class="form-control" placeholder="Gender" style="width:30% ">
+				    <select name="GenderID" ng-model="ctrl.policy.genderid" class="form-control" placeholder="Gender" style="width:30% " convert-to-number>
 						<option Value="3">Female</Option>
 										
 						<option Value="2">Male</Option>
@@ -78,7 +78,8 @@
 		   	<div class="form-group">
 		    	<div class="form-group left-input">
 			      	<label for="">Marital Status</label>
-				    <select name="MarriedStatusID" ng-model="ctrl.policy.marriedstatusid" class="form-control" placeholder="Marital Status" style="width:30% ">
+				    <select name="MarriedStatusID" ng-model="ctrl.policy.marriedstatusid" class="form-control" placeholder="Marital Status" style="width:30%">
+						
 						<option Value="3">Divorced</Option>
 										
 						<option Value="6">Married</Option>
@@ -90,6 +91,7 @@
 						<option Value="1">Unknown</Option>
 						
 						<option Value="5">Windowed</Option>
+						
 					</select>								
 				</div>
 				<div class="form-group right-input">
@@ -105,7 +107,7 @@
 			<div class="form-group">
 		    	<div class="form-group left-input">
 			      	<label for="">Number of Children</label>
-				    <select name="NoChildren" ng-model="ctrl.policy.nochildren" class="form-control" placeholder="Number of Children" style="width:30% ">
+				    <select name="NoChildren" ng-model="ctrl.policy.nochildren" class="form-control" placeholder="Number of Children" style="width:30%" convert-to-number>
 						
 						<option Value="0">0</option>
 						
@@ -142,7 +144,7 @@
 				</div>
 				<div class="form-group right-input">
 			      	<label for="">Number of Adult Dependents</label>
-				    <select name="NoDependents" ng-model="ctrl.policy.noadultdependents" class="form-control" placeholder="Number of Adult Dependents" style="width:30% ">
+				    <select name="NoDependents" ng-model="ctrl.policy.noadultdependents" class="form-control" placeholder="Number of Adult Dependents" style="width:30%" convert-to-number>
 						<option Value="0">0</option>
 						
 						<option Value="1">1</option>
@@ -186,7 +188,7 @@
 				</div>
 				<div class="form-group right-input">
 				    <label>Last Name *</label>
-				    <input type="text" class="form-control" name="MainSurName" ng-model="ctrl.policy.mainsurName" placeholder="Last Name" style="width:80% " required />			
+				    <input type="text" class="form-control" name="MainSurName" ng-model="ctrl.policy.mainsurname" placeholder="Last Name" style="width:80% " required />			
 				</div>
 	   		</div>
    		
@@ -303,7 +305,7 @@
 		    	<div class="form-group left-input">
 			      	<label>Income Per Month</label>
 					
-					<select ng-model="ctrl.policy.incomepermonthid" class="form-control" placeholder="Income Per Month" style="width:30% ">
+					<select ng-model="ctrl.policy.incomepermonthid" class="form-control" placeholder="Income Per Month" style="width:30%" convert-to-number>
 			           <option ng-repeat="income in ctrl.incomes" value="{{income.IncomePerMonthID}}">{{income.IncomePerMonthLabel}}</option>
 			        </select>
 					
@@ -317,7 +319,7 @@
 	   		<div class="form-group">
 		      	<label for="">Payment Method</label>
 				
-				<select ng-model="ctrl.policy.paymenttypeid" class="form-control" placeholder="Payment Method" style="width:15% ">
+				<select ng-model="ctrl.policy.paymenttypeid" class="form-control" placeholder="Payment Method" style="width:15%" convert-to-number>
 		           <option ng-repeat="paymentType in ctrl.paymentTypes" value="{{paymentType.PaymentTypeID}}">{{paymentType.PaymentTypeLabel}}</option>
 		        </select>
 												
@@ -327,7 +329,7 @@
 				<div class="form-group">
 				    <label>Bank</label>
 					
-					<select ng-model="ctrl.policy.paydebitbank" class="form-control" placeholder="Bank" style="width:50% ">
+					<select ng-model="ctrl.policy.paydebitbank" class="form-control" placeholder="Bank" style="width:50% " convert-to-number>
 			           <option ng-repeat="bank in ctrl.banks" value="{{bank.BankID}}">{{bank.BankLabel}}</option>
 			        </select>
 								
@@ -345,7 +347,7 @@
 				
 				<div class="form-group">
 			      	<label for="">Account Type:</label>
-					<select ng-model="ctrl.policy.paydebitacctype" class="form-control" placeholder="Account Type" style="width:40% ">
+					<select ng-model="ctrl.policy.paydebitacctype" class="form-control" placeholder="Account Type" style="width:40% " convert-to-number>
 			           <option ng-repeat="accountType in ctrl.accountTypes" value="{{accountType.AccountID}}">{{accountType.AccountLabel}}</option>
 			        </select>
 					
@@ -353,7 +355,7 @@
 				
 				<div class="form-group">
 			      	<label for="">Debit Day:</label>	
-					<select ng-model="ctrl.policy.paydebitdayid" class="form-control" placeholder="Debit Day" style="width:40% ">
+					<select ng-model="ctrl.policy.paydebitdayid" class="form-control" placeholder="Debit Day" style="width:40% " convert-to-number>
 			           <option ng-repeat="debitDay in ctrl.debitDays" value="{{debitDay.DebitDayID}}">{{debitDay.DebitDayLabel}}</option>
 			        </select>
 					
@@ -361,7 +363,7 @@
 				
 				<div class="form-group">
 			      	<label for="">Payment Provider:</label>
-				    <select name="PayProviderID" ng-model="ctrl.policy.payproviderid" class="form-control" placeholder="Payment Provider" style="width:40% ">
+				    <select name="PayProviderID" ng-model="ctrl.policy.payproviderid" class="form-control" placeholder="Payment Provider" style="width:40% " convert-to-number>
 						<option Value="1">Sage Pay</Option>
 						
 						<option Value="2">Stratcol</Option>
@@ -414,7 +416,7 @@
 				</div>
 				<div class="form-group right-input">
 				    <label>Relationship *</label>
-					<select ng-model="ctrl.policy.benrelationshipid" class="form-control" placeholder="Relationship" style="width:30% ">
+					<select ng-model="ctrl.policy.benrelationshipid" class="form-control" placeholder="Relationship" style="width:30% " convert-to-number>
 			           <option ng-repeat="relationship in ctrl.relationships" value="{{relationship.RelationshipID}}">{{relationship.RelationshipLabel}}</option>
 			        </select>
 				</div>
@@ -441,7 +443,7 @@
 	   		<div class="form-group">
 		      	<label for="">Needs And Objectives *</label>
 		      	
-				<select ng-model="ctrl.policy.needandobjectiveid" class="form-control" placeholder="Needs And Objectives" style="width:40% ">
+				<select ng-model="ctrl.policy.needandobjectiveid" class="form-control" placeholder="Needs And Objectives" style="width:40% " convert-to-number>
 		           <option ng-repeat="needAndObjective in ctrl.needsAndObjectives" value="{{needAndObjective.NeedAndObjectiveID}}">{{needAndObjective.NeedAndObjectiveLabel}}</option>
 		        </select>
 											
@@ -471,18 +473,16 @@
 	   		<div class="form-group">
 		      	<label>Have you cancelled any policies in the last four months or will you be cancelling an existing policy as a result of this sale ? *</label>
 			    <select name="CancelledOtherPolicies" ng-model="ctrl.policy.cancelledotherpolicies" class="form-control" placeholder="" style="width:10% " required>
-					<option value="False">No</option>
-					
-					<option value="True">Yes</option>				
+					<option value="false">No</option>					
+					<option value="true">Yes</option>				
 				</select>								
 			</div>
 		
 			<div class="form-group">
 		      	<label>Do you elect to follow the advice provided by xxxx xxxxx, and confirm that you have been duly advised of the full implications of your actions and, having considered same, I fully understand the course of action that I am about to take. I declare that I am aware of the fact that I must carefully consider whether the product selected is appropriate considering my objectives, circumstances and needs. The advisor gave me the relevant product disclosure in which comprehensive disclosures are made including the benefits of the contributions payable. *</label>
 			    <select name="ElectToFollowAdvice" ng-model="ctrl.policy.electtofollowadvice" class="form-control" placeholder="" style="width:10% " required>
-					<option value="False">No</option>
-					
-					<option value="True">Yes</option>				
+					<option value="false">No</option>					
+					<option value="true">Yes</option>				
 				</select>								
 			</div>
 			
@@ -500,13 +500,13 @@
 			
 		    	<div class="form-group left-input">
 			      	<label>Cover *</label>
-				    <select ng-model="dependent.productchildid" class="form-control" style="width:80% ">
+				    <select ng-model="dependent.productchildid" class="form-control" style="width:80% " convert-to-number>
 		           		<option ng-repeat="productchild in ctrl.planDetails" value="{{productchild.ChildID}}">{{productchild.ChildDescription}}</option>
 		        	</select>								
 				</div>
 				<div class="form-group right-input">
 				    <label>Dependent Type *</label>
-				    <select ng-model="dependent.memtypeid" class="form-control" style="width:80% ">
+				    <select ng-model="dependent.memtypeid" class="form-control" style="width:80% " convert-to-number>
 			           <option ng-repeat="memType in ctrl.memTypes" value="{{memType.MemTypeID}}">{{memType.MemberTypeLabel}}</option>
 			        </select>			
 				</div>
@@ -542,11 +542,20 @@
 			</div>
 		
 			<div class="form-group">
+				<img id="policy-holder-signature-image">
+			</div>
+			
+			<div class="form-group">
 		      	<button ng-click="showSignatureDialog()" type="button">Capture Signature</button>
 			</div>
 		
 			<div class="form-group">
-		      	<button class="button button--large" type="button" ng-disabled="talForm.$invalid">Capture Policy</button>								
+		      	<button class="button button--large" type="button" ng-disabled="talForm.$invalid" ng-click="ctrl.capturePolicy()">Capture Policy</button>								
+			</div>
+			
+						
+			<div class="form-group">
+				<img id="agent-signature-image">
 			</div>
 		
 		</div>

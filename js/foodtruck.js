@@ -4244,6 +4244,32 @@ module.controller('RACellularSettingsController', function($scope) {
 //TODO put in tal.js
 module.controller('TalFormController', function($scope, $timeout){	
 	
+	var ctrl = this;
+	
+	var settings = localStorage.getItem("TAL_SETTINGS") || '{}'; 		
+	settings = JSON.parse(settings);
+	
+	if( !settings.hasOwnProperty('serviceKey') ){
+		
+		$scope.alert('Please configure TAL settings. No service key found!');
+		return;
+	}
+	
+	if( !settings.hasOwnProperty('signature') || settings.signature == '' ){
+		
+		$scope.alert('Please configure TAL settings. No agent signature found!');
+		return;
+	}
+	
+	settings.serviceKey = settings.serviceKey || "4527472882761054349344862033393789429982";
+	settings.signature = settings.signature || "";
+	
+	ctrl.agentsig = settings.signature;
+	TalService.service_key = settings.serviceKey;
+	
+	document.getElementById('agent-signature-image').src = ctrl.agentsig;
+	
+	
 	ons.createDialog('page/signature-capture-dialog.html', {parentScope: $scope}).then(function(dialog) {
 		
       	$scope.signature_capture_dialog = dialog;
@@ -4263,39 +4289,14 @@ module.controller('TalFormController', function($scope, $timeout){
 	  	
 	  	$scope.saveSignature = function(){
 	  		
-	  		if( signaturePad.isEmpty() ) return;
+	  		if( $scope.signaturePad.isEmpty() ) return;
 	  		
 	  		var dataURL = signaturePad.toDataURL(); //image/png
 	  		
-	  		// convert base64 to raw binary data held in a string
-	  	    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-	  	    var byteString = atob(dataURL.split(',')[1]);
-	  	    // separate out the mime component
-	  	    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-	  	    // write the bytes of the string to an ArrayBuffer
-	  	    var ab = new ArrayBuffer(byteString.length);
-	  	    var dw = new DataView(ab);
-	  	    for(var i = 0; i < byteString.length; i++) {
-	  	        dw.setUint8(i, byteString.charCodeAt(i));
-	  	    }
-	  	    // write the ArrayBuffer to a blob, and you're done
-	  	    var blob = new Blob([ab], {type: mimeString});
-	  	    
-	  	    var fd = new FormData();
-	  	    fd.append("file1", blob, "signature.png");
-	  	    
-	  	    //fd.append('method','uploadpolicyholdersig');
-	  	    //fd.append('polid',123);
-	  	    //fd.append('servicekey','4527472882761054349344862033393789429982');
-	  	    
-	  	    
-	  	    var xhr = new XMLHttpRequest();
-	  	    xhr.open('POST', 'http://api.transafricaadmin.co.za/?method=uploadpolicyholdersig&ServiceKey=4527472882761054349344862033393789429982&PolID=107046', true);
-	  	    xhr.onload = function(){
-	  	    	alert('upload complete');
-	  	    };
-	  	    
-	  	    xhr.send(fd);
+	  		ctrl.policyholdersig = dataURL;
+	  		document.getElementById('policy-holder-signature-image').src = ctrl.policyholdersig;
+	  		
+	  		$scope.signature_capture_dialog.hide();
 	  	    
 	  	};
       
@@ -4314,10 +4315,74 @@ module.controller('TalFormController', function($scope, $timeout){
 		
 	};
 	
-	var ctrl = this;
-	
+		
+	/*
 	ctrl.policy = {};
 	ctrl.policy.dependents = [];
+	*/
+	
+	ctrl.policy = {
+			  "planid": 1684,
+			  "mainidno": "7663837635089",
+			  "mainfirstname": "Tom",
+			  "mainsurname": "Cat",
+			  "maintelhome": "0123456789",
+			  "maintelwork": "0115462747",
+			  "maintelcell": "08212345678",
+			  "mainemailaddress": "name@domain.co.za",
+			  "passportnumber": "PASS321",
+			  "workpermitnumber": "12345678",
+			  "physicaladdress1": "1 Market Street",
+			  "physicaladdress2": "Parktown",
+			  "physicaladdress3": "Johannesburg",
+			  "physicalcode": "2001",
+			  "postaladdress1": "PO Box 123",
+			  "postaladdress2": "Parktown",
+			  "postaladdress3": "Johannesburg",
+			  "postalcode": "2000",
+			  "genderid": 2,
+			  "incomepermonthid": 3,
+			  "expenditurepermonth": "None",
+			  "marriedstatusid": "false",
+			  "hasspouse": "true",
+			  "nochildren": 3,
+			  "noadultdependents": 3,
+			  "anyothercover": "true",
+			  "anyothercoverdate": "2000-01-01",
+			  "anyothercoveramount": 1000,
+			  "riskprofile": "High Risk",
+			  "typeofcoverrequired": "Personal",
+			  "monthlycontributionavailable": 500,
+			  "needandobjectiveid": 4,
+			  "needandobjectiveother": "Other text",
+			  "electtofollowadvice": "true",
+			  "cancelledotherpolicies": "false",
+			  "reasonforrecommendation": "Reason for recommendation",
+			  "paymenttypeid": 3,
+			  "grindrodusnno": "1234567",
+			  "paydebitbank": 3,
+			  "paydebitaccno": "12345678",
+			  "paydebitbranchcode": "250123",
+			  "paydebitacctype": 3,
+			  "paydebitdayid": 19,
+			  "benname": "Spike",
+			  "bensurname": "Dog",
+			  "benid": "7663837635089",
+			  "benrelationshipid": 9,
+			  "dependents": [
+			    {
+			      "depfirstname": "Jerry",
+			      "deplastname": "Mouse",
+			      "depdob": "2017-12-07",
+			      "entrydate": "2017-12-05",
+			      "entryage": 0,
+			      "memtypeid": 7,
+			      "productchildid": 7274,
+			      "depidno": "Not Available"
+			    }
+			  ]
+			};
+						
 	
 	ctrl.addDependent = function(){
 		
@@ -4334,6 +4399,147 @@ module.controller('TalFormController', function($scope, $timeout){
 		
 	};
 	
+	ctrl.capturePolicy =  function(){
+		
+		var policy = ctrl.policy;
+		var policyholdersig = ctrl.policyholdersig || '';		
+		var agentsig = ctrl.agentsig || '';
+		
+		if( policyholdersig.length == 0 ){
+			
+			ons.notification.alert({
+				  message: "Policy holder signature is required!",
+				  // or messageHTML: '<div>Message in HTML</div>',
+				  title: 'Error',
+				  buttonLabel: 'OK',
+				  animation: 'default', // or 'none'
+				  // modifier: 'optional-modifier'
+				  callback: function() {
+				    // Alert button is closed!
+				  }
+				});
+			
+			return;
+		}
+		
+		if( agentsig.length == 0 ){
+			
+			ons.notification.alert({
+				  message: "Agent signature is required!",
+				  // or messageHTML: '<div>Message in HTML</div>',
+				  title: 'Error',
+				  buttonLabel: 'OK',
+				  animation: 'default', // or 'none'
+				  // modifier: 'optional-modifier'
+				  callback: function() {
+				    // Alert button is closed!
+				  }
+				});
+			
+			return;
+		}
+		
+		modal.show();
+		
+		var dfd = new jQuery.Deferred();
+		
+		TalService.addPolicy( policy ).done( function( response ){
+			
+			var json = JSON.parse( response );
+			
+			if( json.PolicySubmission == 'Fail' ){
+				
+				dfd.reject('Policy submission failed! Error: ' + json.Error );
+				
+			}
+			else
+			{
+				var PolID = json.PolID;
+				
+				TalService.uploadPolicyHolderSig( PolID, policyholdersig ).done( function( response ){
+					
+					var json = JSON.parse( response );
+					
+					if( json.uploadpolicyholdersig == 'success' ){
+						
+						TalService.uploadAgentSig( PolID, agentsig ).done( function( response ){
+							
+							var json = JSON.parse( response );
+							
+							
+							if( json.uploadagentsig == 'success' ){
+								
+								dfd.resolve("Policy ['" + PolID + "'] was successfully captured.");
+								
+							}
+							else
+							{
+								dfd.reject('Failed to upload agent signature!');
+							}
+							
+							
+						} ).fail(function(err){
+							
+							dfd.reject('Failed to upload agent signature!');
+							
+						});
+					}
+					else
+					{	
+						dfd.reject('Failed to upload policy holder signature!');
+					}
+					
+				} ).fail(function(err){
+					
+					dfd.reject('Failed to upload policy holder signature!');
+					
+				});
+				
+				
+			}
+			
+		} ).fail(function(err){
+			
+			dfd.reject('Failed to send captured policy request!');
+			
+		});
+		
+		var promise = dfd.promise();
+		
+		promise.done(function(msg){
+			
+			ons.notification.alert({
+				  message: msg,
+				  // or messageHTML: '<div>Message in HTML</div>',
+				  title: 'Tal Policy',
+				  buttonLabel: 'OK',
+				  animation: 'default', // or 'none'
+				  // modifier: 'optional-modifier'
+				  callback: function() {
+				    // Alert button is closed!
+				  }
+				});
+			
+		}).fail(function(msg){
+			
+			ons.notification.alert({
+				  message: msg,
+				  // or messageHTML: '<div>Message in HTML</div>',
+				  title: 'Error',
+				  buttonLabel: 'OK',
+				  animation: 'default', // or 'none'
+				  // modifier: 'optional-modifier'
+				  callback: function() {
+				    // Alert button is closed!
+				  }
+				});
+			
+		}).always(function(){
+			modal.hide()
+		});
+		
+	}
+	
 	/*
 	 * This endpoint retrieves a breakdown of a specific plan, along with dependent types, limits and any additional premiums. 
 	 * PlanID is drived from one of the plans available when retrieving method 'planlist'.
@@ -4342,7 +4548,7 @@ module.controller('TalFormController', function($scope, $timeout){
  		
  		var planid = ctrl.policy.planid;
 
- 		if( planid != "" ){
+ 		if( planid > 0 ){
  			
  			for( var i=0; i<ctrl.planlist.length; i++ ){
  				
@@ -4687,3 +4893,17 @@ module.directive('ngEnter', function () {
         });
     };
 });
+
+module.directive('convertToNumber', function() {
+	  return {
+	    require: 'ngModel',
+	    link: function(scope, element, attrs, ngModel) {
+	      ngModel.$parsers.push(function(val) {
+	        return parseInt(val, 10);
+	      });
+	      ngModel.$formatters.push(function(val) {
+	        return '' + val;
+	      });
+	    }
+	  };
+	});
