@@ -128,6 +128,7 @@ var TalService = {
 	            method: 'GET',
 	            url: plan_list_url,
 	            dataType: 'json',
+		  	    timeout: 1000 * 20,
 	            success: function( response ){
 	            	
 	                dfd.resolve( response );
@@ -329,7 +330,8 @@ var TalService = {
 		  	    url: 'http://api.transafricaadmin.co.za/?method=uploadpolicyholdersig&ServiceKey=' + TalService.service_key + '&PolID=' + polid,
 		  	    data: fd,
 		  	    processData: false,
-		  	    contentType: false		  	    
+		  	    contentType: false,
+		  	    timeout: 1000 * 60 * 2
 		  	});
 			
 		},
@@ -361,7 +363,8 @@ var TalService = {
 		  	    url: 'http://api.transafricaadmin.co.za/?method=uploadagentsig&ServiceKey=' + TalService.service_key + '&PolID=' + polid,
 		  	    data: fd,
 		  	    processData: false,
-		  	    contentType: false		  	    
+		  	    contentType: false,
+		  	    timeout: 1000 * 60 * 2 	  	    
 		  	});
 			
 		}

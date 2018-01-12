@@ -4578,7 +4578,7 @@ module.controller('TalFormController', function($scope, $timeout){
  	 		
  	 	}).fail(function(error){
  			  
- 			  dfd.reject( { 'ErrorMessage' : error } );
+ 	 		console.log( { 'ErrorMessage' : error } );
  		}); 	 	
  	 	 	 	
  	};
@@ -4588,101 +4588,119 @@ module.controller('TalFormController', function($scope, $timeout){
  	TalService.getPlanList().done(function( json ){
 		
  		$scope.$apply(function(){
- 			
+			
  			ctrl.planlist = json;
- 		});
+		});
  		
  		modal.hide();
+ 		
+ 		/*
+ 		 * This endpoint retrieves all the bank account types accepted by TAPS.
+ 		 */
+ 	 	TalService.getAccountType().done(function( json ){
+ 			
+ 	 		$scope.$apply(function(){
+ 	 			ctrl.accountTypes = json;
+ 	 		});
+ 			
+ 		}).fail(function(error){
+ 			  
+ 			  console.log( { 'ErrorMessage' : error } );
+ 		});
+ 	 	
+ 	 	/*
+ 		 * This endpoint retrieves all the Bank Names currently accepted by TAPS.
+ 		 */ 	
+ 	 	TalService.getBank().done(function( json ){
+ 			
+ 	 		$scope.$apply(function(){
+ 	 			ctrl.banks = json;
+ 	 		});
+ 			
+ 		}).fail(function(error){
+ 			  
+ 			console.log( { 'ErrorMessage' : error } );
+ 		});
+ 	 	
+ 	 	/*
+ 		 * This endpoint retrieves the payment types available in TAPS.
+ 		 */ 	
+ 	 	TalService.getPaymentType().done(function( json ){
+ 			
+ 	 		$scope.$apply(function(){
+ 	 			ctrl.paymentTypes = json;
+ 	 		});
+ 			
+ 		}).fail(function(error){
+ 			  
+ 			console.log( { 'ErrorMessage' : error } );
+ 		});
+ 	 	
+ 	 	/*
+ 		 * This endpoint retrieves all the income bracket types available in TAPS.
+ 		 */
+ 		TalService.getIncomeBracketType().done(function( json ){
+ 			
+ 			$scope.$apply(function(){
+ 				ctrl.incomes = json;
+ 			});
+ 			
+ 		}).fail(function(error){
+ 			  
+ 			console.log( { 'ErrorMessage' : error } );
+ 		});
+ 	 	
+ 		/*
+ 		 * This endpoint retrieves the different dependent and beneficiary relationship types available in TAPS.
+ 		 */
+ 	 	TalService.getRelationshipTypeId().done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			ctrl.relationships = json;
+ 	 		});
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 	 		console.log( { 'ErrorMessage' : error } );
+ 		});
+ 	 	
+ 	 	/*
+ 		 * This endpoint retrieves the payment days available to set a debit order going off day, in other words the day of the month the debit order should fall on..
+ 		 */
+ 	 	TalService.getPayDebitDayId().done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			ctrl.debitDays = json;
+ 	 		});
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 	 		console.log( { 'ErrorMessage' : error } );
+ 		});
+ 	 	
+ 	 	/*
+ 		 * This endpoint retrieves all the needs and objective types available in TAPS.
+ 		 */
+ 	 	TalService.getNeedsAndObjectives().done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.needsAndObjectives = json;
+ 	 		}); 	 		
+ 	 		
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 	 		console.log( { 'ErrorMessage' : error } );
+ 		});
 		
 	}).fail(function(error){
 		  
-		  dfd.reject( { 'ErrorMessage' : error } );
+		  console.log( { 'ErrorMessage' : error } );
 		  modal.hide();
 	});
  	
- 	/*
-	 * This endpoint retrieves all the bank account types accepted by TAPS.
-	 */
- 	TalService.getAccountType().done(function( json ){
-		
-		ctrl.accountTypes = json;
-		
-	}).fail(function(error){
-		  
-		  dfd.reject( { 'ErrorMessage' : error } );
-	});
  	
- 	/*
-	 * This endpoint retrieves all the Bank Names currently accepted by TAPS.
-	 */ 	
- 	TalService.getBank().done(function( json ){
-		
-		ctrl.banks = json;
-		
-	}).fail(function(error){
-		  
-		  dfd.reject( { 'ErrorMessage' : error } );
-	});
- 	
- 	/*
-	 * This endpoint retrieves the payment types available in TAPS.
-	 */ 	
- 	TalService.getPaymentType().done(function( json ){
-		
-		ctrl.paymentTypes = json;
-		
-	}).fail(function(error){
-		  
-		  dfd.reject( { 'ErrorMessage' : error } );
-	});
- 	
- 	/*
-	 * This endpoint retrieves all the income bracket types available in TAPS.
-	 */
-	TalService.getIncomeBracketType().done(function( json ){
-		
-		ctrl.incomes = json;
-		
-	}).fail(function(error){
-		  
-		  dfd.reject( { 'ErrorMessage' : error } );
-	});
- 	
-	/*
-	 * This endpoint retrieves the different dependent and beneficiary relationship types available in TAPS.
-	 */
- 	TalService.getRelationshipTypeId().done(function( json ){
- 		
- 		ctrl.relationships = json;
- 		
- 	}).fail(function(error){
-		  
-		  dfd.reject( { 'ErrorMessage' : error } );
-	});
- 	
- 	/*
-	 * This endpoint retrieves the payment days available to set a debit order going off day, in other words the day of the month the debit order should fall on..
-	 */
- 	TalService.getPayDebitDayId().done(function( json ){
- 		
- 		ctrl.debitDays = json;
- 		
- 	}).fail(function(error){
-		  
-		  dfd.reject( { 'ErrorMessage' : error } );
-	});
- 	
- 	/*
-	 * This endpoint retrieves all the needs and objective types available in TAPS.
-	 */
- 	TalService.getNeedsAndObjectives().done(function( json ){
- 		
- 		ctrl.needsAndObjectives = json;
- 		
- 	}).fail(function(error){
-		  
-		  dfd.reject( { 'ErrorMessage' : error } );
-	});
  	
  	ctrl.validateIdNumber = function(){
  		
