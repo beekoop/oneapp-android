@@ -53,7 +53,7 @@
 		<echo message="=========== Packing project ===========" />
 		
 		<exec executable="asar" dir="${basedir}">
-			<arg line="pack ${build.dir} ${dist.dir}/oneapp-pos.asar"/>
+			<arg line="pack ${build.dir} ${dist.dir}/oneapp.asar"/>
 		</exec>
 	</target>
 	
@@ -61,7 +61,7 @@
 	<target name="md5" depends="asar">
 		<echo message="=========== Calculating checksum ===========" />
 		
-		<checksum file="${dist.dir}/oneapp-pos.asar" property="CHECKSUM"/>
+		<checksum file="${dist.dir}/oneapp.asar" property="CHECKSUM"/>
 		
 		<copy file="${basedir}/version.json" tofile="${dist.dir}/version.json"
 		overwrite="true" filtering="yes">
