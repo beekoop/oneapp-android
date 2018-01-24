@@ -1280,7 +1280,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 		var line = ShoppingCart.addLine(APP.RA_CELLULAR_PRODUCT_ID, 1);
 		//ShoppingCart.updatePrice(line.index, data.Value);
 		ShoppingCart.updateProductInfo(line.index, data.VoucherName, data.VoucherName, data.VoucherCode);
-		ShoppingCart.vouchers.push(data.PrintString);
+		//ShoppingCart.vouchers.push(data.PrintString);
 		
 		line.taxAmt = parseFloat(new Number(data.ValueVat).toFixed(2));
 		line.lineAmt = parseFloat(new Number(parseFloat(data.Value) - parseFloat(data.ValueVat)).toFixed(2));
@@ -1288,6 +1288,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 		line.costAmt = parseFloat(new Number(parseFloat(data.Cost) - parseFloat(data.CostVat)).toFixed(2));
 		line.voidable = data.Voidable;
 		line.pinNumber = data.PinNumber || '';
+		line.printString = data.PrintString;
 		
 		ShoppingCart.updateTotal();
 		

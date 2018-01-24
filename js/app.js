@@ -760,7 +760,7 @@ APP.holdOrder = function ( customer, cart, order_id, uuid ) {
 	}
 	
 	//add lines
-	order.lines = APP.UTILS.ORDER.getOrderLinesFormCart( cart );	
+	order.lines = APP.UTILS.ORDER.getOrderLinesFromCart( cart );	
 	
 	order.paymenttype = 'CASH';
 	
@@ -873,7 +873,7 @@ APP.checkout = function( customer, cart, payments, order_id, uuid ){
 	    discounts : [],
 	    
 	    //RA Cellular
-	    vouchers : cart.vouchers
+	    vouchers : APP.UTILS.ORDER.getVouchersFromCart( cart )
 	};
 	
 	// assign uuid	
@@ -891,7 +891,7 @@ APP.checkout = function( customer, cart, payments, order_id, uuid ){
 	}
 	
 	//add lines
-	order.lines = APP.UTILS.ORDER.getOrderLinesFormCart( cart );
+	order.lines = APP.UTILS.ORDER.getOrderLinesFromCart( cart );
 	
 	var cash = 0;
 	var change = 0;
@@ -1156,7 +1156,26 @@ APP.UTILS.ORDER = {
 			
 		},
 		
-		getOrderLinesFormCart : function(cart){
+		getVouchersFromCart : function(cart){
+			
+			var vouchers = [];
+			
+			var lines = cart.getLines();
+			
+			for(var i=0; i<lines.length; i++){
+							
+				var line = lines[i];
+				
+				if(line.printString){
+					
+					vouchers.push( line.printString );					
+				}
+			}
+			
+			return vouchers;
+		},
+		
+		getOrderLinesFromCart : function(cart){
 			
 			var orderlines = [];
 			
@@ -1185,6 +1204,7 @@ APP.UTILS.ORDER = {
 			        modifiers : [],
 			        
 			        gift : line.gift,
+			        voucher : line.printString || null,
 			        
 			        discountamt : line.discountAmt,
 			        discountpercentage : line.discountPercentage

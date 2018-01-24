@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ======================================================== -->
-<!-- 			OneApp POS Launcher                           -->
+<!-- 			         OneApp POS                           -->
 <!-- ======================================================== -->
 
-<project name="oneapp-launcher" default="asar" basedir=".">
+<project name="oneapp-pos" default="md5" basedir=".">
 	
 	<property name="build.dir" value="${basedir}/build"/>
 	<property name="dist.dir" value="${basedir}/dist/" />
@@ -29,7 +29,7 @@
 	   		<format property="TODAY_BUILT" pattern="yyyyMMddhhmmss" locale="en,UK"/>
 	  	</tstamp>
 		
-		<echo message="Built  = ${TODAY_BUILT}" />		
+		<echo message="Built  = ${TODAY_BUILT}" />	
         
 		<copy file="${basedir}/package.json" tofile="${build.dir}/package.json"
 		overwrite="true" filtering="yes">
@@ -40,9 +40,39 @@
 	
     </target>
 	
-	<target name="asar" depends="version">
-	        <echo message="=========== Building project ===========" />
+	<target name="build" depends="version">
+	    <echo message="=========== Building project ===========" />
+		
+		<copy todir="${build.dir}">
+			<fileset dir="${basedir}" includes="icon.png, index.html, main.js, components/**, css/**, images/**, js/**, page/**" /> 
+		</copy>
+		
 	</target>
 	
+	<target name="asar" depends="build">
+		<echo message="=========== Packing project ===========" />
+		
+		<exec executable="asar" dir="${basedir}">
+			<arg line="pack ${build.dir} ${dist.dir}/oneapp-pos.asar"/>
+		</exec>
+	</target>
+	
+	
+	<target name="md5" depends="asar">
+		<echo message="=========== Calculating checksum ===========" />
+		
+		<checksum file="${dist.dir}/oneapp-pos.asar" property="CHECKSUM"/>
+		
+		<copy file="${basedir}/version.json" tofile="${dist.dir}/version.json"
+		overwrite="true" filtering="yes">
+			<filterset>
+		      <filter token="VERSION" value="${TODAY_BUILT}"/>
+			  <filter token="CHECKSUM" value="${CHECKSUM}"/>
+		    </filterset>
+		</copy>
+		
+		<echo message="${CHECKSUM}"/>
+		
+	</target>
 	
 </project>
