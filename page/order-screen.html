@@ -125,7 +125,7 @@
 					</ons-col>
 					
 					<ons-col width="100px">
-						<strong>{{currentLine.price | currency : "$" : 2}}</strong>
+						<strong>{{currentLine.price | currency : "R" : 2}}</strong>
 					</ons-col>
 					
 					<ons-col width="100px">
@@ -183,7 +183,7 @@
 					</ons-col>
 					
 					<ons-col width="100px">
-						<strong>{{ (currentLine.price * currentLine.qty) | currency : "$" : 2}}</strong>
+						<strong>{{ (currentLine.price * currentLine.qty) | currency : "R" : 2}}</strong>
 					</ons-col>
 					
 					<ons-col width="100px">
@@ -553,7 +553,7 @@
 		   			
 		   			<ons-row class="modifiers" ng-show="line.discountPercentage > 0">
 		   				<ons-col>
-		   					Discount({{line.discountPercentage}}%). Saved {{line.discountAmt | currency : "$" : 2 }}
+		   					Discount({{line.discountPercentage}}%). Saved {{line.discountAmt | currency : "R" : 2 }}
 		   				</ons-col>
 		   			</ons-row>
 		   			
@@ -570,7 +570,7 @@
 		   					Last Sale
 		   				</ons-col>
 		   				<ons-col class="right">
-		   					{{screen.lastSale.amount | currency : "$" : 2 }}
+		   					{{screen.lastSale.amount | currency : "R" : 2 }}
 		   				</ons-col>
 		   			</ons-row>
 		   			
@@ -579,7 +579,7 @@
 		   					<span style="font-size: 17px;">Change</span>
 		   				</ons-col>
 		   				<ons-col class="right">
-		   					{{screen.lastSale.change | currency : "$" : 2}}
+		   					{{screen.lastSale.change | currency : "R" : 2}}
 		   				</ons-col>
 		   			</ons-row>
 		   		</ons-list-item>
@@ -610,7 +610,7 @@
 		   					Total <span style="font-size: 17px;">(x{{cart.qtytotal}})</span>
 		   				</ons-col>
 		   				<ons-col class="right">
-		   					{{cart.grandtotal | currency : "$" : 2 }}
+		   					{{cart.grandtotal | currency : "R" : 2 }}
 		   				</ons-col>
 		   			</ons-row>
 		   		</ons-list-item>

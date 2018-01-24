@@ -49,7 +49,7 @@
 								{{order.note}}
 							</ons-col>
 							<ons-col>
-								{{order.grandtotal | currency : "$" : 2}}
+								{{order.grandtotal | currency : "R" : 2}}
 							</ons-col>
 						</ons-row>		
 					</ons-list-item>
@@ -118,7 +118,7 @@
 		   					Total <span style="font-size: 17px;">(x{{current_order.qtytotal}})</span>
 		   				</ons-col>
 		   				<ons-col class="right">
-		   					{{current_order.grandtotal | currency : "$" : 2 }}
+		   					{{current_order.grandtotal | currency : "R" : 2 }}
 		   				</ons-col>
 		   			</ons-row>
 		   		</ons-list-item>

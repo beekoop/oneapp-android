@@ -23,7 +23,7 @@ function backButtonHandler(){
 function initializeCayan(){
 	
 	// initialize cayan
-	CayanService.init();
+	//CayanService.init();
 	
 	if(CayanService.isConfigured == true && CayanService.MODE == 'CED')
 	{
@@ -127,6 +127,82 @@ function initializeCayan(){
 		var product = results[0];
 		APP.RA_CELLULAR_PRODUCT_ID = product['product_id'];
 	}
+	
+	/* POLE DISPLAY */	
+	
+	var c = jQuery( ShoppingCart );	
+	
+	c.on('cart.clear', function( event ){
+		
+		console.log('cart.clear');	
+		
+		POLE_DISPLAY.display(formatPoleDisplayLine("TOTAL","0.00"), "");
+	});
+
+	c.on('cart.addLine', function( event, line ){
+		
+		console.log('cart.addLine');
+		
+		var cart = line.cart;
+		
+		var OrderTotal = cart.grandtotal;
+		var OrderTax = cart.taxtotal;
+		var ItemId = line.index;
+		var Sku = line.product_id;
+		var Description = line.product.name;
+		var Qty = line.qty;
+		var Amount = new Number( line.grandtotal / line.qty ).toFixed(2);
+		var TaxAmount = line.taxAmt;
+		var UPC = line.product.upc; 
+		
+		OrderTotal = new Number(OrderTotal).toFixed(2);
+		
+		POLE_DISPLAY.display(Qty + "x " + Description  , formatPoleDisplayLine("TOTAL",OrderTotal));
+		
+	});
+	
+	c.on('cart.updateLine', function( event, line ){
+		
+		console.log('cart.updateLine');
+		
+		var cart = line.cart;
+		
+		var OrderTotal = cart.grandtotal;
+		var OrderTax = cart.taxtotal;
+		var ItemId = line.index;
+		var Qty = line.qty;
+		var Description = line.product.name;
+		var Amount = new Number( line.grandtotal / line.qty ).toFixed(2);
+		var TaxAmount = line.taxAmt;
+		
+		OrderTotal = new Number(OrderTotal).toFixed(2);
+		
+		POLE_DISPLAY.display(Qty + "x " + Description  , formatPoleDisplayLine("TOTAL",OrderTotal));
+		
+	});
+	
+	c.on('cart.removeLine', function( event, line ){
+		
+		console.log('cart.removeLine');
+		
+		var cart = this;
+		
+		var OrderTotal = cart.grandtotal;
+		var OrderTax = cart.taxtotal;
+		var ItemId = line.index;
+		var Qty = line.qty;
+		var Description = line.product.name;
+		
+		OrderTotal = new Number(OrderTotal).toFixed(2);
+		
+		POLE_DISPLAY.display("-" + Qty + "x " + Description , formatPoleDisplayLine("TOTAL",OrderTotal));
+		
+	});
+	
+}
+
+function formatPoleDisplayLine(label, value){
+	return label + JSReceiptUtils.format(value, (20 - label.length), true);
 }
 
 function initializeBuffer(){
@@ -349,6 +425,28 @@ module.controller('AppController', function($scope) {
 		
 		moment = global.moment;
 	}
+	
+	/* barcode integration */
+
+	$(document).pos();
+	$(document).on('scan.pos.barcode', function(event){
+		//access `event.code` - barcode data
+		
+		$scope.$broadcast("SCAN_BARCODE", event.code);
+		
+	});
+	/*
+	$(document).on('swipe.pos.card', function(event){
+		//access following:
+		// `event.card_number` - card number only
+		// `event.card_holder_first_name` - card holder first name only
+		// `event.card_holder_last_name` - card holder last name only
+		// `event.card_exp_date_month` - card expiration month - 2 digits
+		// `event.card_exp_date_year_2` - card expiration year - 2 digits
+		// `event.card_exp_date_year_4` - card expiration year - 4 digits
+		// `event.swipe_data` - original swipe data from raw processing or sending to a 3rd party service
+	});
+	*/
 	
 });
 
@@ -944,7 +1042,25 @@ module.service('OrderScreen', function() {
 		
 		
 		// RA Cellular
-		var raCellularSettings = localStorage.getItem("RA_CELLULAR_SETTINGS") || {};
+		var raCellularSettings = localStorage.getItem("RA_CELLULAR_SETTINGS");
+		
+		if( raCellularSettings == null ){
+			
+			ons.notification.alert({
+				
+  				title : 'Error',
+  				
+  			    'message': 'Please configure RA Cellular settings',
+  			    
+  			    callback: function() {
+  			    	// Do something here.
+  			    }
+  			});
+			
+			return;
+		}
+		
+		
 		var raCellularSettings = JSON.parse( raCellularSettings );
 		
 		var terminal = APP.TERMINAL.getById(APP.TERMINAL_KEY);
@@ -1052,6 +1168,21 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 					
 					var data = response.data;
 					data = JSON.parse( data );
+					
+					var MessageType = data['MessageType'];
+					
+					if( MessageType == 'Message' ){
+						
+						var PrintString = data['PrintString'];
+						
+						PrinterManager.print( [
+							['BASE64',PrintString],
+							['PAPER_CUT']
+						] );
+						
+						return;
+						
+					}
 															
 					$scope.$apply(function(){
 			    		
@@ -1136,7 +1267,8 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 		OrderScreen.lastSale = null;
 		
 		var line = ShoppingCart.addLine(product_id, qty);
-		$scope.currentLineIndex = line.index;
+		$scope.currentLineIndex = line.index;	
+		
 	};
 	
 	$scope.addRACellularLine = function( data ){
@@ -1158,6 +1290,8 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 		line.pinNumber = data.PinNumber || '';
 		
 		ShoppingCart.updateTotal();
+		
+		POLE_DISPLAY.display("1x " + data.VoucherName  , formatPoleDisplayLine("TOTAL",new Number(ShoppingCart.grandtotal).toFixed(2)));
 		
 		$scope.currentLineIndex = line.index;
 		
@@ -1613,6 +1747,8 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 			amount : ShoppingCart.grandtotal
 		}];
 		
+		POLE_DISPLAY.display(formatPoleDisplayLine("TOTAL", ShoppingCart.grandtotal), "");
+		
 		APP.checkout( OrderScreen.customer, ShoppingCart, payments, OrderScreen.order_id, OrderScreen.uuid ).done(function( order ){
 			
 			var lastSale = {
@@ -1651,10 +1787,14 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 	$scope.checkout = function(payments){
 		
 		modal.show();
+		
+		POLE_DISPLAY.display(formatPoleDisplayLine("TOTAL", ShoppingCart.grandtotal), "");
 				
 		APP.checkout( OrderScreen.customer, ShoppingCart, payments, OrderScreen.order_id, OrderScreen.uuid ).done(function( order ){
 			
 			var lastSale = payments[0];
+			
+			var changeText = null;
 			
 			if(lastSale.type == 'CASH'){
 				/*
@@ -1662,7 +1802,13 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 					CayanCED.startOrder( APP.UTILS.ORDER.getDocumentNo() );
 				});
 				*/
+				
+				changeText = formatPoleDisplayLine("CHANGE", "" + lastSale["change"]);
+							
 			}
+			
+			var paidText = formatPoleDisplayLine("PAID", "" + lastSale["amount"]);
+			POLE_DISPLAY.display( paidText , changeText );
 			
 			$scope.$apply(function(){
 				$scope.reset();	
@@ -2872,7 +3018,41 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 		
 		$scope.$broadcast("UPDATE_CUSTOMER_LIST", {});
 		
+	});	
+	
+	
+	$scope.$on("SCAN_BARCODE", function(event, barcode){
+		
+		var results = APP.PRODUCT.search({ 'upc' : barcode });
+		
+		if( results.length > 0 ){
+			var product = results[0];
+			var product_id = product['product_id'];
+			
+			$scope.$apply(function(){
+				
+				$scope.addLine( product_id , 1);
+				
+			});			
+			
+		}
+		else
+		{
+			ons.notification.alert({
+				  message: 'Barcode: ' + barcode + ' not found!',
+				  // or messageHTML: '<div>Message in HTML</div>',
+				  title: 'Information',
+				  buttonLabel: 'OK',
+				  animation: 'default', // or 'none'
+				  // modifier: 'optional-modifier'
+				  callback: function() {
+				    // Alert button is closed!
+				  }
+				});
+		}		
+		
 	});
+	
 });
 
 // shopping cart

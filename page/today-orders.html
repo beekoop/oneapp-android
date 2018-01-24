@@ -55,7 +55,7 @@
 								<span ng-if="order.status == 'VO'">VOIDED</span>
 							</ons-col>
 							<ons-col>
-								{{ ( order.grandtotal + order.tipamt + order.donation + - order.cayan_discountamt ) | currency : "$" : 2}}
+								{{ ( order.grandtotal + order.tipamt + order.donation + - order.cayan_discountamt ) | currency : "R" : 2}}
 							</ons-col>
 							<ons-col>
 								{{order.paymenttype}}
@@ -154,7 +154,7 @@
 		   					Total <span style="font-size: 17px;">(x{{current_order.qtytotal}})</span>
 		   				</ons-col>
 		   				<ons-col class="right">
-		   					{{ ( current_order.grandtotal + current_order.tipamt + current_order.donation + - current_order.cayan_discountamt ) | currency : "$" : 2 }}
+		   					{{ ( current_order.grandtotal + current_order.tipamt + current_order.donation + - current_order.cayan_discountamt ) | currency : "R" : 2 }}
 		   				</ons-col>
 		   			</ons-row> 			
 		   			

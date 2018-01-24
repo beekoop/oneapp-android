@@ -147,11 +147,18 @@ function Cart()
 		
 		this.removeLine = function(index){
 			
+			var line = this.lines.get(index);
+			
+			//bug fix
+			if(line == null) return;
+			
+			var x = jQuery.extend({},line);
+			
 			this.lines.remove(index);
 			
 			this.updateTotal();	
 			
-			jQuery(this).trigger('cart.removeLine', index);
+			jQuery(this).trigger('cart.removeLine', x);
 			this.callbacks.fire(this, 'remove line');
 			
 		};

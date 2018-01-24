@@ -1589,9 +1589,14 @@ APP.PRINTER_SETTINGS.testPoleDisplaySettings = function( settings ){
 	
 	var dfd = new jQuery.Deferred();
 	
-	var format = [];
+	var printer = NODEJS_Printer;
+	var printerName = settings['poleDisplayName'];
 	
-	PrinterManager.print( format ).done(function(){
+	var printJob = PoleDisplay_ESC_COMMANDS.CLEAR;
+    printJob = printJob + JSReceiptUtils.format("Welcome to", 20);
+    printJob = printJob + JSReceiptUtils.format("OneApp POS", 20);
+	
+	printer.print(printerName, printJob).done(function(){
 		
 		dfd.resolve();
 		
@@ -1634,6 +1639,8 @@ APP.PRINTER.openDrawer = function(){
 		PrinterManager.print([['OPEN_DRAWER']]);
 	}
 };
+
+
 
 /*======================== Cayan Settings ======================*/
 

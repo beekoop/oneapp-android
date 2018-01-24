@@ -951,7 +951,7 @@ PrinterManager.getEMVErrorReceiptPrintFormat = function ( response ) {
     var LINE_WIDTH = this.getLineWidth();
     var LINE_SEPARATOR = JSReceiptUtils.replicate('-', LINE_WIDTH);
 
-    var cursymbol = '$';
+    var cursymbol = 'R';
 
     var printFormat = [
 
@@ -1107,7 +1107,7 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
 
        ['N', LINE_SEPARATOR ],
 
-       ['H4', 'ORDER# ' + order.documentno ],
+       ['H3', 'ORDER# ' + order.documentno ],
 
        ['N', JSReceiptUtils.format(dateOrdered, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Employee: ' + user_name, LINE_WIDTH)],
@@ -1127,6 +1127,8 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
     var OFFSET;
 
     var text, line;
+    
+    var cursymbol = 'R';
 
     /* add order body */
     for (var i = 0; i < order.lines.length; i++) {
@@ -1162,7 +1164,7 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
         }
 
         if (line.discountamt > 0) {
-        	var discountMessage = "Discount(" + Number(line.discountpercentage).toFixed(2) + "%). Saved $" + Number(line.discountamt).toFixed(2);
+        	var discountMessage = "Discount(" + Number(line.discountpercentage).toFixed(2) + "%). Saved " + cursymbol + Number(line.discountamt).toFixed(2);
             printFormat.push(['N', JSReceiptUtils.format(discountMessage, LINE_WIDTH)]);
         }
     }
@@ -1170,7 +1172,7 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
     /* add order total*/
     printFormat.push(['N', LINE_SEPARATOR]);
 
-    var cursymbol = '$';
+    
 
 
 
@@ -1582,7 +1584,8 @@ PrinterManager.getTillPrintFormat = function( till ) {
             ['FEED'],
             ['CENTER'],
             ['N',LINE_SEPARATOR],
-            ['H1', 'Close Till Receipt'],
+            ['H1', 'Close Till'],
+            ['H1', 'Receipt'],
             ['N',LINE_SEPARATOR],
             ['B',JSReceiptUtils.format(("Vehicle:"),10) + JSReceiptUtils.format((storeName),LINE_WIDTH-10,true)],
             ['B',JSReceiptUtils.format(("Terminal:"),10) + JSReceiptUtils.format((terminalName),LINE_WIDTH-10,true)],
@@ -1891,44 +1894,22 @@ var POLE_DISPLAY = {
     	
     	var configuration = this.getPrinterConfiguration();
     	
-    	if( !configuration.ENABLE_POLE ){
+    	if( !APP.PRINTER_SETTINGS.isPoleDisplayEnabled() ){
     		
     		return;
     		
     	}
     	
-    	/*
-    	if( POSTERITA_Bridge.isPresent() ){
-    		
-    		POSTERITA_Bridge.print(configuration.POLE_DISPLAY_NAME, printData);
-    		
-    		return;    		
-    	}
-    	*/
+    	console.log(printData);
     	
-        var base64encodedstr = Base64.encode(printData);
-        
-        /* use xmlhttprequest driectly */
-        var xhttp;
-        if (window.XMLHttpRequest) {
-            xhttp = new XMLHttpRequest();
-            } else {
-            // code for IE6, IE5
-            xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        
-        xhttp.onreadystatechange = function() {
-        	  if (xhttp.readyState == 4 && xhttp.status == 200) {
-        	    //console.log(xhttp.responseText);
-        	  }
-        };
-        
-        xhttp.open("POST", "/printing/", false);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        
-        var postData = "action=print&printer=" + encodeURIComponent(configuration.POLE_DISPLAY_NAME) + "&job=" + encodeURIComponent(base64encodedstr);
-                
-        xhttp.send(postData);
+    	var printer = NODEJS_Printer;
+
+	    var configuration = this.getPrinterConfiguration();
+	    var printerName = configuration.POLE_DISPLAY_NAME;
+	    
+	    return printer.print(printerName, printData);
+    	
+    	
     }
     
 };
