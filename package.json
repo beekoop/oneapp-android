@@ -1,5 +1,5 @@
 {
   "name"    : "OneApp POS",
-  "version" : "0.1.0",
+  "version" : "@VERSION@",
   "main"    : "main.js"
 }

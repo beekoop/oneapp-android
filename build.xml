@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================== -->
+<!-- 			OneApp POS Launcher                           -->
+<!-- ======================================================== -->
+
+<project name="oneapp-launcher" default="asar" basedir=".">
+	
+	<property name="build.dir" value="${basedir}/build"/>
+	<property name="dist.dir" value="${basedir}/dist/" />
+	
+	<!-- Cleans up the current build                                         -->
+    <!-- =================================================================== -->
+    <target name="clean">
+    	<echo message="=========== Cleaning project ===========" />
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+    </target>
+	
+	<target name="init" depends="clean">
+        <echo message="=========== Building project ===========" />
+        <tstamp />
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${dist.dir}" />
+    </target>
+	
+	<target name="version" depends="init">
+        <echo message="=========== Set version ===========" />
+        <tstamp>
+	   		<format property="TODAY_BUILT" pattern="yyyyMMddhhmmss" locale="en,UK"/>
+	  	</tstamp>
+		
+		<echo message="Built  = ${TODAY_BUILT}" />		
+        
+		<copy file="${basedir}/package.json" tofile="${build.dir}/package.json"
+		overwrite="true" filtering="yes">
+			<filterset>
+		      <filter token="VERSION" value="${TODAY_BUILT}"/>
+		    </filterset>
+		</copy>
+	
+    </target>
+	
+	<target name="asar" depends="version">
+	        <echo message="=========== Building project ===========" />
+	</target>
+	
+	
+</project>
