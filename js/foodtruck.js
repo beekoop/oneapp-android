@@ -4446,13 +4446,27 @@ module.controller('TalFormController', function($scope, $timeout){
 	
 	if( !settings.hasOwnProperty('serviceKey') ){
 		
-		$scope.alert('Please configure TAL settings. No service key found!');
+		ons.notification.alert({
+			  message: 'Please configure TAL settings. No service key found!',
+			  title: 'Error',
+			  callback: function() {
+				  menu.setMainPage('page/tal-settings.html', {closeMenu: true});
+			  }
+			});
+		
 		return;
 	}
 	
 	if( !settings.hasOwnProperty('signature') || settings.signature == '' ){
 		
-		$scope.alert('Please configure TAL settings. No agent signature found!');
+		ons.notification.alert({
+			  message: 'Please configure TAL settings. No agent signature found!',
+			  title: 'Error',
+			  callback: function() {
+				  menu.setMainPage('page/tal-settings.html', {closeMenu: true});
+			  }
+			});		
+		
 		return;
 	}
 	
@@ -4511,11 +4525,11 @@ module.controller('TalFormController', function($scope, $timeout){
 	};
 	
 		
-	/*
+	
 	ctrl.policy = {};
 	ctrl.policy.dependents = [];
-	*/
 	
+	/*
 	ctrl.policy = {
 			  "planid": 1684,
 			  "mainidno": "7663837635089",
@@ -4577,7 +4591,7 @@ module.controller('TalFormController', function($scope, $timeout){
 			    }
 			  ]
 			};
-						
+	*/					
 	
 	ctrl.addDependent = function(){
 		
@@ -4988,7 +5002,36 @@ var settings = localStorage.getItem("TAL_SETTINGS") || '{}';
 	
 	$scope.save = function(){
 		
-		//todo validations
+		if(!$scope.settings.hasOwnProperty('serviceKey') ||  !$scope.settings.serviceKey )
+		{
+			ons.notification.alert({
+				  message: 'Service key is required!',
+				  title: 'Error',
+				  callback: function() {
+				    // Alert button is closed!
+					// menu.setMainPage('page/order-screen.html', {closeMenu:
+					// true});
+				  }
+				});
+			
+			return;
+		}
+		
+		if(!$scope.settings.hasOwnProperty('signature') || $scope.settings.signature == '')
+		{
+			ons.notification.alert({
+				  message: 'Agent signature is required!',
+				  title: 'Error',
+				  callback: function() {
+				    // Alert button is closed!
+					// menu.setMainPage('page/order-screen.html', {closeMenu:
+					// true});
+				  }
+				});
+			
+			return;
+		}		
+		
 		
 		localStorage.setItem("TAL_SETTINGS", JSON.stringify($scope.settings));
 		
