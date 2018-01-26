@@ -305,6 +305,20 @@ function logout()
 	
 }
 
+function showAboutDialog()
+{
+	ons.notification.alert({
+		  message: 'OneApp POS v' + APP_VERSION,
+		  title: 'About',
+		  buttonLabel: 'OK',
+		  animation: 'default', // or 'none'
+		  // modifier: 'optional-modifier'
+		  callback: function() {
+		    // Alert button is closed!
+		  }
+		});
+}
+
 function initDB(){
 		
 	// initialize database for account

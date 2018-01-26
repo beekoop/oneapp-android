@@ -37,6 +37,13 @@
 		      <filter token="VERSION" value="${TODAY_BUILT}"/>
 		    </filterset>
 		</copy>
+		
+		<copy file="${basedir}/js/version.js" tofile="${build.dir}/js/version.js"
+		overwrite="true" filtering="yes">
+			<filterset>
+		      <filter token="VERSION" value="${TODAY_BUILT}"/>
+		    </filterset>
+		</copy>
 	
     </target>
 	
