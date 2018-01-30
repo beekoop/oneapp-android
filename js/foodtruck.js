@@ -4552,7 +4552,7 @@ module.controller('TalFormController', function($scope, $timeout){
 			  "genderid": 2,
 			  "incomepermonthid": 3,
 			  "expenditurepermonth": "None",
-			  "marriedstatusid": "false",
+			  "marriedstatusid": "6",
 			  "hasspouse": "true",
 			  "nochildren": 3,
 			  "noadultdependents": 3,
@@ -4749,6 +4749,353 @@ module.controller('TalFormController', function($scope, $timeout){
 		
 	}
 	
+	/*Tal Payments*/
+	
+	/*ctrl.addPolicyPayment = function(){
+		
+		var mainIdNumber = '8801235111088';
+		
+		TalService.policySearch( mainIdNumber ).done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.policy = json;
+ 	 		}); 			
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+		
+		var polid = ctrl.policy.PolID;
+		
+		TalService.addPolicyPayment( polid ).done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.policy = json;
+ 	 		}); 			
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+	}*/
+	
+	/*ctrl.payment = {
+			"receiptnumber" : "0000017",
+			"payments" : [
+				{
+					"paymentdate" : "2018-01-01",
+					"requestedamount" : 35,
+					"returnedamount" : 35,
+					"payperiodid" : 61,
+					"description" : "Cash"
+				}
+			]
+	};
+	*/
+	ctrl.searchPolicy = function(){
+		
+		if( ctrl.keyword != '' && ctrl.keyword != undefined)
+		{
+			TalService.policySearch( ctrl.keyword ).done(function( json ){
+	 	 		
+	 	 		$scope.$apply(function(){
+	 	 			
+	 	 			ctrl.policies = json;
+	 	 			console.log( ctrl.policies );
+	 	 		}); 			
+	 	 		
+	 	 	}).fail(function(error){
+	 			  
+	 			  dfd.reject( { 'ErrorMessage' : error } );
+	 		});
+			
+		}
+	}
+	
+	ctrl.getPaymentHistory = function( polId){
+		
+		if( polId == '' || polId == undefined)
+			return;
+		
+		var months = [
+						{"id" : 1, "name" :"January"},
+						{"id" : 2, "name" :"February"},
+						{"id" : 3, "name" :"March"},
+						{"id" : 4, "name" :"April"},
+						{"id" : 5, "name" :"May"},
+						{"id" : 6, "name" :"June"},
+						{"id" : 7, "name" :"July"},
+						{"id" : 8, "name" :"August"},
+						{"id" : 9, "name" :"September"},
+						{"id" : 10, "name" :"October"},
+						{"id" : 11, "name" :"November"},
+						{"id" : 12, "name" :"December"}
+					];
+		
+		TalService.getPaymenthistory( polId ).done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.paymentHistories = json;
+ 	 			
+ 	 			for(var i=0; i< json.length; i++)
+ 	 			{
+ 	 				for(j=0; j<months.length; j++)
+ 	 				{
+ 	 					if( json[i].PayMonth == months[j].id )
+ 	 					{
+ 	 						json[i].PayMonth = months[j].name;
+ 	 					}
+ 	 				}
+ 	 			}
+ 	 			
+ 	 			console.log( ctrl.paymentHistories );
+ 	 		}); 			
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+		
+		TalService.getPaymentPeriod().done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.paymentPeriods = json;
+ 	 			
+ 	 			var paymentPeriods = [];
+ 	 			var paymentHistories = [];
+ 	 			
+ 	 			paymentPeriods = ctrl.paymentPeriods;
+ 	 			paymentHistories = ctrl.paymentHistories;
+ 	 			
+ 	 			/*get payment period */
+ 	 			if( paymentHistories.length > 0 )
+ 	 			{
+ 	 				paymentPeriods = paymentPeriods.filter( function( paymentPeriod ){
+     	 				
+ 	     	 		      for( var i=0, len=paymentHistories.length; i<len; i++ )
+ 	     	 		      {
+ 	     	 		          if( paymentHistories[i].PayPeriodID == paymentPeriod.PayID )
+ 	     	 		          {
+ 	     	 		              return false;
+ 	     	 		          }
+ 	     	 		      }
+ 	     	 		      
+ 	     	 		      return true;
+ 	     	 		      
+ 	     	 			});
+ 	 			}
+ 	 			
+ 	 			/*get payment after policy was created. remove months before policy creation. */
+ 	 			var periods = [];
+ 	 			periods = paymentPeriods;
+ 	 			
+ 	 			var month = 10;
+ 	 			var year = 2017;
+ 	 			var sum = (2017*2017) + 10;
+ 	 			
+ 	 			var availablePaymentPeriods = [];
+ 	 			
+ 	 			for(var k=0; k<periods.length; k++)
+ 	 			{
+ 	 				var obj = {};
+ 	 				
+ 	 				var add = ( periods[k].PayYear * periods[k].PayYear ) + periods[k].PayMonth;
+ 	 				
+ 	 				if( add > sum )
+ 	 				{
+ 	 					obj.PayID = periods[k].PayID;
+ 	 					obj.PayMonth = periods[k].PayMonth;
+ 	 					obj.PayYear = periods[k].PayYear;
+ 	 					
+ 	 					availablePaymentPeriods.push(obj);
+ 	 				}
+ 	 				
+ 	 			}
+ 	 			
+ 	 			/*change month number to name*/
+ 	 			for(var i=0; i< availablePaymentPeriods.length; i++)
+ 	 			{
+ 	 				for(j=0; j<months.length; j++)
+ 	 				{
+ 	 					if( availablePaymentPeriods[i].PayMonth == months[j].id )
+ 	 					{
+ 	 						availablePaymentPeriods[i].PayMonth = months[j].name;
+ 	 					}
+ 	 				}
+ 	 			}
+ 	 			
+ 	 			ctrl.availablePaymentPeriods = availablePaymentPeriods;     	 			
+ 	 			
+ 	 		}); 			
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+		
+		
+		TalService.requestPremium( polId ).done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.monthlyPremium = json;
+ 	 		}); 			
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+		
+	}
+	
+	ctrl.pay = function ( list ) {
+        
+		var models = [];
+		var data = {};
+		var payment = [];		
+		var polId = ctrl.polId;
+		
+		var paymentDate = (new Date()).toISOString().split('T')[0];
+		
+        angular.forEach(list, function (value, key) {
+            if (list[key].selected == list[key].PayID) {
+            	models.push(list[key]); 
+            }
+        });
+		
+        //var ordernumber = APP.UTILS.ORDER.getDocumentNo();
+		data.receiptnumber = "123456";
+		
+		for(var i=0; i<models.length; i++)
+		{
+			var model = {};
+			
+			model.requestedamount = ctrl.monthlyPremium.MonthlyPremium;
+			model.returnedamount = ctrl.monthlyPremium.MonthlyPremium;
+			model.paymentdate = paymentDate;			
+			model.payperiodid= models[i].PayID;
+			model.description = "Cash";
+			
+			payment.push(model);
+		}
+		
+		data.payment = payment;
+        ctrl.data = data;
+        
+        var totalPremium = null;
+        
+        for(var j=0; j<payment.length; j++)
+        {
+        	totalPremium = totalPremium + payment[j].requestedamount;
+        }
+        
+        ctrl.totalPremium = totalPremium;
+        
+        /*pay*/
+        var dfd = new jQuery.Deferred();     
+        
+       /* TalService.addPolicyPayment( ctrl.data, polId ).done( function( response ){*/
+        	
+        	var json = {
+      			  "PaymentSubmission": "Success",
+    			  "TotalPaymentReceived" : "500"
+    			};
+        	
+        	//var json = JSON.parse( response );
+        				
+			if( json.PaymentSubmission == 'Fail' ){
+				
+				dfd.reject('Policy submission failed! Error: ' + json.Error );
+				
+			}
+			else
+			{
+				console.log('success ' + json.TotalPaymentReceived);
+				
+				var amount = json.TotalPaymentReceived;
+				
+				var cart = new Cart();
+				
+				var line = cart.addLine(105, 1);
+				//ShoppingCart.updatePrice(line.index, data.Value);
+				cart.updateProductInfo(line.index, 'TAL Premium', 'code', '123456');
+				//ShoppingCart.vouchers.push(data.PrintString);
+				
+				line.taxAmt = 0;
+				line.lineAmt = parseFloat(amount);
+				line.lineNetAmt = parseFloat(amount);
+				line.costAmt = 0;
+				line.voidable = false;
+				
+				cart.updateTotal();
+				
+				modal.show();
+				
+				var payments = [{
+					'type' : 'CASH',
+					'amount' : amount
+				}];				
+				
+				
+				APP.checkout( null, cart, payments, null, null ).done(function( order ){					
+					
+										
+				}).fail(function(msg){
+					
+				}).always(function(msg){
+					
+					modal.hide();		
+					
+				});	
+			}
+        	
+      /*  }).fail(function(err){
+			
+			dfd.reject('Failed to send payment request!');
+			
+		});*/
+        
+        var promise = dfd.promise();
+		
+		promise.done(function(msg){
+			
+			ons.notification.alert({
+				  message: msg,
+				  // or messageHTML: '<div>Message in HTML</div>',
+				  title: 'Tal Payment',
+				  buttonLabel: 'OK',
+				  animation: 'default', // or 'none'
+				  // modifier: 'optional-modifier'
+				  callback: function() {
+				    // Alert button is closed!
+				  }
+				});
+			
+		}).fail(function(msg){
+			
+			ons.notification.alert({
+				  message: msg,
+				  // or messageHTML: '<div>Message in HTML</div>',
+				  title: 'Error',
+				  buttonLabel: 'OK',
+				  animation: 'default', // or 'none'
+				  // modifier: 'optional-modifier'
+				  callback: function() {
+				    // Alert button is closed!
+				  }
+				});
+			
+		}).always(function(){
+			modal.hide()
+		});
+        
+    }
+	
 	/*
 	 * This endpoint retrieves a breakdown of a specific plan, along with dependent types, limits and any additional premiums. 
 	 * PlanID is drived from one of the plans available when retrieving method 'planlist'.
@@ -4929,6 +5276,25 @@ module.controller('TalFormController', function($scope, $timeout){
  		
  	}
  	
+ 	ctrl.validateBeneficiaryIdNumber = function(){
+ 		
+ 		var id = ctrl.policy.benid;
+ 		
+ 		TalService.validateIdNumber( id ).done(function( json ){
+ 	 		
+ 	 		$scope.$apply(function(){
+ 	 			
+ 	 			ctrl.beneficiaryIdStatus = json['IDNumber'];
+ 	 			
+ 	 		});
+ 	 		
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+ 		
+ 	}
+ 	
  	TalService.getMemTypes().done(function( json ){
 		
 		ctrl.memTypes = json;
@@ -4937,6 +5303,96 @@ module.controller('TalFormController', function($scope, $timeout){
 		  
 		  dfd.reject( { 'ErrorMessage' : error } );
 	});
+ 	
+ 	/*ctrl.capturePolicy = function(){
+ 		
+ 		TalService.getPlanList().done(function( json ){
+ 			
+ 			var mainMemberInfo = {
+ 					
+ 	 				'policyNo' : '123456',
+ 	 				'plan' : ctrl.policy_info,
+ 	 				'name' : ( ctrl.mainFirstName || '' ) + " " + ( ctrl.mainSurName || '' ),
+ 	 				'mainMemberId' : ctrl.mainMemberId,
+ 	 				'genderType' : ctrl.genderType,
+ 	 				'maritalStatus' : ctrl.marriedStatus,
+ 	 				'hasSpouse' : ctrl.hasSpouse,
+ 	 				'numberOfChildren' : ctrl.numberOfChildren,
+ 	 				'numberOfAdultDependents' : ctrl.numberOfAdultDependents,
+ 	 				'workPermitNumber' : ctrl.workPermitNumber,
+ 	 				'passportNumber' : ctrl.passportNumber,
+ 	 				'telephoneWork' : ctrl.telephoneWork,
+ 	 				'telephoneHome' : ctrl.telephoneHome,
+ 	 				'cellNumber' : ctrl.cellNumber,
+ 	 				'emailAddress' : ctrl.emailAddress,
+ 	 				'physicalAddress' : ( ctrl.physicalAddress1 || '' ) + ", " + ( ctrl.physicalAddress2 || '' ) + ", " + ( ctrl.physicalAddress3 || '' ),
+ 	 				'postalAddress' : ( ctrl.postalAddress1 || '' ) + ", " + ( ctrl.postalAddress2 || '' ) + ", " + ( ctrl.postalAddress3 || '' ),
+ 	 				'otherFuneralCover' : ctrl.otherFuneralCover
+ 	 		};
+ 			
+ 			var beneficiaryInfo = {
+ 					
+ 					'beneficiaryName' : ( ctrl.beneficiaryFirstName || '' ) + " " + ( ctrl.beneficiarySurname || '' ),
+ 					'beneficiaryId' : ctrl.beneficiaryId,
+ 					'beneficiaryRelationship' : ctrl.beneficiaryRelationship
+ 			};
+ 			
+ 			var financialInfo = {
+ 					
+ 					'totalPremium' : ctrl.basicPremium,
+ 					'paymentMethod' : ctrl.paymentMethod,					
+ 					'incomePerMonth' : ctrl.incomePerMonth,
+ 					'expenditurePerMonth' : ctrl.expenditurePerMonth,
+ 			};
+ 			
+ 			var payments = {
+ 					
+ 			};
+ 			
+ 			var dependents = {
+ 					
+ 			};
+ 			
+ 			var signature = {
+ 					
+ 			};
+ 			
+ 			var adviceRecord = {
+ 					
+ 					'riskProfile' : ctrl.riskProfile,
+ 					'typeOfCoverRequired' : ctrl.typeOfCoverRequired,
+ 					'monthlyContributionAvailable' : ctrl.monthlyContributionAvailable,
+ 					'availableFuneralcover' : ctrl.typeOfCoverRequired,
+ 					'needAndObjective' : ctrl.needAndObjective,
+ 					'reasonForRecommendation' : ctrl.reasonForRecommendation,
+ 					'cancelledOtherPolicies' : ctrl.cancelledOtherPolicies,
+ 					'electToFollowAdvice' : ctrl.electToFollowAdvice
+ 			};
+ 			
+			menu.setMainPage('page/view-tal-application.html', {closeMenu: true, callback:function(){
+				
+				ctrl.mainMemberInfo = mainMemberInfo;
+				ctrl.beneficiaryInfo = beneficiaryInfo;
+				ctrl.financialInfo = financialInfo;
+				ctrl.adviceRecord = adviceRecord;
+				
+				renderView( ctrl.mainMemberInfo, ctrl.beneficiaryInfo, ctrl.financialInfo, ctrl.adviceRecord );
+			}});
+ 				
+ 	 	}).fail(function(error){
+ 			  
+ 			  dfd.reject( { 'ErrorMessage' : error } );
+ 		});
+ 		
+ 	}*/
+ 	
+ 	/*renderView = function( mainMemberInfo, beneficiaryInfo, financialInfo, adviceRecord ){
+ 		
+ 		ctrl.mainMemberInfo = mainMemberInfo;
+ 		ctrl.beneficiaryInfo = beneficiaryInfo;
+ 		ctrl.financialInfo = financialInfo;
+ 		ctrl.adviceRecord = adviceRecord;
+ 	}*/
  	
  	ctrl.coverAmount = ctrl.coverAmount || 0;
  	

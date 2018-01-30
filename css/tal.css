@@ -12,7 +12,7 @@
 	float: left;
 } */
 
-.tal-form fieldset.scheduler-border {
+.tal-form  fieldset.scheduler-border {
     border: 1px groove #ddd !important;
     padding: 1.4em 1.4em 1.4em 1.4em !important;
     margin: 0 4px 1.5em 4px !important;
@@ -42,7 +42,7 @@
 .tal-form .form-control{}
 .tal-form .form-group{}
 
-.tal-form .form-control {
+.tal-form .form-control, .tal-payment-form .form-control{
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -62,26 +62,26 @@
           transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
-.tal-form .form-group {
+.tal-form .form-group, .view-application-form .form-group, .tal-payment-form .form-group {
   margin-bottom: 15px;
 }
 
-.tal-form .left-input {
+.tal-form .left-input , .tal-payment-form .left-input {
 	width: 50%;
 	float: left;
 }
 
-.tal-form .right-input {
+.tal-form .right-input, .tal-payment-form .right-input {
 	width: 50%;
 	display: table;
 }
 
-.tal-form .seperator-grey{
+.seperator-grey{
 	border-top : 1px solid #d0d0d0;
 	width: 100%;
 }
 
-.tal-form label{
+.tal-form label, .tal-payment-form label{
 	font-size : 15px;	
 }
 
@@ -92,33 +92,33 @@
 	margin-bottom: 10px;
 }
 
-.tal-form #plan-detail-table{
+.tal-form #plan-detail-table , .tal-payment-form #policies-table , .tal-payment-form #payment-history-table, .tal-payment-form #payment-periods-table{
 	width: 100%;
 	text-align: left;	
 }
 
-.tal-form #plan-detail-table, #plan-detail-table td{
+.tal-form #plan-detail-table, #plan-detail-table td, .tal-payment-form #policies-table, #policies-table td, .tal-payment-form #payment-history-table, #payment-history-table td, .tal-payment-form #payment-periods-table, #payment-periods-table td {
   border-collapse: collapse;
   padding: 5px;
 }
-.tal-form #plan-detail-table tbody tr:nth-child(even) {
+.tal-form #plan-detail-table tbody tr:nth-child(even),  .tal-payment-form #policies-table tbody tr:nth-child(even), .tal-payment-form #payment-history-table tbody tr:nth-child(even), .tal-payment-form #payment-periods-table tbody tr:nth-child(even){
   background: #f1f1f1 none repeat scroll 0 0;
 }
-.tal-form #plan-detail-table tbody tr:nth-child(odd) {
+.tal-form #plan-detail-table tbody tr:nth-child(odd) , .tal-payment-form #policies-table tbody tr:nth-child(odd), .tal-payment-form #payment-history-table tbody tr:nth-child(odd), .tal-payment-form #payment-periods-table tbody tr:nth-child(odd) {
   background-color: #ffffff;
 }
 
-.tal-form #plan-detail-table thead tr{
+.tal-form #plan-detail-table thead tr , .tal-payment-form #policies-table thead tr, .tal-payment-form #payment-history-table thead tr, .tal-payment-form #payment-periods-table thead tr{
 	background: #f5f5f5 none repeat scroll 0 0;
 }
 
-.tal-form #plan-detail-table{
+.tal-form #plan-detail-table , .tal-payment-form #policies-table, .tal-payment-form #payment-history-table, .tal-payment-form #payment-periods-table {
 	border: 1px solid #ddd;
 	border-radius: 3px;
 	margin: 0 0 18px;
 }
 
-.tal-form #plan-detail-table th{
+.tal-form #plan-detail-table th , .tal-payment-form #policies-table th, .tal-payment-form #payment-history-table th, .tal-payment-form #payment-periods-table th{
 	padding: 8px 10px 7px	
 }
 
@@ -153,4 +153,26 @@
 
 .tal-form ._720kb-datepicker-calendar-day:hover, .tal-form ._720kb-datepicker-calendar-day._720kb-datepicker-active{
 	background: #d0d0d0;
+}
+
+.tal-form .invalid-text{
+	color : red;
+	font-size: 14px;
+}
+
+.tal-form .valid-text{
+	color: green;
+	font-size: 14px;
+}
+
+.view-application-form{
+	margin-left: 20px;
+	margin-right: 20px;
+}
+.view-application-form .form-group div {
+	display: table-cell;
+}
+
+.view-application-form .form-group div:first-child {
+	width: 250px;	
 }

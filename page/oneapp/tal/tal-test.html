@@ -71,8 +71,16 @@
 				</div>
 		   </div>
 		   
-		   <div class="form-group">
+		   <!-- <div class="form-group">
 		   	{{ ctrl.status }}
+		   </div> -->
+		   
+		   <div class="form-group"  ng-class="{'invalid-text' : ctrl.status == 'ID number too short' || ctrl.status =='ID number too long' || ctrl.status =='ID number failed check digit validation', 'valid-text' : ctrl.status == 'Valid'}">
+			   <div class="form-group" style="float:left; width:60% ">
+			   	{{ ctrl.status }}
+			   </div>
+			   <div class="form-group right-input">
+			   </div>
 		   </div>
    
 		   	<div class="form-group">
@@ -319,10 +327,11 @@
 	   		<div class="form-group">
 		      	<label for="">Payment Method</label>
 				
-				<select ng-model="ctrl.policy.paymenttypeid" class="form-control" placeholder="Payment Method" style="width:15%" convert-to-number>
+				<select ng-model="ctrl.policy.paymenttypeid" class="form-control" placeholder="Payment Method" style="width:15%;" convert-to-number>
 		           <option ng-repeat="paymentType in ctrl.paymentTypes" value="{{paymentType.PaymentTypeID}}">{{paymentType.PaymentTypeLabel}}</option>
 		        </select>
-												
+		        
+		        <!-- <select ng-model="ctrl.policy.paymenttypeid" ng-options="paymentType.PaymentTypeLabel for paymentType in ctrl.paymentTypes track by paymentType.PaymentTypeID"  convert-to-number></select> -->
 			</div>
 		
 			<div id="debit-bank-container" ng-show="ctrl.policy.paymenttypeid == 2">
@@ -377,17 +386,17 @@
 				
 			</div>
 		
-			<div id="easy-pay-container" ng-show="ctrl.policy.paymenttype == 4">
+			<div id="easy-pay-container" ng-show="ctrl.policy.paymenttypeid == 4">
 				<div class="form-group">
 			      	<label for="">Easypay Option: The Policy holder is a foriegn national ? Rather generate a system based EasyPay Number.</label>
 				    <input type="checkbox" name="EasyPayTickBox" Value="Yes" ng-model="ctrl.policy.EasyPayTickBox">							
 				</div>		
 			</div>
 		
-			<div id="grindrod-contianer" ng-show="ctrl.policy.paymenttype == 9">
+			<div id="grindrod-contianer" ng-show="ctrl.policy.paymenttypeid == 9">
 				<div class="form-group">
 			      	<label>Grindrod Number:</label>
-				    <input type="text" class="form-control" name="GrindrodUSNNo" ng-model="ctrl.policy.GrindrodUSNNo" placeholder="Grindrod Number" style="width:40% "/>								
+				    <input type="text" class="form-control" name="grindrodusnno" ng-model="ctrl.policy.grindrodusnno" placeholder="Grindrod Number" style="width:40% "/>								
 				</div>
 			</div>
 		
@@ -401,18 +410,18 @@
 			<div class="form-group">
 		    	<div class="form-group left-input">
 			      	<label>First Name *</label>
-				    <input type="text" class="form-control" name="BenName" ng-model="ctrl.policy.benname" placeholder="First Name" style="width:80% " required />								
+				    <input type="text" class="form-control" name="benname" ng-model="ctrl.policy.benname" placeholder="First Name" style="width:80% " required />								
 				</div>
 				<div class="form-group right-input">
 				    <label>Last Name *</label>
-				    <input type="text" class="form-control" name="BenSurname" ng-model="ctrl.policy.bensurname" placeholder="Last Name" style="width:80% " required />			
+				    <input type="text" class="form-control" name="bensurname" ng-model="ctrl.policy.bensurname" placeholder="Last Name" style="width:80% " required />			
 				</div>
 	   		</div>
    		
 	   		<div class="form-group">
 		    	<div class="form-group left-input">
 			      	<label>ID Number *</label>
-				    <input type="text" class="form-control" name="BenID" ng-model="ctrl.policy.benid" placeholder="ID Number" style="width:80% " required />								
+				    <input type="text" class="form-control" name="benid" ng-model="ctrl.policy.benid" placeholder="ID Number" style="width:80% " required  ng-blur="ctrl.validateBeneficiaryIdNumber();"/>								
 				</div>
 				<div class="form-group right-input">
 				    <label>Relationship *</label>
@@ -421,6 +430,18 @@
 			        </select>
 				</div>
 	   		</div>
+	   		
+	   		<!-- <div class="form-group"  ng-class="{'invalid-text' : ctrl.beneficiaryIdStatus == 'ID number too short' || ctrl.beneficiaryIdStatus =='ID number too long' || ctrl.beneficiaryIdStatus =='ID number failed check digit validation', 'valid-text' : ctrl.beneficiaryIdStatus == 'Valid'}">
+		   		{{ ctrl.beneficiaryIdStatus }}
+		   	</div> -->
+		   	
+		   	<div class="form-group"  ng-class="{'invalid-text' : ctrl.beneficiaryIdStatus == 'ID number too short' || ctrl.beneficiaryIdStatus =='ID number too long' || ctrl.beneficiaryIdStatus =='ID number failed check digit validation', 'valid-text' : ctrl.beneficiaryIdStatus == 'Valid'}">
+			   <div class="form-group" style="float:left; width:60% ">
+			   	{{ ctrl.beneficiaryIdStatus }}
+			   </div>
+			   <div class="form-group right-input">
+			   </div>
+		   </div>
    		
 	   		<div class="form-group seperator-grey">
 			</div>
@@ -550,17 +571,23 @@
 			</div>
 		
 			<div class="form-group">
-		      	<button class="button button--large" type="button" ng-disabled="talForm.$invalid" ng-click="ctrl.capturePolicy()">Capture Policy</button>								
+		      	<button class="button button--large" type="button" ng-click="ctrl.capturePolicy()">Capture Policy</button>								
 			</div>
 			
-						
 			<div class="form-group">
 				<img id="agent-signature-image">
 			</div>
+			
+			<!-- <a href="page/tal-payment.html">Accept Payments</a> -->
 		
 		</div>
 </form>
 </div>
+<!-- <div>
+	<div class="form-group">
+	     <a href="page/oneapp/tal/tal-payment.html">Accept Payments</a>
+	</div>
+</div> -->
 
 
 </ons-page> 

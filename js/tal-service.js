@@ -249,6 +249,196 @@ var TalService = {
 			
 		},
 		
+		/*
+		 * This endpoint returns policies based on a keyword
+			Fields searched: Policy Number, Main Member ID Number, Policy Holder Surname, Work Permit Number, Passport Number or Cell Phone Number.
+			Depending on your keyword, this method can return more than one result.
+		 */
+		policySearch : function( keyword ){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=policysearch&servicekey='+TalService.service_key+'&keyword='+ keyword;
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
+			
+		},
+		
+		/*
+		 * This endpoint retrieves the last 12 payments made against a policy.
+		 */
+		getPaymenthistory : function( polId ){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=paymenthistory&polid='+ polId +'&servicekey='+TalService.service_key;
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
+			
+		},
+		
+		/*
+		 * This endpoint retrieves the payment periods available for allocating a payment against.
+		*/		
+		getPaymentPeriod : function(){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=paymentperiod';
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
+		},
+		
+		/*
+		 * This endpoint retrieves the monthly premium for the selected policy.
+		*/		
+		requestPremium : function( polid ){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=requestpremium&serviceKey='+TalService.service_key+'&PolID=' + polid;
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
+		},
+		
+		/*
+		 * Use this method to allocate payments against a policy in the system.
+			Always ensure the requested amount and the returned amount are the same value. No partial payments are accepted, please submit the correct payment amount based on the total policy premium, including any additional dependent payments.
+			The system only accepts payments for periods where no payment has been captured, please use method 'paymenthistory' to determine which payperiodid's are available for payment allocation.
+			The system accepts multiple payment periods.
+		*/		
+		/*addPolicyPayment : function( polId ){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=addpolicypayment&servicekey='+TalService.service_key+'&polid=' + polid;
+			
+			var dfd = new jQuery.Deferred();	        	        
+	        
+	        $.ajax({
+	            method: 'GET',
+	            url: url,
+	            dataType: 'json',
+	            success: function( response ){
+	            	
+	                dfd.resolve( response );
+	            },
+	            error: function( jqXHR, textStatus, errorThrown ){
+	            	
+	            	dfd.reject( textStatus );
+	            }
+	        });
+	                
+	        return dfd.promise();
+		},*/
+		
+		/*addPolicyPayment : function( payment, polid ){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=addpolicypayment&servicekey='+TalService.service_key+'&Polid='+polid;
+			
+			return $.post( url, 'data=' + JSON.stringify( payment ) );
+			
+		},*/
+		
+		addPolicyPayment : function( payment, polid ){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=addpolicypayment&servicekey='+TalService.service_key+'&Polid='+polid;
+			
+			var dfd = new jQuery.Deferred();	     
+			
+			 $.ajax({
+		            method: 'POST',
+		            url: url,
+		            dataType: 'json',
+		            data:JSON.stringify( payment ),
+		            contentType:"application/json; charset=utf-8",
+		            success: function( response ){
+		            	
+		                dfd.resolve( response );
+		                alert("success");
+		            },
+		            error: function( jqXHR, textStatus, errorThrown ){
+		            	
+		            	//hack for response
+		            	var responseText = jqXHR.responseText;
+		            	responseText = responseText.substr(responseText.indexOf('{'));
+		            	
+		            	try{
+		            		console.log(responseText);
+		            		//var response = JSON.parse(responseText);
+		            		
+			            	dfd.resolve( responseText );
+			                alert("success");
+			                
+			                return;
+		            	}
+		            	catch(e){
+		            		alert(e);
+		            	}
+		            	
+		            	dfd.reject( jqXHR.responseText );
+		            	alert( jqXHR.responseText );
+		            }
+		        });
+		                
+		        return dfd.promise();
+			
+		},
+		
 		validateIdNumber : function( id ){
 			
 			var validate_id_number_url = 'http://api.transafricaadmin.co.za/?method=validateidnumber&servicekey='+TalService.service_key+'&idnumber='+id;

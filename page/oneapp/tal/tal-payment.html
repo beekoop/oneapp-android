@@ -1,0 +1,157 @@
+<ons-page ng-controller="TalFormController as ctrl"> 
+	<ons-toolbar fixed-style>
+		<div class="left">
+			<ons-toolbar-button onclick="menu.toggle()">
+			<ons-icon icon="ion-navicon"></ons-icon>
+			</ons-toolbar-button>
+		</div>
+	  	<div class="center">Add Payments</div>
+	</ons-toolbar>
+	<div class="tal-payment-form" style="margin-left: 20px;margin-right: 20px;">
+		<form name="talPaymentForm" method="get" action="" novalidate>
+			<!-- <div><h3 style="color:green;">Add Payments</h3></div> -->
+			
+	   		<div>
+		   		<div class="form-group">
+					<h5>Search Policies:</h5>
+				</div>
+				
+				<div class="form-group">
+			    	<div class="form-group left-input">
+				      	<label>Policy Search</label>
+					    <input type="text" class="form-control" name="keyword" ng-model="ctrl.keyword" placeholder="ID, Surname, Cell Number" style="width:99% "/>
+					</div>
+					<div class="form-group right-input" style="padding-top: 16px;">
+						<button class="button" type="button" ng-click="ctrl.searchPolicy()">Search Policy</button>	
+					</div>
+		   		</div>
+				
+		   		<div class="form-group">
+					<table id="policies-table" ng-show="ctrl.policies.length > 0">
+						<thead>
+							  <tr>
+							  	<th>PolNo</th>
+							  	<th>PolID</th>
+							  	<th>PolicyActive</th>
+							  	<th>MainIDNo</th>
+							  	<th>MainSurname</th>
+							  	<th>Mainfirstname</th>
+							  	<!-- <th>WorkPermitnumber</th>
+							  	<th>PassportNumber</th> -->
+							  	<th>MainTelCell</th>
+							  </tr>
+						  </thead>
+						  <tbody>
+							   <tr ng-repeat="policy in ctrl.policies">
+							    <td>{{ policy.PolNo }}</td>
+							    <td>{{ policy.PolID }}</td>
+							    <td>{{ policy.PolicyActive }}</td>
+							    <td>{{ policy.MainIDNo }}</td>
+							    <td>{{ policy.MainSurname }}</td>
+							    <td>{{ policy.Mainfirstname }}</td>
+							   <!--  <td>{{ policy.WorkPermitnumber }}</td>
+							    <td>{{ policy.PassportNumber }}</td> -->
+							    <td>{{ policy.MainTelCell }}</td>
+							  </tr>
+						  </tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="form-group seperator-grey"></div>
+			
+			<div>
+				<div class="form-group">
+					<h5>Payment History: ( Payments already allocated )</h5>
+				</div>
+				
+				<div class="form-group">
+			    	<div class="form-group left-input">
+				      	<label>Policy ID:</label>
+					    <input type="text" class="form-control" name="polId" ng-model="ctrl.polId" placeholder="ID" style="width:99% "/>
+					</div>
+					<div class="form-group right-input" style="padding-top: 16px;">
+						<button class="button" type="button" ng-click="ctrl.getPaymentHistory( ctrl.polId )">Search</button>	
+					</div>
+		   		</div>
+				
+				<div class="form-group">
+					<table id="payment-history-table" ng-show="ctrl.paymentHistories.length > 0">
+						<thead>
+							  <tr>
+							  	<th>PayPeriodID</th>
+							  	<th>RequestedAmount</th>
+							  	<th>ReturnedAmount</th>
+							  	<th>DescriptionFromFile</th>
+							  	<th>PaymentTypeLabel</th>
+							  	<!-- <th>PaymentTypeID</th> -->
+							  	<th>PayMonth</th>
+							  	<th>PayYear</th>
+							  	<!-- <th></th> -->
+							  </tr>
+						  </thead>
+						  <tbody>
+							   <tr ng-repeat="paymentHistory in ctrl.paymentHistories">
+							    <td>{{ paymentHistory.PayPeriodID }}</td>
+							    <td>{{ paymentHistory.RequestedAmount }}</td>
+							    <td>{{ paymentHistory.ReturnedAmount }}</td>
+							    <td>{{ paymentHistory.DescriptionFromFile }}</td>
+							    <td>{{ paymentHistory.PaymentTypeLabel }}</td>
+							    <!-- <td>{{ paymentHistory.PaymentTypeID }}</td> -->
+							    <td>{{ paymentHistory.PayMonth }}</td>
+							    <td>{{ paymentHistory.PayYear }}</td>
+							    <!-- <td> <input type="checkbox" ng-model="paymentHistory.selected" ng-true-value="'{{paymentHistory.PayPeriodID}}'" ng-false-value="''"/> </input></td> -->
+							  </tr>
+						  </tbody>
+					</table>
+				</div>
+				
+				<!-- <div class="form-group right-input" style="padding-top: 16px;">
+					<button class="button" type="button" ng-click="ctrl.test( ctrl.paymentHistories )">test</button>	
+				</div> 		
+				
+				<p>{{ctrl.data}}</p> -->	
+			
+			</div>
+			
+			<div class="form-group seperator-grey"></div>
+			
+			<div ng-show="ctrl.availablePaymentPeriods.length > 0">
+				<div class="form-group">
+					<h5>Payment Periods Available:</h5>
+				</div>
+				
+				<div class="form-group">
+					<table id="payment-periods-table">
+						<thead>
+							  <tr>
+							  	<th>PayID</th>
+							  	<th>PayMonth</th>
+							  	<th>PayYear</th>
+							  	<th>Select Month/Months</th>
+							  </tr>
+						  </thead>
+						  <tbody>
+							   <tr ng-repeat="availablePaymentPeriod in ctrl.availablePaymentPeriods">
+							    <td>{{ availablePaymentPeriod.PayID }}</td>
+							    <td>{{ availablePaymentPeriod.PayMonth }}</td>
+							    <td>{{ availablePaymentPeriod.PayYear }}</td>
+							    <td> <input type="checkbox" ng-model="availablePaymentPeriod.selected" ng-true-value="'{{availablePaymentPeriod.PayID}}'" ng-false-value="''"/> </input></td>
+							  </tr>
+						  </tbody>
+					</table>
+				</div>
+				
+				<div class="form-group right-input" style="padding-top: 16px;">
+					<button class="button" type="button" ng-click="ctrl.pay( ctrl.availablePaymentPeriods )" ng-disabled=" availablePaymentPeriod.PayID == '' ">Pay</button>	
+				</div>			
+				
+				<p>{{ ctrl.data }}</p>
+				<!-- <p>Total Premium: {{ ctrl.totalPremium }}</p> -->
+			
+			</div>
+			
+			
+		</form>
+	</div>
+</ons-page>
