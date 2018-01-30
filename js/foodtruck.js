@@ -4476,8 +4476,10 @@ module.controller('TalFormController', function($scope, $timeout){
 	ctrl.agentsig = settings.signature;
 	TalService.service_key = settings.serviceKey;
 	
-	document.getElementById('agent-signature-image').src = ctrl.agentsig;
-	
+	if( document.getElementById('agent-signature-image') !=null )
+	{
+		document.getElementById('agent-signature-image').src = ctrl.agentsig;
+	}
 	
 	ons.createDialog('page/signature-capture-dialog.html', {parentScope: $scope}).then(function(dialog) {
 		
@@ -4987,6 +4989,8 @@ module.controller('TalFormController', function($scope, $timeout){
 		data.payment = payment;
         ctrl.data = data;
         
+        console.log(ctrl.data);
+        
         var totalPremium = null;
         
         for(var j=0; j<payment.length; j++)
@@ -4999,7 +5003,7 @@ module.controller('TalFormController', function($scope, $timeout){
         /*pay*/
         var dfd = new jQuery.Deferred();     
         
-       /* TalService.addPolicyPayment( ctrl.data, polId ).done( function( response ){*/
+        /*TalService.addPolicyPayment( ctrl.data, polId ).done( function( response ){*/
         	
         	var json = {
       			  "PaymentSubmission": "Success",
@@ -5054,7 +5058,7 @@ module.controller('TalFormController', function($scope, $timeout){
 				});	
 			}
         	
-      /*  }).fail(function(err){
+        /*}).fail(function(err){
 			
 			dfd.reject('Failed to send payment request!');
 			
