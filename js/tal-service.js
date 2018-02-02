@@ -358,14 +358,11 @@ var TalService = {
 		},
 		
 		/*
-		 * Use this method to allocate payments against a policy in the system.
-			Always ensure the requested amount and the returned amount are the same value. No partial payments are accepted, please submit the correct payment amount based on the total policy premium, including any additional dependent payments.
-			The system only accepts payments for periods where no payment has been captured, please use method 'paymenthistory' to determine which payperiodid's are available for payment allocation.
-			The system accepts multiple payment periods.
+		 * This endpoint returns the detail of the selected policy.
 		*/		
-		/*addPolicyPayment : function( polId ){
+		policyView : function( polid ){
 			
-			var url = 'http://api.transafricaadmin.co.za/?method=addpolicypayment&servicekey='+TalService.service_key+'&polid=' + polid;
+			var url = 'http://api.transafricaadmin.co.za/?method=policyview&serviceKey='+TalService.service_key+'&PolID=' + polid;
 			
 			var dfd = new jQuery.Deferred();	        	        
 	        
@@ -384,7 +381,14 @@ var TalService = {
 	        });
 	                
 	        return dfd.promise();
-		},*/
+		},
+		
+		/*
+		 * Use this method to allocate payments against a policy in the system.
+			Always ensure the requested amount and the returned amount are the same value. No partial payments are accepted, please submit the correct payment amount based on the total policy premium, including any additional dependent payments.
+			The system only accepts payments for periods where no payment has been captured, please use method 'paymenthistory' to determine which payperiodid's are available for payment allocation.
+			The system accepts multiple payment periods.
+		*/		
 		
 		/*addPolicyPayment : function( payment, polid ){
 			
@@ -409,34 +413,16 @@ var TalService = {
 		            success: function( response ){
 		            	
 		                dfd.resolve( response );
-		                alert("success");
+		                //alert("success");
 		            },
 		            error: function( jqXHR, textStatus, errorThrown ){
-		            	
-		            	//hack for response
-		            	var responseText = jqXHR.responseText;
-		            	responseText = responseText.substr(responseText.indexOf('{'));
-		            	
-		            	try{
-		            		console.log(responseText);
-		            		//var response = JSON.parse(responseText);
-		            		
-			            	dfd.resolve( responseText );
-			                alert("success");
-			                
-			                return;
-		            	}
-		            	catch(e){
-		            		alert(e);
-		            	}
 		            	
 		            	dfd.reject( jqXHR.responseText );
 		            	alert( jqXHR.responseText );
 		            }
 		        });
 		                
-		        return dfd.promise();
-			
+		        return dfd.promise();			
 		},
 		
 		validateIdNumber : function( id ){
@@ -558,8 +544,5 @@ var TalService = {
 		  	});
 			
 		}
-		
-		
-		
 		
 }

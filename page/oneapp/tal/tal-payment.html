@@ -30,15 +30,15 @@
 					<table id="policies-table" ng-show="ctrl.policies.length > 0">
 						<thead>
 							  <tr>
-							  	<th>PolNo</th>
-							  	<th>PolID</th>
-							  	<th>PolicyActive</th>
-							  	<th>MainIDNo</th>
-							  	<th>MainSurname</th>
-							  	<th>Mainfirstname</th>
+							  	<th>Pol No</th>
+							  	<th>Pol ID</th>
+							  	<th>Active</th>
+							  	<th>Main ID</th>
+							  	<th>Main Surname</th>
+							  	<th>Main Firstname</th>
 							  	<!-- <th>WorkPermitnumber</th>
 							  	<th>PassportNumber</th> -->
-							  	<th>MainTelCell</th>
+							  	<th>Main Tel</th>
 							  </tr>
 						  </thead>
 						  <tbody>
@@ -79,11 +79,11 @@
 					<table id="payment-history-table" ng-show="ctrl.paymentHistories.length > 0">
 						<thead>
 							  <tr>
-							  	<th>PayPeriodID</th>
-							  	<th>RequestedAmount</th>
-							  	<th>ReturnedAmount</th>
-							  	<th>DescriptionFromFile</th>
-							  	<th>PaymentTypeLabel</th>
+							  	<th>ID</th>
+							  	<th>Requested Amount</th>
+							  	<th>Returned Amount</th>
+							  	<th>Description</th>
+							  	<th>Payment Type</th>
 							  	<!-- <th>PaymentTypeID</th> -->
 							  	<th>PayMonth</th>
 							  	<th>PayYear</th>
@@ -106,12 +106,6 @@
 					</table>
 				</div>
 				
-				<!-- <div class="form-group right-input" style="padding-top: 16px;">
-					<button class="button" type="button" ng-click="ctrl.test( ctrl.paymentHistories )">test</button>	
-				</div> 		
-				
-				<p>{{ctrl.data}}</p> -->	
-			
 			</div>
 			
 			<div class="form-group seperator-grey"></div>
@@ -125,9 +119,9 @@
 					<table id="payment-periods-table">
 						<thead>
 							  <tr>
-							  	<th>PayID</th>
-							  	<th>PayMonth</th>
-							  	<th>PayYear</th>
+							  	<th>ID</th>
+							  	<th>Month</th>
+							  	<th>Year</th>
 							  	<th>Select Month/Months</th>
 							  </tr>
 						  </thead>
@@ -136,18 +130,19 @@
 							    <td>{{ availablePaymentPeriod.PayID }}</td>
 							    <td>{{ availablePaymentPeriod.PayMonth }}</td>
 							    <td>{{ availablePaymentPeriod.PayYear }}</td>
-							    <td> <input type="checkbox" ng-model="availablePaymentPeriod.selected" ng-true-value="'{{availablePaymentPeriod.PayID}}'" ng-false-value="''"/> </input></td>
+							    <td> <input type="checkbox" ng-model="availablePaymentPeriod.selected" ng-true-value="'{{availablePaymentPeriod.PayID}}'" ng-false-value="''" ng-click="ctrl.selected()"/> </input></td>
 							  </tr>
 						  </tbody>
 					</table>
 				</div>
 				
-				<div class="form-group right-input" style="padding-top: 16px;">
-					<button class="button" type="button" ng-click="ctrl.pay( ctrl.availablePaymentPeriods )" ng-disabled=" availablePaymentPeriod.PayID == '' ">Pay</button>	
+				<div class="form-group style="padding-top: 16px;">
+					<button class="button button--large" type="button" ng-click="ctrl.pay( ctrl.availablePaymentPeriods )" ng-disabled="ctrl.check =='' " >Pay</button>	
 				</div>			
 				
-				<p>{{ ctrl.data }}</p>
+				<!-- <p>{{ ctrl.data }}</p> -->
 				<!-- <p>Total Premium: {{ ctrl.totalPremium }}</p> -->
+				<!-- <p>{{ ctrl.check }}</p> -->
 			
 			</div>
 			
