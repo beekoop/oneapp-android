@@ -5,7 +5,7 @@ function closeApp(){
 	navigator.notification.confirm(
            'Do you want to quit', 
            onConfirmQuit, 
-           'Posterita Food POS', 
+           'OneApp POS', 
            'OK,Cancel'  
     );
 }
@@ -237,6 +237,16 @@ function validateTerminal()
 	}
 	else
 	{
+		//update documentNo
+		var remote_sequence = terminal['sequence'];
+		var local_sequence = localStorage.getItem('DOCUMENT_NO') || '0';
+		local_sequence = parseInt(local_sequence);
+		
+		if( remote_sequence > local_sequence ){
+			
+			localStorage.setItem('DOCUMENT_NO', remote_sequence);			
+		}
+		
 		var user_key = APP.USER_KEY;
 		
 		// validate user key
