@@ -112,7 +112,6 @@ var TalService = {
 	        });
 	                
 	        return dfd.promise();
-			
 		},
 		
 		/*
@@ -193,7 +192,6 @@ var TalService = {
 	        });
 	                
 	        return dfd.promise();
-			
 		},
 		
 		/*
@@ -275,7 +273,6 @@ var TalService = {
 	        });
 	                
 	        return dfd.promise();
-			
 		},
 		
 		/*
@@ -302,7 +299,6 @@ var TalService = {
 	        });
 	                
 	        return dfd.promise();
-			
 		},
 		
 		/*
@@ -471,12 +467,39 @@ var TalService = {
 	        return dfd.promise();
 		},
 		
-		addPolicy : function( policy ){
+		/*addPolicy : function( policy ){
 			
 			var url = 'http://api.transafricaadmin.co.za/?method=addpolicy&servicekey='+TalService.service_key;
 			
 			return $.post( url, 'data=' + JSON.stringify(policy) );
 			
+		},*/
+		
+		addPolicy : function( policy ){
+			
+			var url = 'http://api.transafricaadmin.co.za/?method=addpolicy&servicekey='+TalService.service_key;;
+			
+			var dfd = new jQuery.Deferred();	     
+			
+			 $.ajax({
+		            method: 'POST',
+		            url: url,
+		            dataType: 'json',
+		            data:JSON.stringify( policy ),
+		            contentType:"application/json; charset=utf-8",
+		            success: function( response ){
+		            	
+		                dfd.resolve( response );
+		                //alert("success");
+		            },
+		            error: function( jqXHR, textStatus, errorThrown ){
+		            	
+		            	dfd.reject( jqXHR.responseText );
+		            	alert( jqXHR.responseText );
+		            }
+		        });
+		                
+		        return dfd.promise();			
 		},
 		
 		uploadPolicyHolderSig : function( polid, signature ){

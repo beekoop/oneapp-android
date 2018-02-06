@@ -1156,6 +1156,34 @@ APP.UTILS.ORDER = {
 			
 		},
 		
+		getNextDocumentNo : function(){
+			
+			var number = localStorage.getItem('DOCUMENT_NO') || '-1';
+			var prefix = localStorage.getItem('DOCUMENT_NO_PREFIX') || '';
+			
+			number = parseInt(number);
+			
+			if(number < 0){
+				
+				var terminal = APP.TERMINAL.getById( APP.TERMINAL_KEY );
+				number = terminal['sequence'] || "0";
+				prefix = terminal['prefix'];	
+				
+				localStorage.setItem('DOCUMENT_NO_PREFIX', prefix);
+			}
+			
+			var documentNo = "" + (parseInt(number) + 1);
+			
+			var padding = "000000000";
+			
+			padding = padding.substr(0, padding.length - documentNo.length);
+			
+			documentNo = prefix + padding + documentNo;
+			
+			return documentNo;
+			
+		},
+		
 		getVouchersFromCart : function(cart){
 			
 			var vouchers = [];

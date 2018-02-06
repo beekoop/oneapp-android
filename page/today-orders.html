@@ -82,7 +82,7 @@
 		   		<ons-list-item ng-repeat="line in current_order.lines">
 		   			<ons-row>
 		   				<ons-col>
-		   					{{line.qtyentered}} x {{line.name}}
+		   					{{line.qtyentered}} x {{line.name}} {{ line.description }}
 		   				</ons-col>
 		   				<ons-col width="70px" class="right">
 		   					{{line.lineamt | number : 2 }}

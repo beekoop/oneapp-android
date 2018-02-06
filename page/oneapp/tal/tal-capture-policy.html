@@ -1,0 +1,652 @@
+<ons-page ng-controller="TalFormController as ctrl"> 
+<ons-toolbar fixed-style>
+	<div class="left">
+		<ons-toolbar-button onclick="menu.setMainPage('page/oneapp/tal/tal.html', {closeMenu: true})">
+		<ons-icon icon="ion-ios-arrow-back"></ons-icon>Back
+		</ons-toolbar-button>
+	</div>
+  	<div class="center">Capture A New Policy</div>
+</ons-toolbar>
+
+<div class="tal-form" style="margin-left: 20px;margin-right: 20px;">
+<form name="talForm" method="get" action="" novalidate>
+		
+<!--  -->
+<div ng-show="ctrl.step == 0">
+	<div><h3 style="color:green;">Capture A New Policy</h3></div>
+	
+	<div class="form-group" style="width:40%">
+		<label>Select Product:</label>
+		<select name="menu2" id="menu2"  ng-model="ctrl.policy.planid" class="form-control" ng-change="ctrl.getPlanDetail();" ng-init="ctrl.policy.planid=0" convert-to-number>
+			
+			<option value="0">Make Selection</Option>								                
+	           <option ng-repeat="plan in ctrl.planlist" value="{{ plan.PlanID }}" >{{ plan.PlanName }} (R{{ plan.Premium }})</option>
+		</select>
+	</div>
+	
+	<div class="form-group" ng-show="ctrl.policy.planid > 0">
+		<h5>Policy Info: {{ ctrl.policy_info }}</h5>
+	</div>
+</div>
+<!--  -->
+		
+<div ng-hide="ctrl.policy.planid == 0">
+<!--  -->
+	<div ng-show="ctrl.step == 0">
+		<div class="form-group">
+			<table id="plan-detail-table">
+				<thead>
+					  <tr>
+					  	<th>Cover</th>
+					  	<th>Description</th>
+					  	<th>Max Deps</th>
+					  	<th>Additional Premium</th>
+					  </tr>
+				  </thead>
+				  <tbody>
+					   <tr ng-repeat="planDetail in ctrl.planDetails | orderBy : '-ChildCover'">
+					    <td>R {{ planDetail.ChildCover | number:2 }}</td>
+					    <td>{{ planDetail.ChildDescription }}</td>
+					    <td>{{ planDetail.ChildItemLimit }}</td>
+					    <td>R {{ planDetail.ChildPremium | number:2 }} per Dep</td>
+					  </tr>
+				  </tbody>
+			</table>
+		</div>
+		<div class="form-group">
+			<p>Basic Premium: <strong>R {{ ctrl.basicPremium }}</strong></p>
+		</div>
+	
+		<div style="text-align:center;">
+			<button type="button" class="button" ng-click="ctrl.step = ctrl.step+1" style="width:15%">Next</button>
+		</div>	
+	</div>	
+<!--  -->
+
+<!--  -->
+	<div ng-show="ctrl.step == 1">
+		<div class="form-group">
+			<h5>Step 1: Capture Policy / Main Member Information:</h5>
+		</div>
+
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>ID Number *</label>
+			    <input class="form-control" name="id" ng-model="ctrl.policy.mainidno" placeholder="ID Number" style="width:80% " ng-blur="ctrl.validateIdNumber();" required ng-virtual-keyboard/>	
+			</div>
+			<div class="form-group right-input">
+		      	<label for="">Gender</label>
+			    <select name="GenderID" ng-model="ctrl.policy.genderid" class="form-control" placeholder="Gender" style="width:30% " convert-to-number>
+					<option Value="3">Female</Option>
+									
+					<option Value="2">Male</Option>
+					
+					<option Value="1">Unknown</Option>
+				</select>
+			</div>
+	   </div>
+   
+   <!-- <div class="form-group">
+   	{{ ctrl.status }}
+   </div> -->
+   
+	   <div class="form-group"  ng-class="{'invalid-text' : ctrl.status == 'ID number too short' || ctrl.status =='ID number too long' || ctrl.status =='ID number failed check digit validation', 'valid-text' : ctrl.status == 'Valid'}">
+		   <div class="form-group" style="float:left; width:60% ">
+		   	{{ ctrl.status }}
+		   </div>
+		   <div class="form-group right-input">
+		   </div>
+	   </div>
+ 
+	   	<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label for="">Marital Status</label>
+			    <select name="MarriedStatusID" ng-model="ctrl.policy.marriedstatusid" class="form-control" placeholder="Marital Status" style="width:30%">
+					
+					<option Value="3">Divorced</Option>
+									
+					<option Value="6">Married</Option>
+					
+					<option Value="4">Other</Option>
+					
+					<option Value="2">Single</Option>
+					
+					<option Value="1">Unknown</Option>
+					
+					<option Value="5">Windowed</Option>
+					
+				</select>								
+			</div>
+			<div class="form-group right-input">
+		      	<label for="">Has Spouse</label>
+			    <select name="HasSpouse" ng-model="ctrl.policy.hasspouse" class="form-control" placeholder="Has Spouse" style="width:20% ">
+					<option Value="false">No</option>
+					
+					<option Value="true">Yes</option>
+				</select>								
+			</div>
+	   </div>
+
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label for="">Number of Children</label>
+			    <select name="NoChildren" ng-model="ctrl.policy.nochildren" class="form-control" placeholder="Number of Children" style="width:30%" convert-to-number>
+					
+					<option Value="0">0</option>
+					
+					<option Value="1">1</option>
+					
+					<option Value="2">2</option>
+					
+					<option Value="3">3</option>
+					
+					<option Value="4">4</option>
+					
+					<option Value="5">5</option>
+					
+					<option Value="6">6</option>
+					
+					<option Value="7">7</option>
+					
+					<option Value="8">8</option>
+					
+					<option Value="9">9</option>
+					
+					<option Value="10">10</option>
+					
+					<option Value="11">11</option>
+					
+					<option Value="12">12</option>
+					
+					<option Value="13">13</option>
+					
+					<option Value="14">14</option>
+					
+					<option Value="15">15</option>					
+				</select>								
+			</div>
+			<div class="form-group right-input">
+		      	<label for="">Number of Adult Dependents</label>
+			    <select name="NoDependents" ng-model="ctrl.policy.noadultdependents" class="form-control" placeholder="Number of Adult Dependents" style="width:30%" convert-to-number>
+					<option Value="0">0</option>
+					
+					<option Value="1">1</option>
+					
+					<option Value="2">2</option>
+					
+					<option Value="3">3</option>
+					
+					<option Value="4">4</option>
+					
+					<option Value="5">5</option>
+					
+					<option Value="6">6</option>
+					
+					<option Value="7">7</option>
+					
+					<option Value="8">8</option>
+					
+					<option Value="9">9</option>
+					
+					<option Value="10">10</option>
+					
+					<option Value="11">11</option>
+					
+					<option Value="12">12</option>
+					
+					<option Value="13">13</option>
+					
+					<option Value="14">14</option>
+					
+					<option Value="15">15</option>
+				</select>								
+			</div>
+		</div>
+
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>First Name *</label>
+			    <input type="text" class="form-control" name="MainFirstName" ng-model="ctrl.policy.mainfirstname" placeholder="First Name" style="width:80% " required ng-virtual-keyboard />		
+			    <p ng-show="talForm.MainFirstName.$invalid && !talForm.MainFirstName.$pristine" class="help-block">First Name is required.</p>						
+			</div>
+			<div class="form-group right-input">
+			    <label>Last Name *</label>
+			    <input type="text" class="form-control" name="MainSurName" ng-model="ctrl.policy.mainsurname" placeholder="Last Name" style="width:80% " required ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Work Permit Number</label>
+			    <input type="text" class="form-control" name="WorkPermitNumber" ng-model="ctrl.policy.workpermitnumber" placeholder="Work Permit Number" style="width:80%" ng-virtual-keyboard/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Passport Number</label>
+			    <input type="text" class="form-control" name="PassportNumber" ng-model="ctrl.policy.passportnumber" placeholder="Passport Number" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Tel Work</label>
+			    <input type="text" class="form-control" name="MainTelWork" ng-model="ctrl.policy.maintelwork" placeholder="Tel Work" style="width:80% " ng-virtual-keyboard/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Tel Home</label>
+			    <input type="text" class="form-control" name="MainTelHome" ng-model="ctrl.policy.maintelhome" placeholder="Tel Home" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Cell Number *</label>
+			    <input class="form-control" name="MainTelCell" ng-model="ctrl.policy.maintelcell" placeholder="Cell Number" style="width:80% " required ng-virtual-keyboard/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Email Address</label>
+			    <input type="email" class="form-control" name="MainEmailAddress" ng-model="ctrl.policy.mainemailaddress" placeholder="Email Address" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Physical Address 1</label>
+			    <input type="text" class="form-control" name="PhysicalAddress1" ng-model="ctrl.policy.physicaladdress1" placeholder="Physical Address 1" style="width:80% " ng-virtual-keyboard/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Physical Address 2</label>
+			    <input type="text" class="form-control" name="PhysicalAddress2" ng-model="ctrl.policy.physicaladdress2" placeholder="Physical Address 2" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Physical Address 3</label>
+			    <input type="text" class="form-control" name="PhysicalAddress3" ng-model="ctrl.policy.physicaladdress3" placeholder="Physical Address 3" style="width:80% " ng-virtual-keyboard/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Physical Code</label>
+			    <input type="text" class="form-control" name="PhysicalCode" ng-model="ctrl.policy.physicalcode" placeholder="Physical Code" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Postal Address 1</label>
+			    <input type="text" class="form-control" name="PostalAddress1" ng-model="ctrl.policy.postaladdress1" placeholder="Postal Address 1" style="width:80% " ng-virtual-keyboard/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Postal Address 2</label>
+			    <input type="text" class="form-control" name="PostalAddress2" ng-model="ctrl.policy.postaladdress2" placeholder="Postal Address 2" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Postal Address 3</label>
+			    <input type="text" class="form-control" name="PostalAddress3" ng-model="ctrl.policy.postaladdress3" placeholder="Postal Address 3" style="width:80% " ng-virtual-keyboard/>								
+			</div>
+			<div class="form-group right-input">
+			    <label>Postal Code</label>
+			    <input type="text" class="form-control" name="PostalCode" ng-model="ctrl.policy.postalcode" placeholder="Postal Code" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+ 		<div class="form-group seperator-grey">
+	</div>
+	
+	<div style="text-align:center;">
+		<button type="button" class="button" ng-click="ctrl.step = ctrl.step-1" style="width:15%">Back</button> &nbsp;<button type="button" class="button" ng-click="ctrl.step = ctrl.step+1" style="width:15%">Next</button>
+	</div>
+	
+	</div>			
+ 		
+  		<!--  -->
+	<div ng-show="ctrl.step == 2">
+	
+  		<div class="form-group">
+			<h5>Step 2: Financial Information:</h5>
+		</div>
+
+		<div class="form-group">
+	      	<label for="">Any Other Funeral Cover</label>
+		    <select name="AnyOtherCover" ng-model="ctrl.policy.anyothercover" class="form-control" placeholder="Any Other Funeral Cover" style="width:10% ">
+				<option Value="false">No</option>
+				
+				<option Value="true">Yes</option>
+			</select>								
+		</div>
+
+		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>If 'Yes' From What Date ?</label>
+			    <!-- <input type="text" class="form-control" name="AnyOtherCoverDate" ng-model="AnyOtherCoverDate" placeholder="" style="width:50% "/> -->
+			    
+			    <datepicker date-format="yyyy-MM-dd" selector="form-control"  button-prev="<i class='fa fa-arrow-left'></i>" button-next="<i class='fa fa-arrow-right'></i>">
+				  <input class="form-control" name="AnyOtherCoverDate" ng-model="ctrl.policy.anyothercoverdate" type="text" style="width:50%;" placeholder="Choose a date"/>
+				</datepicker>
+												
+			</div>
+			<div class="form-group right-input">
+			    <label>Cover Amount</label>
+			    <input type="number" class="form-control" name="coverAmount" ng-model="ctrl.policy.ctrl.coverAmount"  placeholder="Cover Amount" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+	    	<div class="form-group left-input">
+		      	<label>Income Per Month</label>
+				
+				<select ng-model="ctrl.policy.incomepermonthid" class="form-control" placeholder="Income Per Month" style="width:30%" convert-to-number>
+		           <option ng-repeat="income in ctrl.incomes" value="{{income.IncomePerMonthID}}">{{income.IncomePerMonthLabel}}</option>
+		        </select>
+				
+			</div>
+			<div class="form-group right-input">
+			    <label>Expenditure Per Month</label>
+			    <input type="text" class="form-control" name="ExpenditurePerMonth" ng-model="ctrl.policy.expenditurepermonth" placeholder="Expenditure Per Month" style="width:80% " ng-virtual-keyboard/>			
+			</div>
+  		</div>
+ 		
+  		<div class="form-group">
+      		<label for="">Payment Method</label>
+		
+			<select ng-model="ctrl.policy.paymenttypeid" class="form-control" placeholder="Payment Method" style="width:15%;" convert-to-number>
+	           <option ng-repeat="paymentType in ctrl.paymentTypes" value="{{paymentType.PaymentTypeID}}">{{paymentType.PaymentTypeLabel}}</option>
+	        </select>
+        
+        	<!-- <select ng-model="ctrl.policy.paymenttypeid" ng-options="paymentType.PaymentTypeLabel for paymentType in ctrl.paymentTypes track by paymentType.PaymentTypeID"  convert-to-number></select> -->
+		</div>
+
+		<div id="debit-bank-container" ng-show="ctrl.policy.paymenttypeid == 2">
+			<div class="form-group">
+			    <label>Bank</label>
+				
+				<select ng-model="ctrl.policy.paydebitbank" class="form-control" placeholder="Bank" style="width:50% " convert-to-number>
+		           <option ng-repeat="bank in ctrl.banks" value="{{bank.BankID}}">{{bank.BankLabel}}</option>
+		        </select>
+							
+			</div>
+			
+			<div class="form-group">
+		      	<label>Branch Code:</label>
+			    <input type="text" class="form-control" name="PayDebitBranchCode" ng-model="ctrl.policy.paydebitbranchCode" placeholder="Branch Code" style="width:100% " ng-virtual-keyboard/>								
+			</div>
+			
+			<div class="form-group">
+		      	<label>Acc Number:</label>
+			    <input type="text" class="form-control" name="PayDebitAccNo" ng-model="ctrl.policy.paydebitaccNo" placeholder="Acc Number" style="width:100% " ng-virtual-keyboard/>								
+			</div>
+			
+			<div class="form-group">
+		      	<label for="">Account Type:</label>
+				<select ng-model="ctrl.policy.paydebitacctype" class="form-control" placeholder="Account Type" style="width:40% " convert-to-number>
+		           <option ng-repeat="accountType in ctrl.accountTypes" value="{{accountType.AccountID}}">{{accountType.AccountLabel}}</option>
+		        </select>
+				
+			</div>
+			
+			<div class="form-group">
+		      	<label for="">Debit Day:</label>	
+				<select ng-model="ctrl.policy.paydebitdayid" class="form-control" placeholder="Debit Day" style="width:40% " convert-to-number>
+		           <option ng-repeat="debitDay in ctrl.debitDays" value="{{debitDay.DebitDayID}}">{{debitDay.DebitDayLabel}}</option>
+		        </select>
+				
+			</div>
+			
+			<div class="form-group">
+		      	<label for="">Payment Provider:</label>
+			    <select name="PayProviderID" ng-model="ctrl.policy.payproviderid" class="form-control" placeholder="Payment Provider" style="width:40% " convert-to-number>
+					<option Value="1">Sage Pay</Option>
+					
+					<option Value="2">Stratcol</Option>
+				</select>								
+			</div>
+			
+			<div class="form-group">
+		      	<label for="">The Policy holder is a foriegn national ? Skip ID Number Check.</label>
+			    <input type="checkbox" name="IDTickBox" Value="Yes" ng-model="IDTickBox">							
+			</div>
+			
+		</div>
+
+		<div id="easy-pay-container" ng-show="ctrl.policy.paymenttypeid == 4">
+			<div class="form-group">
+		      	<label for="">Easypay Option: The Policy holder is a foriegn national ? Rather generate a system based EasyPay Number.</label>
+			    <input type="checkbox" name="EasyPayTickBox" Value="Yes" ng-model="ctrl.policy.EasyPayTickBox">							
+			</div>		
+		</div>
+	
+		<div id="grindrod-contianer" ng-show="ctrl.policy.paymenttypeid == 9">
+			<div class="form-group">
+		      	<label>Grindrod Number:</label>
+			    <input type="text" class="form-control" name="grindrodusnno" ng-model="ctrl.policy.grindrodusnno" placeholder="Grindrod Number" style="width:40% " ng-virtual-keyboard/>								
+			</div>
+		</div>
+
+		<div class="form-group seperator-grey">
+		</div>
+	
+		<div style="text-align:center;">
+			<button type="button" class="button" ng-click="ctrl.step = ctrl.step-1" style="width:15%">Back</button> &nbsp;<button type="button" class="button" ng-click="ctrl.step = ctrl.step+1" style="width:15%">Next</button>
+		</div>
+	
+	</div>
+	
+	<!--  -->
+	<div ng-show="ctrl.step == 3">
+ 		
+  	<div class="form-group">
+		<h5>Step 3: Beneficiary Information:</h5>
+	</div>
+
+	<div class="form-group">
+    	<div class="form-group left-input">
+	      	<label>First Name *</label>
+		    <input type="text" class="form-control" name="benname" ng-model="ctrl.policy.benname" placeholder="First Name" style="width:80% " required ng-virtual-keyboard/>								
+		</div>
+		<div class="form-group right-input">
+		    <label>Last Name *</label>
+		    <input type="text" class="form-control" name="bensurname" ng-model="ctrl.policy.bensurname" placeholder="Last Name" style="width:80% " required ng-virtual-keyboard/>			
+		</div>
+  	</div>
+ 		
+  	<div class="form-group">
+	   	<div class="form-group left-input">
+	      	<label>ID Number *</label>
+		    <input type ="text" class="form-control" id="benid" name="benid" ng-model="ctrl.policy.benid" placeholder="ID Number" style="width:80% " ng-blur="ctrl.validateBeneficiaryIdNumber();" required ng-virtual-keyboard ng-click="ctrl.showKeyBoard()"/>								
+		</div>
+		<div class="form-group right-input">
+		    <label>Relationship *</label>
+			<select ng-model="ctrl.policy.benrelationshipid" class="form-control" placeholder="Relationship" style="width:30% " convert-to-number>
+	           <option ng-repeat="relationship in ctrl.relationships" value="{{relationship.RelationshipID}}">{{relationship.RelationshipLabel}}</option>
+	        </select>
+		</div>
+  	</div>
+  		
+	<div class="form-group"  ng-class="{'invalid-text' : ctrl.beneficiaryIdStatus == 'ID number too short' || ctrl.beneficiaryIdStatus =='ID number too long' || ctrl.beneficiaryIdStatus =='ID number failed check digit validation', 'valid-text' : ctrl.beneficiaryIdStatus == 'Valid'}" style="height: 10px;">
+	   <div class="form-group" style="float:left; width:60% ">
+	   	{{ ctrl.beneficiaryIdStatus }}
+	   </div>
+	   <div class="form-group right-input">
+		</div>
+	</div>
+ 		
+  		<div class="form-group seperator-grey" style="margin-bottom:50px;">
+		</div>
+	
+		<div style="text-align:center;">
+			<button type="button" class="button" ng-click="ctrl.step = ctrl.step-1" style="width:15%">Back</button> &nbsp;<button type="button" class="button" ng-click="ctrl.step = ctrl.step+1" style="width:15%">Next</button>
+		</div>
+	
+	</div>
+	
+
+	<!--  -->
+	<div ng-show="ctrl.step == 4">
+	
+	<div class="form-group">
+		<h5>Step 4: Advice Record:</h5>
+	</div>
+
+	<div class="form-group">
+    	<div class="form-group left-input">
+	      	<label>Monthly Contribution Available *</label>
+		    <input type="number" class="form-control" name="MonthlyContributionAvailable" ng-model="ctrl.policy.monthlycontributionavailable" placeholder="Monthly Contribution Available" style="width:80% " required ng-virtual-keyboard/>								
+		</div>
+		<div class="form-group right-input">
+		    <label>Cover Required *</label>
+		    <input type="text" class="form-control" name="TypeOfCoverRequired" ng-model="ctrl.policy.typeofcoverrequired" placeholder="Cover Required" style="width:80% " required ng-virtual-keyboard/>			
+		</div>
+  		</div>
+ 		
+  		<div class="form-group">
+      	<label for="">Needs And Objectives *</label>
+      	
+		<select ng-model="ctrl.policy.needandobjectiveid" class="form-control" placeholder="Needs And Objectives" style="width:40% " convert-to-number>
+           <option ng-repeat="needAndObjective in ctrl.needsAndObjectives" value="{{needAndObjective.NeedAndObjectiveID}}">{{needAndObjective.NeedAndObjectiveLabel}}</option>
+        </select>
+									
+	</div>
+
+	<div class="form-group">
+    	<div class="form-group left-input">
+	      	<label>If Other Please Specify *</label>
+		    <input type="text" class="form-control" name="NeedAndObjectiveOther" ng-model="ctrl.policy.needandobjectiveother" placeholder="If Other Please Specify" style="width:80% " required ng-virtual-keyboard/>								
+		</div>
+		<div class="form-group right-input">
+		    <label>Reason For Recommendation *</label>
+		    <input type="text" class="form-control" name="ReasonForRecommendation" ng-model="ctrl.policy.reasonforrecommendation" placeholder="Reason For Recommendation" style="width:80% " required ng-virtual-keyboard/>			
+		</div>
+  		</div>
+ 		
+  		<div class="form-group">
+    	<div class="form-group">
+	      	<label>Risk Profile *</label>
+		    <input type="text" class="form-control" name="RiskProfile" ng-model="ctrl.policy.riskprofile" placeholder="Risk Profile" style="width:40% " required ng-virtual-keyboard/>								
+		</div>
+  		</div>
+ 		
+  		<div class="form-group seperator-grey">
+	</div>
+
+  		<div class="form-group">
+      	<label>Have you cancelled any policies in the last four months or will you be cancelling an existing policy as a result of this sale ? *</label>
+	    <select name="CancelledOtherPolicies" ng-model="ctrl.policy.cancelledotherpolicies" class="form-control" placeholder="" style="width:10% " required>
+			<option value="false">No</option>					
+			<option value="true">Yes</option>				
+		</select>								
+	</div>
+
+	<div class="form-group">
+      	<label>Do you elect to follow the advice provided by xxxx xxxxx, and confirm that you have been duly advised of the full implications of your actions and, having considered same, I fully understand the course of action that I am about to take. I declare that I am aware of the fact that I must carefully consider whether the product selected is appropriate considering my objectives, circumstances and needs. The advisor gave me the relevant product disclosure in which comprehensive disclosures are made including the benefits of the contributions payable. *</label>
+	    <select name="ElectToFollowAdvice" ng-model="ctrl.policy.electtofollowadvice" class="form-control" placeholder="" style="width:10% " required>
+			<option value="false">No</option>					
+			<option value="true">Yes</option>				
+		</select>								
+	</div>
+	
+	
+	<div class="form-group seperator-grey">
+	</div>
+	
+	<div style="text-align:center;">
+		<button type="button" class="button" ng-click="ctrl.step = ctrl.step-1" style="width:15%">Back</button> &nbsp;<button type="button" class="button" ng-click="ctrl.step = ctrl.step+1" style="width:15%">Next</button>
+	</div>
+	
+	</div>
+
+	<!--  -->
+	<div ng-show="ctrl.step == 5">
+	
+	<div class="form-group">
+		<h5>Step 5: Capture Dependents</h5>
+	</div>
+
+	<div class="form-group" ng-repeat="dependent in ctrl.policy.dependents">
+	
+	<h5>Dependent {{$index + 1}} <a href="javascript:void(0)" ng-click="ctrl.policy.dependents.splice($index, 1)">Delete</a></h5>
+	
+    	<div class="form-group left-input">
+	      	<label>Cover *</label>
+		    <select ng-model="dependent.productchildid" class="form-control" style="width:80% " convert-to-number>
+           		<option ng-repeat="productchild in ctrl.planDetails" value="{{productchild.ChildID}}">{{productchild.ChildDescription}}</option>
+        	</select>								
+		</div>
+		<div class="form-group right-input">
+		    <label>Dependent Type *</label>
+		    <select ng-model="dependent.memtypeid" class="form-control" style="width:80% " convert-to-number>
+	           <option ng-repeat="memType in ctrl.memTypes" value="{{memType.MemTypeID}}">{{memType.MemberTypeLabel}}</option>
+	        </select>			
+		</div>
+		
+		<div class="form-group left-input">
+	      	<label>First Name *</label>
+		    <input type="text" class="form-control" name="firstname" ng-model="dependent.depfirstname" placeholder="First Name" style="width:80% " required ng-virtual-keyboard/>								
+		</div>
+		<div class="form-group right-input">
+		    <label>Last Name *</label>
+		    <input type="text" class="form-control" name="lastname" ng-model="dependent.deplastname" placeholder="Last Name" style="width:80% " required ng-virtual-keyboard/>			
+		</div>
+		
+		<div class="form-group left-input">
+	      	<label>Date of Birth *</label>
+		    <!-- <input type="text" class="form-control" name="dob" ng-model="dependent.depdob" placeholder="Date of Birth" style="width:80% " required/> -->
+		    <datepicker date-format="yyyy-MM-dd" selector="form-control"  button-prev="<i class='fa fa-arrow-left'></i>" button-next="<i class='fa fa-arrow-right'></i>">
+			  <input class="form-control" name="dob" ng-model="dependent.depdob" type="text" style="width:80%;" placeholder="Date of Birth"/>
+			</datepicker>								
+		</div>
+		<div class="form-group right-input">
+		    <label>ID Number *</label>
+		    <input type="text" class="form-control" name="idno" ng-model="depidno" placeholder="ID Number" style="width:80% " required ng-virtual-keyboard/>			
+		</div>
+  		</div>
+  		
+  		<div class="form-group">
+		<button ng-click="ctrl.addDependent()" type="button">Add Dependent</button>
+	</div>
+
+	<div class="form-group">
+      	<label>* Indicates Mandatory Field</label>
+	</div>
+	
+	<div style="text-align:center;">
+		<button type="button" class="button" ng-click="ctrl.step = ctrl.step-1" style="width:15%">Back</button> &nbsp;<button type="button" class="button" ng-click="ctrl.step = ctrl.step+1" style="width:15%">Next</button>
+	</div>
+	
+	</div>
+
+	<!--  -->
+	<div ng-show="ctrl.step == 6">
+	
+	<div class="form-group">
+		<h5>Step 6: Capture Signature</h5>
+	</div>
+
+	<div class="form-group">
+		<img id="policy-holder-signature-image">
+	</div>
+	
+	<div class="form-group">
+      	<button ng-click="showSignatureDialog()" type="button">Capture Signature</button>
+	</div>
+
+	<div class="form-group">
+      	<button class="button button--large" type="button" ng-click="ctrl.capturePolicy()">Capture Policy</button>								
+	</div>
+	
+	<div class="form-group">
+		<img id="agent-signature-image">
+	</div>
+	
+	<div style="text-align:center;">
+		<button type="button" class="button" ng-click="ctrl.step = ctrl.step-1" style="width:15%">Back</button>
+	</div>
+	
+	</div>
+	
+</div>
+</form>
+</div>
+
+</ons-page> 
