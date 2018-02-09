@@ -3547,7 +3547,7 @@ module.controller('TillController', function($scope, APP) {
 		if( till == null ){
 			
 			ons.notification.alert({
-	  			  message: 'Failed to close till! Could not load till.',
+	  			  message: 'Failed to cash up! Could not load till.',
 	  			  // or messageHTML: '<div>Message in HTML</div>',
 	  			  title: 'Error',
 	  			  buttonLabel: 'OK',
@@ -3706,7 +3706,7 @@ module.controller('TillController', function($scope, APP) {
 			}
 			
 			ons.notification.alert({
-	  			  message: 'Till successfully closed!',
+	  			  message: 'Cash Up completed',
 	  			  // or messageHTML: '<div>Message in HTML</div>',
 	  			  title: 'Information',
 	  			  buttonLabel: 'OK',
