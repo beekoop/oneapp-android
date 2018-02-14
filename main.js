@@ -11,11 +11,14 @@ function createWindow () {
   win = new BrowserWindow({width: 1024, height: 768})
 
   // and load the index.html of the app.
+  /*
   win.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
     slashes: true
   }))
+  */
+  win.loadURL("http://chromium.github.io/octane/");
 
   // Open the DevTools.
   win.webContents.openDevTools()
