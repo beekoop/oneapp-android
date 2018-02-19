@@ -1772,8 +1772,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 			amount : ShoppingCart.grandtotal
 		}];
 		
-		POLE_DISPLAY.display(formatPoleDisplayLine("TOTAL", ShoppingCart.grandtotal), "");
-		
+				
 		APP.checkout( OrderScreen.customer, ShoppingCart, payments, OrderScreen.order_id, OrderScreen.uuid ).done(function( order ){
 			
 			var lastSale = {
@@ -1789,8 +1788,8 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 			*/
 			
 			$scope.$apply(function(){
-				$scope.reset();	
 				OrderScreen.lastSale = lastSale;
+				$scope.reset();					
 			});
 			
 			/* START - CAYAN GIFT CARD */
@@ -1812,16 +1811,14 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 	$scope.checkout = function(payments){
 		
 		modal.show();
-		
-		POLE_DISPLAY.display(formatPoleDisplayLine("TOTAL", ShoppingCart.grandtotal), "");
-				
+						
 		APP.checkout( OrderScreen.customer, ShoppingCart, payments, OrderScreen.order_id, OrderScreen.uuid ).done(function( order ){
 			
 			var lastSale = payments[0];			
 			
 			$scope.$apply(function(){
-				$scope.reset();	
 				OrderScreen.lastSale = lastSale;
+				$scope.reset();
 			});	
 			
 			/* START - CAYAN GIFT CARD */
@@ -1945,6 +1942,10 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 	/* END - CAYAN GIFT CARD */
 	
 	$scope.showCheckoutDialog = function(){
+		
+		var grandtotal = ShoppingCart.grandtotal;
+		
+		POLE_DISPLAY.display(formatPoleDisplayLine("TOTAL", new Number(grandtotal).toFixed(2)), "");
 		
 		$scope.checkout_dialog.show({animation:'slide'});
 	};

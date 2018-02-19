@@ -253,8 +253,8 @@ var NODEJS_Printer = {
         	            	    
         	            	}
         	            		            		
-        	            	console.log(`stdout: ${stdout}`);
-        	            	console.log(`stderr: ${stderr}`);
+        	            	//console.log(`stdout: ${stdout}`);
+        	            	//console.log(`stderr: ${stderr}`);
         	            	
         	            	if (stdout.indexOf("not found") > -1) {
             	                dfd.reject(error);
