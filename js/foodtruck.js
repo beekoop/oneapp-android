@@ -3798,7 +3798,12 @@ module.controller('PrinterSettingsController', function($scope, OrderScreen, APP
 	
 	NODEJS_Printer.getPrinters().done(function(printers){
 		
-		$scope.printers = printers;
+		$scope.$apply(function(){
+			
+			$scope.printers = printers;
+			
+		});		
+		
 		
 	}).fail(function(error){
 		

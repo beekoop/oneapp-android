@@ -1,7 +1,7 @@
 /*== Node.js printer implementation ==*/
 var fileSys = require('fs');
 var operatingSys = require('os');
-var doIt = require("child_process").execSync;
+var doIt = require("child_process").exec;
 
 var NODEJS_Printer = {
 
@@ -182,13 +182,99 @@ var NODEJS_Printer = {
     },
 
     print : function( printerName, printData ) {
-
+    	
         var dfd = new jQuery.Deferred();
 
         var tempdir = operatingSys.tmpdir();
         var filename = tempdir + "/escpos.prt";
+        
+        var OS = this.getOS();
 
         // delete the last version of our RAW file
+        fileSys.lstat(filename, function(err, stats){
+        	
+        	if(err) {
+        		// why bother deleting if the file does not even exist
+        	}
+        	        		
+    		fileSys.unlink(filename, function(err){
+    			
+    			// why bother deleting if the file does not even exist
+    			
+    			// and just in case you forgot it add a final printit/newline
+    	        printData = printData + String.fromCharCode(10);  
+    	        
+    	        
+    	        // finally use OS specific method to copy to printer or print it via cups lp implementation
+    	        // Windows needs try catch , while cups delivers a result anyway
+    	        if (OS == "WIN") {
+    	            try 
+    	            {
+    	                fileSys.writeFile('//localhost/' + printerName, printData, function(error){
+    	                	
+    	                	if(error){
+    	                		
+    	                		dfd.reject("Failed to print : " + error);
+    	                		console.error(error);
+    	                		return;
+    	                	}
+    	                	
+    	                	dfd.resolve("data printed");
+    	                	
+    	                });
+    	                
+    	            } 
+    	            catch (e) {
+    	              dfd.reject("Error copying prt file : " + e.message);
+    	            }
+    	        }
+    	        
+    	        if (OS == "LINUX") {
+    	        	
+    	        	// write our content to the RAW printer file
+    	            fileSys.appendFile(filename, printData, 'binary', function(error){
+    	            	
+    	            	if (error) {
+    	            		
+    	            		dfd.reject("Failed to print : " + error);
+    	            	    console.error(error);
+    	            	    return;
+    	            	    
+    	            	}
+    	            	
+    	            	printcommand = "lp -d " + printerName + " " + filename;
+        	            
+        	            doIt(printcommand, {encoding: 'UTF-8'}, function( error, stdout, stderr ){
+        	            	
+        	            	if (error) {
+        	            		
+        	            		dfd.reject("Failed to print : " + error);
+        	            	    console.error(error);
+        	            	    return;
+        	            	    
+        	            	}
+        	            		            		
+        	            	console.log(`stdout: ${stdout}`);
+        	            	console.log(`stderr: ${stderr}`);
+        	            	
+        	            	if (stdout.indexOf("not found") > -1) {
+            	                dfd.reject(error);
+            	            } else {
+            	                dfd.resolve("data printed");
+            	            }
+        	            	
+        	            });
+    	            	
+    	            }); 
+    	            
+    	        }
+    			
+    		});
+        	
+        });
+        
+        
+        /*
 
         try {
             stats = fileSys.lstatSync(filename);
@@ -228,6 +314,7 @@ var NODEJS_Printer = {
                 dfd.resolve("data printed");
             }
         }
+        */
 
         return dfd.promise();
 
@@ -264,26 +351,39 @@ var NODEJS_Printer = {
             // new  Version using powershell (always in english ? )
             listCommand = "wmic printer get name";
             // collect result
-            var listResult = doIt(listCommand, {
-                encoding: 'ascii'
-            });
-            //plit into single lines
-            listResultLines = listResult.split("\n");
-            for (var d = 1; d < listResultLines.length; d++) {
-                if (listResultLines[d].trim().length > 0)
-                    printers.push(listResultLines[d].trim());
-                continue;
-
-                // look for the keyword ShareName
-                if (listResultLines[d].indexOf("Name ") > -1) {
-                    //split by colon
-                    listLineParts = listResultLines[d].split(":");
-                    if (listLineParts[1].trim().length > 0) {
-                        // and push if the right part holds a share/Printer Name
+            doIt(listCommand, {encoding: 'ascii'}, function(err, stdout, stderr){
+            	
+            	if(err){
+            		
+            		df.reject('Failed to load printers. Error: ' + error);
+            		return;
+            		
+            	}
+            	
+            	var listResult = stdout;
+            	
+            	//split into single lines
+                listResultLines = listResult.split("\n");
+                for (var d = 1; d < listResultLines.length; d++) {
+                    if (listResultLines[d].trim().length > 0)
                         printers.push(listResultLines[d].trim());
-                    }
+                    continue;
+
+                    // look for the keyword ShareName
+                    if (listResultLines[d].indexOf("Name ") > -1) {
+                        //split by colon
+                        listLineParts = listResultLines[d].split(":");
+                        if (listLineParts[1].trim().length > 0) {
+                            // and push if the right part holds a share/Printer Name
+                            printers.push(listResultLines[d].trim());
+                        }
+                    }               
+                    
                 }
-            }
+                
+                dfd.resolve(printers);
+            	
+            });           
 
         }
 
@@ -291,24 +391,37 @@ var NODEJS_Printer = {
             // better than win here, list printers only
             var listCommand = "lpstat -v";
             //run the command and collect output
-            var listResult = doIt(listCommand, {
-                encoding: 'utf8'
-            });
-            // split output into single lines
-            listResultLines = listResult.split("\n");
-            for (var d = 0; d < listResultLines.length; d++) {
-                // lpstat delivers "device for PRINTERNAME : ADDITIONAL info"
-                // so first check for colon (:) then split by the word for
-                if (listResultLines[d].indexOf(":") > 0) {
-                    listLineParts = listResultLines[d].split(":");
-                    detailParts = listLineParts[0].split("for");
-                    //name is the second part so push it
-                    printers.push(detailParts[1].trim());
+            doIt(listCommand, {encoding: 'utf8'}, function(error, stdout, stderr){
+            	
+            	if(error){
+            		
+            		df.reject('Failed to load printers. Error: ' + error);
+            		return;
+            		
+            	}
+            	
+            	var listResult = stdout;
+            	
+            	// split output into single lines
+                listResultLines = listResult.split("\n");
+                for (var d = 0; d < listResultLines.length; d++) {
+                    // lpstat delivers "device for PRINTERNAME : ADDITIONAL info"
+                    // so first check for colon (:) then split by the word for
+                    if (listResultLines[d].indexOf(":") > 0) {
+                        listLineParts = listResultLines[d].split(":");
+                        detailParts = listLineParts[0].split("for");
+                        //name is the second part so push it
+                        printers.push(detailParts[1].trim());
+                    }
                 }
-            }
+                
+                dfd.resolve(printers);
+            	
+            });            
+            
         }
 
-        dfd.resolve(printers);
+        
         return dfd.promise();
     },
     

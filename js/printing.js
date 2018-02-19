@@ -1088,7 +1088,8 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
        ['FEED'],
        ['CENTER'],
 
-       ['H4', account.businessname ]
+       ['H1', account.businessname ],
+       ['H3', store_name ]
     ];
 
     if( location &&  location.length > 0 ){
@@ -1111,6 +1112,7 @@ PrinterManager.getReceiptPrintFormat = function ( order, openDrawer ) {
 
        ['N', JSReceiptUtils.format(dateOrdered, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Employee: ' + user_name, LINE_WIDTH)],
+       ['N', JSReceiptUtils.format('Terminal: ' + terminal_name, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Terminal: ' + terminal_name, LINE_WIDTH)],
        ['N', JSReceiptUtils.format('Customer' + ': ' + customer_name, LINE_WIDTH)],
 
