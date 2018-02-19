@@ -2523,11 +2523,17 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 			var changeText = null;
 			
 			if(lastSale.type == 'CASH'){
-								
-				changeText = formatPoleDisplayLine("CHANGE", "" + lastSale["change"]);							
+				
+				var change = lastSale["change"];
+				change = new Number(change).toFixed(2);
+				
+				changeText = formatPoleDisplayLine("CHANGE", "" + change);							
 			}
 			
-			var paidText = formatPoleDisplayLine("PAID", "" + lastSale["amount"]);
+			var amount = lastSale["amount"];
+			amount = new Number(amount).toFixed(2);
+			
+			var paidText = formatPoleDisplayLine("PAID", "" + amount);
 			POLE_DISPLAY.display( paidText , changeText );
 			
 		}
