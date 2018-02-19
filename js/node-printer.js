@@ -183,55 +183,54 @@ var NODEJS_Printer = {
 
     print : function( printerName, printData ) {
     	
+    	// and just in case you forgot it add a final printit/newline
+        printData = printData + String.fromCharCode(10);  
+    	
         var dfd = new jQuery.Deferred();
-
-        var tempdir = operatingSys.tmpdir();
-        var filename = tempdir + "/escpos.prt";
         
         var OS = this.getOS();
-
-        // delete the last version of our RAW file
-        fileSys.lstat(filename, function(err, stats){
+        
+        // finally use OS specific method to copy to printer or print it via cups lp implementation
+        // Windows needs try catch , while cups delivers a result anyway
+        if (OS == "WIN") {
+            try 
+            {
+                fileSys.writeFile('//localhost/' + printerName, printData, function(error){
+                	
+                	if(error){
+                		
+                		dfd.reject("Failed to print : " + error);
+                		console.error(error);
+                		return;
+                	}
+                	
+                	dfd.resolve("data printed");
+                	
+                });
+                
+            } 
+            catch (e) {
+              dfd.reject("Failed to send print data : " + e.message);
+            }
+        }
+        
+        if (OS == "LINUX") {
         	
-        	if(err) {
-        		// why bother deleting if the file does not even exist
-        	}
-        	        		
-    		fileSys.unlink(filename, function(err){
-    			
-    			// why bother deleting if the file does not even exist
-    			
-    			// and just in case you forgot it add a final printit/newline
-    	        printData = printData + String.fromCharCode(10);  
-    	        
-    	        
-    	        // finally use OS specific method to copy to printer or print it via cups lp implementation
-    	        // Windows needs try catch , while cups delivers a result anyway
-    	        if (OS == "WIN") {
-    	            try 
-    	            {
-    	                fileSys.writeFile('//localhost/' + printerName, printData, function(error){
-    	                	
-    	                	if(error){
-    	                		
-    	                		dfd.reject("Failed to print : " + error);
-    	                		console.error(error);
-    	                		return;
-    	                	}
-    	                	
-    	                	dfd.resolve("data printed");
-    	                	
-    	                });
-    	                
-    	            } 
-    	            catch (e) {
-    	              dfd.reject("Error copying prt file : " + e.message);
-    	            }
-    	        }
-    	        
-    	        if (OS == "LINUX") {
-    	        	
-    	        	// write our content to the RAW printer file
+        	 var tempdir = operatingSys.tmpdir();
+             var filename = tempdir + "/" + printerName.split(' ').join('') + ".prt";
+        	
+        	// delete the last version of our RAW file
+            fileSys.lstat(filename, function(err, stats){
+            	
+            	if(err) {
+            		// why bother deleting if the file does not even exist
+            	}
+            	        		
+        		fileSys.unlink(filename, function(err){
+        			
+        			// why bother deleting if the file does not even exist
+        	        
+        			// write our content to the RAW printer file
     	            fileSys.appendFile(filename, printData, 'binary', function(error){
     	            	
     	            	if (error) {
@@ -266,12 +265,14 @@ var NODEJS_Printer = {
         	            });
     	            	
     	            }); 
-    	            
-    	        }
-    			
-    		});
+        			
+        		});
+            	
+            });
         	
-        });
+        }
+
+        
         
         
         /*

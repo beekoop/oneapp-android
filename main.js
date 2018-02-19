@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, dialog} = require('electron')
 const path = require('path')
 const url = require('url')
 
@@ -8,7 +8,11 @@ let win
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 1024, height: 768})
+  win = new BrowserWindow({
+      width: 1024,
+      height: 768,
+      title: 'OneApp POS '
+  })
 
   // and load the index.html of the app.
   
@@ -22,6 +26,19 @@ function createWindow () {
 
   // Open the DevTools.
   win.webContents.openDevTools()
+  
+  //Emitted when trying to close window
+	win.on('close', (event) => {
+		
+		let index = dialog.showMessageBox(win, {type:"question", buttons:["OK","Cancel"], title:"OneApp POS", message:"Do you want to quit?"});
+		
+		if(index == 1){
+			
+			event.preventDefault();     
+			
+		}    	
+		   
+	})
 
   // Emitted when the window is closed.
   win.on('closed', () => {

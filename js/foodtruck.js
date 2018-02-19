@@ -1817,23 +1817,7 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 				
 		APP.checkout( OrderScreen.customer, ShoppingCart, payments, OrderScreen.order_id, OrderScreen.uuid ).done(function( order ){
 			
-			var lastSale = payments[0];
-			
-			var changeText = null;
-			
-			if(lastSale.type == 'CASH'){
-				/*
-				CayanCED.endOrder( order.documentno ).always(function(){
-					CayanCED.startOrder( APP.UTILS.ORDER.getDocumentNo() );
-				});
-				*/
-				
-				changeText = formatPoleDisplayLine("CHANGE", "" + lastSale["change"]);
-							
-			}
-			
-			var paidText = formatPoleDisplayLine("PAID", "" + lastSale["amount"]);
-			POLE_DISPLAY.display( paidText , changeText );
+			var lastSale = payments[0];			
 			
 			$scope.$apply(function(){
 				$scope.reset();	
@@ -2529,6 +2513,23 @@ module.controller('OrderScreenController', function($scope, $timeout, $window, $
 		OrderScreen.ref_order_id = null;
 		
 		$scope.currentLineIndex = null;
+		
+		//Display change info if any
+		if( OrderScreen.lastSale != null ){
+			
+			var lastSale = OrderScreen.lastSale;
+			
+			var changeText = null;
+			
+			if(lastSale.type == 'CASH'){
+								
+				changeText = formatPoleDisplayLine("CHANGE", "" + lastSale["change"]);							
+			}
+			
+			var paidText = formatPoleDisplayLine("PAID", "" + lastSale["amount"]);
+			POLE_DISPLAY.display( paidText , changeText );
+			
+		}
 		
 	};	
 	
